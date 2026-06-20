@@ -8,124 +8,139 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="carbon/styles.css" />
-<style>
-  :root{
-    --white-0:#ffffff;--black-100:#000000;
-    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
-    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
-    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
-    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
-    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
-    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
-    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
-    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
-    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--background); }
-  .dl-row:hover { background: var(--layer-hover-01); }
-  .dl-btn:hover { background: #0050e6 !important; }
-  .dl-btn:active { background: var(--blue-80) !important; }
-  .dl-hicon:hover { background: var(--layer-hover-02); }
-  .dl-ghost:hover { background: var(--background-hover); }
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['IBM Plex Sans','system-ui','-apple-system','BlinkMacSystemFont','sans-serif'] },
+          colors: {
+            driftlog: {
+              panel:           '#161616',
+              blue:            '#0f62fe',
+              'blue-hover':    '#0050e6',
+              'blue-accent':   '#4589ff',
+              field:           '#f4f4f4',
+              'field-hover':   '#e8e8e8',
+              'border-subtle': '#c6c6c6',
+              'gray-40':       '#a8a8a8',
+              'text-2':        '#525252',
+              'text-helper':   '#6f6f6f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    input, button, select, textarea { font-family: inherit; color: inherit; }
+  </style>
 </helmet>
-<div data-screen-label="Trip Overview" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--background); color:var(--text-primary);">
 
-  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
-        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+<div data-screen-label="Trip Overview" class="min-h-screen font-sans bg-white text-[#161616]">
+
+  <header class="h-12 bg-driftlog-panel text-white flex items-center px-4 sticky top-0 z-10">
+    <div class="flex items-center gap-[10px]">
+      <div class="w-5 h-5 bg-driftlog-blue-accent flex items-center justify-center">
+        <span class="font-semibold text-[0.8125rem] leading-none">$</span>
       </div>
-      <a href="01b My Trips.dc.html" style="font-size:0.875rem; text-decoration:none; color:inherit;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></a>
+      <a href="01b My Trips.dc.html" class="text-sm no-underline text-white">
+        <span class="font-semibold">Driftlog</span> <span class="text-driftlog-gray-40">Trips</span>
+      </a>
     </div>
-    <div style="margin-left:auto; display:flex; align-items:center; height:100%;">
-      <button class="dl-hicon" aria-label="Settings" style="width:48px; height:48px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-        <img src="carbon/icons/settings.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+    <div class="ml-auto flex items-center h-full">
+      <button aria-label="Settings" class="w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-driftlog-field-hover">
+        <img src="carbon/icons/settings.svg" width="20" height="20" alt="" class="invert" />
       </button>
-      <div style="width:32px; height:32px; border-radius:50%; background:var(--blue-60); color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; margin-left:8px;">YO</div>
+      <div class="w-8 h-8 rounded-full bg-driftlog-blue text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
     </div>
   </header>
 
-  <main style="max-width:1056px; margin:0 auto; padding:48px 16px 80px;">
+  <main class="max-w-[1056px] mx-auto px-4 pt-12 pb-20">
 
-    <div style="display:flex; align-items:flex-start; gap:24px; margin-bottom:48px;">
-      <div style="min-width:0;">
-        <p style="margin:0 0 8px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); text-transform:uppercase;">Trip</p>
-        <h1 style="margin:0 0 12px; font-size:2rem; line-height:1.25; font-weight:400;">Lisbon long weekend</h1>
-        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-          <span style="display:inline-flex; align-items:center; gap:8px; font-size:0.875rem; color:var(--text-secondary);">
-            <img src="carbon/icons/calendar.svg" width="16" height="16" alt="" style="opacity:0.6;" /> Jun 12 – 15, 2026
+    <!-- Trip header -->
+    <div class="flex items-start gap-6 mb-12">
+      <div class="min-w-0">
+        <p class="mb-2 text-xs tracking-[0.32px] text-driftlog-text-2 uppercase">Trip</p>
+        <h1 class="mb-3 text-[2rem] leading-[1.25] font-normal">Lisbon long weekend</h1>
+        <div class="flex items-center gap-4 flex-wrap">
+          <span class="inline-flex items-center gap-2 text-sm text-driftlog-text-2">
+            <img src="carbon/icons/calendar.svg" width="16" height="16" alt="" class="opacity-60" /> Jun 12 – 15, 2026
           </span>
-          <span style="width:1px; height:16px; background:var(--border-subtle-01);"></span>
-          <div style="display:flex; align-items:center;">
+          <span class="w-px h-4 bg-driftlog-border-subtle"></span>
+          <div class="flex items-center">
             <sc-for list="{{ people }}" as="p" hint-placeholder-count="4">
-              <div title="{{ p.name }}" style="width:28px; height:28px; border-radius:50%; background:{{ p.avatarBg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.6875rem; font-weight:600; margin-left:-6px; border:2px solid var(--background);">{{ p.initials }}</div>
+              <div title="{{ p.name }}" class="w-7 h-7 rounded-full flex items-center justify-center text-[0.6875rem] font-semibold text-white -ml-[6px] border-2 border-white" style="background:{{ p.avatarBg }}">{{ p.initials }}</div>
             </sc-for>
-            <span style="margin-left:12px; font-size:0.875rem; color:var(--text-secondary);">4 people</span>
+            <span class="ml-3 text-sm text-driftlog-text-2">4 people</span>
           </div>
         </div>
       </div>
-      <a href="03 Add Expense.dc.html" class="dl-btn" style="margin-left:auto; flex:none; height:48px; background:var(--blue-60); color:var(--text-on-color); font-size:0.875rem; letter-spacing:0.16px; text-decoration:none; display:inline-flex; align-items:center; gap:48px; padding:0 16px; transition:background 110ms;">
+      <a href="03 Add Expense.dc.html" class="ml-auto flex-none h-12 bg-driftlog-blue text-white text-sm tracking-[0.16px] no-underline inline-flex items-center gap-12 px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover">
         <span>Add expense</span>
-        <img src="carbon/icons/add.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+        <img src="carbon/icons/add.svg" width="20" height="20" alt="" class="invert" />
       </a>
     </div>
 
-    <h2 style="margin:0 0 16px; font-size:0.875rem; font-weight:600; letter-spacing:0.16px;">Balances</h2>
-    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1px; background:var(--border-subtle-01); border:1px solid var(--border-subtle-01); margin-bottom:48px;">
+    <!-- Balances -->
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.16px]">Balances</h2>
+    <div class="grid grid-cols-4 gap-px bg-driftlog-border-subtle border border-driftlog-border-subtle mb-12">
       <sc-for list="{{ people }}" as="p" hint-placeholder-count="4">
-        <a href="04 Person Detail.dc.html" class="dl-row" style="display:block; background:var(--layer-02); padding:20px; text-decoration:none; color:inherit; border-top:3px solid {{ p.accentTop }};">
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-            <div style="width:28px; height:28px; border-radius:50%; background:{{ p.avatarBg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.6875rem; font-weight:600;">{{ p.initials }}</div>
-            <span style="font-size:0.875rem; font-weight:600;">{{ p.label }}</span>
+        <a href="04 Person Detail.dc.html" class="block bg-white p-5 no-underline text-[#161616] transition-colors duration-[70ms] hover:bg-driftlog-field-hover" style="border-top:3px solid {{ p.accentTop }}">
+          <div class="flex items-center gap-[10px] mb-5">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[0.6875rem] font-semibold text-white" style="background:{{ p.avatarBg }}">{{ p.initials }}</div>
+            <span class="text-sm font-semibold">{{ p.label }}</span>
           </div>
-          <p style="margin:0 0 2px; font-size:1.75rem; line-height:1.28572; font-weight:400; color:{{ p.color }};">{{ p.amountStr }}</p>
-          <p style="margin:0; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">{{ p.status }}</p>
+          <p class="mb-[2px] text-[1.75rem] leading-[1.28572] font-normal" style="color:{{ p.color }}">{{ p.amountStr }}</p>
+          <p class="text-xs tracking-[0.32px] text-driftlog-text-2">{{ p.status }}</p>
         </a>
       </sc-for>
     </div>
 
-    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;">
-      <h2 style="margin:0; font-size:0.875rem; font-weight:600; letter-spacing:0.16px;">Recent expenses</h2>
-      <span style="font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">7 expenses · €1,272.00 total</span>
+    <!-- Recent expenses -->
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="text-sm font-semibold tracking-[0.16px]">Recent expenses</h2>
+      <span class="text-xs tracking-[0.32px] text-driftlog-text-2">7 expenses · €1,272.00 total</span>
     </div>
 
-    <div style="border:1px solid var(--border-subtle-01);">
-      <div style="display:grid; grid-template-columns:1fr 140px 140px 120px 40px; align-items:center; padding:0 16px; height:40px; background:var(--layer-01); border-bottom:1px solid var(--border-subtle-01);">
-        <span style="font-size:0.75rem; font-weight:600; letter-spacing:0.32px; color:var(--text-secondary);">Description</span>
-        <span style="font-size:0.75rem; font-weight:600; letter-spacing:0.32px; color:var(--text-secondary);">Date</span>
-        <span style="font-size:0.75rem; font-weight:600; letter-spacing:0.32px; color:var(--text-secondary);">Split</span>
-        <span style="font-size:0.75rem; font-weight:600; letter-spacing:0.32px; color:var(--text-secondary); text-align:right;">Amount</span>
+    <div class="border border-driftlog-border-subtle">
+      <div class="grid grid-cols-[1fr_140px_140px_120px_40px] items-center px-4 h-10 bg-driftlog-field border-b border-driftlog-border-subtle">
+        <span class="text-xs font-semibold tracking-[0.32px] text-driftlog-text-2">Description</span>
+        <span class="text-xs font-semibold tracking-[0.32px] text-driftlog-text-2">Date</span>
+        <span class="text-xs font-semibold tracking-[0.32px] text-driftlog-text-2">Split</span>
+        <span class="text-xs font-semibold tracking-[0.32px] text-driftlog-text-2 text-right">Amount</span>
         <span></span>
       </div>
       <sc-for list="{{ expenses }}" as="e" hint-placeholder-count="7">
-        <div class="dl-row" style="display:grid; grid-template-columns:1fr 140px 140px 120px 40px; align-items:center; padding:0 16px; min-height:56px; border-bottom:1px solid var(--border-subtle-00); transition:background 70ms;">
-          <div style="display:flex; align-items:center; gap:12px; min-width:0; padding:8px 0;">
-            <div style="width:32px; height:32px; border-radius:50%; background:{{ e.payerBg }}; color:var(--white-0); flex:none; display:flex; align-items:center; justify-content:center; font-size:0.6875rem; font-weight:600;">{{ e.payerInitials }}</div>
-            <div style="min-width:0;">
-              <p style="margin:0; font-size:0.875rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ e.desc }}</p>
-              <p style="margin:2px 0 0; font-size:0.75rem; color:var(--text-secondary);">{{ e.payerLine }}</p>
+        <div class="grid grid-cols-[1fr_140px_140px_120px_40px] items-center px-4 min-h-14 border-b border-[#e0e0e0] transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+          <div class="flex items-center gap-3 min-w-0 py-2">
+            <div class="w-8 h-8 rounded-full flex-none flex items-center justify-center text-[0.6875rem] font-semibold text-white" style="background:{{ e.payerBg }}">{{ e.payerInitials }}</div>
+            <div class="min-w-0">
+              <p class="text-sm truncate">{{ e.desc }}</p>
+              <p class="text-xs text-driftlog-text-2 mt-0.5">{{ e.payerLine }}</p>
             </div>
           </div>
-          <span style="font-size:0.875rem; color:var(--text-secondary);">{{ e.dateStr }}</span>
-          <span style="font-size:0.875rem; color:var(--text-secondary);">{{ e.splitStr }}</span>
-          <span style="font-size:0.875rem; text-align:right; font-variant-numeric:tabular-nums;">{{ e.amountStr }}</span>
-          <span style="display:flex; justify-content:flex-end; color:var(--icon-secondary);">
-            <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" style="opacity:0.5;" />
+          <span class="text-sm text-driftlog-text-2">{{ e.dateStr }}</span>
+          <span class="text-sm text-driftlog-text-2">{{ e.splitStr }}</span>
+          <span class="text-sm text-right tabular-nums">{{ e.amountStr }}</span>
+          <span class="flex justify-end">
+            <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" class="opacity-50" />
           </span>
         </div>
       </sc-for>
     </div>
 
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:32px; padding:24px; background:var(--layer-01); border-left:3px solid var(--blue-60);">
+    <!-- Settle up CTA -->
+    <div class="flex items-center justify-between gap-6 mt-8 p-6 bg-driftlog-field" style="border-left:3px solid #0f62fe">
       <div>
-        <p style="margin:0 0 4px; font-size:1rem; font-weight:600;">Ready to settle up?</p>
-        <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">Clear all balances in just 3 payments.</p>
+        <p class="mb-1 text-base font-semibold">Ready to settle up?</p>
+        <p class="text-sm text-driftlog-text-2">Clear all balances in just 3 payments.</p>
       </div>
-      <a href="05 Settle Up.dc.html" class="dl-ghost" style="flex:none; height:48px; display:inline-flex; align-items:center; gap:48px; padding:0 16px; border:1px solid var(--blue-60); color:var(--link-primary); font-size:0.875rem; letter-spacing:0.16px; text-decoration:none; transition:background 110ms;">
+      <a href="05 Settle Up.dc.html" class="flex-none h-12 inline-flex items-center gap-12 px-4 border border-driftlog-blue text-driftlog-blue text-sm tracking-[0.16px] no-underline transition-colors duration-[110ms] hover:bg-[rgba(141,141,141,0.12)]">
         <span>Settle up</span>
         <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" />
       </a>
@@ -133,16 +148,17 @@
 
   </main>
 </div>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1056,&quot;height&quot;:900}}">
 class Component extends DCLogic {
   renderVals() {
     const fmt = (n) => "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const avatars = { You: "var(--blue-60)", Maya: "var(--teal-60)", Sam: "var(--purple-60)", Theo: "var(--magenta-60)" };
+    const avatars = { You: "#0f62fe", Maya: "#007d79", Sam: "#8a3ffc", Theo: "#d02670" };
     const ledger = [
-      { name: "You", label: "You", initials: "YO", bal: 436 },
-      { name: "Maya", label: "Maya", initials: "MA", bal: -52 },
-      { name: "Sam", label: "Sam", initials: "SA", bal: -176 },
+      { name: "You",  label: "You",  initials: "YO", bal:  436 },
+      { name: "Maya", label: "Maya", initials: "MA", bal:  -52 },
+      { name: "Sam",  label: "Sam",  initials: "SA", bal: -176 },
       { name: "Theo", label: "Theo", initials: "TH", bal: -208 },
     ];
     const people = ledger.map((p) => {
@@ -151,35 +167,36 @@ class Component extends DCLogic {
         ...p,
         avatarBg: avatars[p.name],
         amountStr: fmt(Math.abs(p.bal)),
-        color: owed ? "var(--support-success)" : "var(--text-primary)",
-        accentTop: owed ? "var(--support-success)" : "var(--support-error)",
+        color:     owed ? "#24a148" : "#161616",
+        accentTop: owed ? "#24a148" : "#da1e28",
         status: p.name === "You" ? "You are owed" : owed ? "Is owed" : "Owes the group",
       };
     });
 
     const rawExpenses = [
-      { desc: "Tarts & coffee", payer: "Sam", date: "Jun 14", amount: 24, ways: 4 },
-      { desc: "Surf lessons", payer: "Theo", date: "Jun 14", amount: 120, ways: 3 },
-      { desc: "Train to Sintra", payer: "Maya", date: "Jun 13", amount: 36, ways: 4 },
-      { desc: "Dinner at Time Out Market", payer: "You", date: "Jun 13", amount: 164, ways: 4 },
-      { desc: "Groceries", payer: "Sam", date: "Jun 13", amount: 88, ways: 4 },
-      { desc: "Rental car", payer: "Maya", date: "Jun 12", amount: 240, ways: 4 },
-      { desc: "Airbnb (3 nights)", payer: "You", date: "Jun 12", amount: 600, ways: 4 },
+      { desc: "Tarts & coffee",            payer: "Sam",  date: "Jun 14", amount:  24, ways: 4 },
+      { desc: "Surf lessons",              payer: "Theo", date: "Jun 14", amount: 120, ways: 3 },
+      { desc: "Train to Sintra",           payer: "Maya", date: "Jun 13", amount:  36, ways: 4 },
+      { desc: "Dinner at Time Out Market", payer: "You",  date: "Jun 13", amount: 164, ways: 4 },
+      { desc: "Groceries",                 payer: "Sam",  date: "Jun 13", amount:  88, ways: 4 },
+      { desc: "Rental car",                payer: "Maya", date: "Jun 12", amount: 240, ways: 4 },
+      { desc: "Airbnb (3 nights)",         payer: "You",  date: "Jun 12", amount: 600, ways: 4 },
     ];
     const initialsOf = { You: "YO", Maya: "MA", Sam: "SA", Theo: "TH" };
     const expenses = rawExpenses.map((e) => ({
-      desc: e.desc,
+      desc:         e.desc,
       payerInitials: initialsOf[e.payer],
-      payerBg: avatars[e.payer],
-      payerLine: e.payer === "You" ? "You paid" : e.payer + " paid",
-      dateStr: e.date,
-      splitStr: "Split " + e.ways + " ways",
-      amountStr: fmt(e.amount),
+      payerBg:      avatars[e.payer],
+      payerLine:    e.payer === "You" ? "You paid" : e.payer + " paid",
+      dateStr:      e.date,
+      splitStr:     "Split " + e.ways + " ways",
+      amountStr:    fmt(e.amount),
     }));
 
     return { people, expenses };
   }
 }
+
 </script>
 </body>
 </html>

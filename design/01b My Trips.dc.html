@@ -8,152 +8,168 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="carbon/styles.css" />
-<style>
-  :root{
-    --white-0:#ffffff;--black-100:#000000;
-    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
-    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
-    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--cyan-60:#0072c3;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
-    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
-    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
-    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
-    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
-    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
-    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);--overlay:rgba(0,0,0,0.6);
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--layer-01); }
-  .dl-row:hover { background: var(--layer-hover-01); }
-  .dl-btn:hover { background: #0050e6 !important; }
-  .dl-btn:active { background: var(--blue-80) !important; }
-  .dl-btn-s:hover { background: var(--gray-80) !important; }
-  .dl-hicon:hover { background: var(--layer-hover-02); }
-  .dl-field:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
-  .dl-field::placeholder { color: var(--text-placeholder); }
-  .dl-chipx:hover { background: rgba(255,255,255,0.25); }
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['IBM Plex Sans','system-ui','-apple-system','BlinkMacSystemFont','sans-serif'] },
+          colors: {
+            driftlog: {
+              panel:           '#161616',
+              blue:            '#0f62fe',
+              'blue-hover':    '#0050e6',
+              'blue-active':   '#002d9c',
+              'blue-accent':   '#4589ff',
+              field:           '#f4f4f4',
+              'field-hover':   '#e8e8e8',
+              'border-subtle': '#c6c6c6',
+              'border-strong': '#8d8d8d',
+              'gray-40':       '#a8a8a8',
+              'gray-80':       '#393939',
+              'text-2':        '#525252',
+              'text-helper':   '#6f6f6f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #f4f4f4; }
+    input, button, select, textarea { font-family: inherit; color: inherit; }
+    input::placeholder { color: rgba(22,22,22,0.4); }
+    input:focus { outline: 2px solid #0f62fe; outline-offset: -2px; }
+  </style>
 </helmet>
-<div data-screen-label="My Trips" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--layer-01); color:var(--text-primary);">
 
-  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
-        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+<div data-screen-label="My Trips" class="min-h-screen font-sans bg-driftlog-field text-[#161616]">
+
+  <header class="h-12 bg-driftlog-panel text-white flex items-center px-4 sticky top-0 z-10">
+    <div class="flex items-center gap-[10px]">
+      <div class="w-5 h-5 bg-driftlog-blue-accent flex items-center justify-center">
+        <span class="font-semibold text-[0.8125rem] leading-none">$</span>
       </div>
-      <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+      <span class="text-sm"><span class="font-semibold">Driftlog</span> <span class="text-driftlog-gray-40">Trips</span></span>
     </div>
-    <div style="margin-left:auto; display:flex; align-items:center; height:100%;">
-      <button class="dl-hicon" aria-label="Settings" style="width:48px; height:48px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center;">
-        <img src="carbon/icons/settings.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+    <div class="ml-auto flex items-center h-full">
+      <button aria-label="Settings" class="w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-driftlog-field-hover">
+        <img src="carbon/icons/settings.svg" width="20" height="20" alt="" class="invert" />
       </button>
-      <div style="width:32px; height:32px; border-radius:50%; background:var(--blue-60); color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; margin-left:8px;">YO</div>
+      <div class="w-8 h-8 rounded-full bg-driftlog-blue text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
     </div>
   </header>
 
-  <main style="max-width:880px; margin:0 auto; padding:48px 16px 80px;">
+  <main class="max-w-[880px] mx-auto px-4 pt-12 pb-20">
 
-    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:32px;">
+    <div class="flex items-end justify-between gap-6 mb-8">
       <div>
-        <h1 style="margin:0 0 6px; font-size:2rem; line-height:1.25; font-weight:400;">Your trips</h1>
-        <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">{{ summaryLine }}</p>
+        <h1 class="text-[2rem] leading-[1.25] font-normal mb-[6px]">Your trips</h1>
+        <p class="text-sm text-driftlog-text-2">{{ summaryLine }}</p>
       </div>
-      <button class="dl-btn" onclick="{{ openModal }}" style="flex:none; height:48px; border:none; background:var(--blue-60); color:var(--text-on-color); font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; display:inline-flex; align-items:center; gap:48px; padding:0 16px; transition:background 110ms; font-family:var(--font-family-sans);">
-        <span style="white-space:nowrap;">Create trip</span>
-        <img src="carbon/icons/add.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+      <button onclick="{{ openModal }}" class="flex-none h-12 border-0 bg-driftlog-blue text-white text-sm tracking-[0.16px] cursor-pointer inline-flex items-center gap-12 px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover active:bg-driftlog-blue-active">
+        <span class="whitespace-nowrap">Create trip</span>
+        <img src="carbon/icons/add.svg" width="20" height="20" alt="" class="invert" />
       </button>
     </div>
 
-    <div style="border:1px solid var(--border-subtle-01); background:var(--layer-02);">
+    <div class="border border-driftlog-border-subtle bg-white">
       <sc-for list="{{ trips }}" as="t" hint-placeholder-count="4">
-        <a href="{{ t.href }}" class="dl-row" style="display:flex; align-items:center; gap:24px; padding:20px 24px; border-bottom:1px solid var(--border-subtle-00); text-decoration:none; color:inherit; transition:background 70ms;">
-          <div style="flex:1; min-width:0;">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-              <span style="font-size:1rem; font-weight:600;">{{ t.name }}</span>
+        <a href="{{ t.href }}" class="flex items-center gap-6 py-5 px-6 border-b border-[#e0e0e0] no-underline text-[#161616] transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-[10px] mb-2">
+              <span class="text-base font-semibold">{{ t.name }}</span>
               <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:0.6875rem; letter-spacing:0.32px; color:var(--blue-70); background:var(--blue-20); padding:1px 8px; border-radius:999px;">Active</span>
+                <span class="text-[0.6875rem] tracking-[0.32px] text-[#0043ce] bg-[#d0e2ff] py-px px-2 rounded-full">Active</span>
               </sc-if>
             </div>
-            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-              <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.8125rem; color:var(--text-secondary);">
-                <img src="carbon/icons/calendar.svg" width="14" height="14" alt="" style="opacity:0.55;" /> {{ t.dateStr }}
+            <div class="flex items-center gap-[14px] flex-wrap">
+              <span class="inline-flex items-center gap-[6px] text-[0.8125rem] text-driftlog-text-2">
+                <img src="carbon/icons/calendar.svg" width="14" height="14" alt="" class="opacity-[0.55]" /> {{ t.dateStr }}
               </span>
-              <span style="width:1px; height:14px; background:var(--border-subtle-01);"></span>
-              <div style="display:flex; align-items:center;">
+              <span class="w-px h-[14px] bg-driftlog-border-subtle"></span>
+              <div class="flex items-center">
                 <sc-for list="{{ t.avatars }}" as="a" hint-placeholder-count="4">
-                  <div style="width:24px; height:24px; border-radius:50%; background:{{ a.bg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.625rem; font-weight:600; margin-left:-5px; border:2px solid var(--layer-02);">{{ a.initials }}</div>
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[0.625rem] font-semibold text-white -ml-[5px] border-2 border-white" style="background:{{ a.bg }}">{{ a.initials }}</div>
                 </sc-for>
-                <span style="margin-left:10px; font-size:0.8125rem; color:var(--text-secondary);">{{ t.peopleStr }}</span>
+                <span class="ml-[10px] text-[0.8125rem] text-driftlog-text-2">{{ t.peopleStr }}</span>
               </div>
             </div>
           </div>
-          <div style="text-align:right; flex:none;">
-            <p style="margin:0 0 2px; font-size:1.125rem; font-weight:400; color:{{ t.balColor }}; font-variant-numeric:tabular-nums;">{{ t.balAmount }}</p>
-            <p style="margin:0; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">{{ t.balLabel }}</p>
+          <div class="text-right flex-none">
+            <p class="mb-[2px] text-lg font-normal tabular-nums" style="color:{{ t.balColor }}">{{ t.balAmount }}</p>
+            <p class="text-xs tracking-[0.32px] text-driftlog-text-2">{{ t.balLabel }}</p>
           </div>
-          <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" style="opacity:0.4; flex:none;" />
+          <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" class="opacity-40 flex-none" />
         </a>
       </sc-for>
     </div>
+
   </main>
 
   <!-- Create trip modal -->
   <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
-    <div onclick="{{ closeModal }}" style="position:fixed; inset:0; background:var(--overlay); z-index:50; display:flex; align-items:center; justify-content:center; padding:24px;">
-      <div onclick="{{ stop }}" style="width:100%; max-width:480px; background:var(--layer-02); box-shadow:0 4px 16px rgba(0,0,0,0.3);">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:20px 20px 8px;">
+    <div onclick="{{ closeModal }}" class="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6">
+      <div onclick="{{ stop }}" class="w-full max-w-[480px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+
+        <div class="flex items-start justify-between p-5 pb-2">
           <div>
-            <p style="margin:0 0 2px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Driftlog</p>
-            <h2 style="margin:0; font-size:1.25rem; font-weight:400;">Create trip</h2>
+            <p class="mb-[2px] text-xs tracking-[0.32px] text-driftlog-text-2">Driftlog</p>
+            <h2 class="text-xl font-normal">Create trip</h2>
           </div>
-          <button class="dl-hicon" onclick="{{ closeModal }}" aria-label="Close" style="width:40px; height:40px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--icon-secondary);">
+          <button onclick="{{ closeModal }}" aria-label="Close" class="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover">
             <img src="carbon/icons/close.svg" width="20" height="20" alt="" />
           </button>
         </div>
 
-        <div style="padding:16px 20px 24px;">
-          <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Trip name</label>
-          <input class="dl-field" type="text" value="{{ tripName }}" oninput="{{ onTripName }}" placeholder="e.g. Lisbon long weekend" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; margin-bottom:24px;" />
+        <div class="px-5 pb-6 pt-4">
+          <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Trip name</label>
+          <input type="text" value="{{ tripName }}" oninput="{{ onTripName }}" placeholder="e.g. Lisbon long weekend" class="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4 mb-6" />
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+          <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Start date</label>
-              <input class="dl-field" type="date" value="{{ start }}" onchange="{{ onStart }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; font-family:var(--font-family-sans);" />
+              <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Start date</label>
+              <input type="date" value="{{ start }}" onchange="{{ onStart }}" class="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4" />
             </div>
             <div>
-              <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">End date</label>
-              <input class="dl-field" type="date" value="{{ end }}" onchange="{{ onEnd }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; font-family:var(--font-family-sans);" />
+              <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">End date</label>
+              <input type="date" value="{{ end }}" onchange="{{ onEnd }}" class="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4" />
             </div>
           </div>
 
-          <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">People</label>
-          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">People</label>
+          <div class="flex flex-wrap gap-2 mb-3">
             <sc-for list="{{ chips }}" as="c" hint-placeholder-count="2">
-              <span style="display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 4px 0 12px; background:var(--gray-80); color:var(--white-0); font-size:0.8125rem; border-radius:999px;">
+              <span class="inline-flex items-center gap-[6px] h-8 pl-3 pr-1 bg-driftlog-gray-80 text-white text-[0.8125rem] rounded-full">
                 {{ c.name }}
                 <sc-if value="{{ c.removable }}" hint-placeholder-val="{{ true }}">
-                  <button class="dl-chipx" onclick="{{ c.remove }}" aria-label="Remove" style="width:24px; height:24px; border:none; background:transparent; cursor:pointer; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0;">
-                    <img src="carbon/icons/close.svg" width="14" height="14" alt="" style="filter:invert(1);" />
+                  <button onclick="{{ c.remove }}" aria-label="Remove" class="w-6 h-6 border-0 bg-transparent cursor-pointer rounded-full flex items-center justify-center p-0 hover:bg-[rgba(255,255,255,0.25)]">
+                    <img src="carbon/icons/close.svg" width="14" height="14" alt="" class="invert" />
                   </button>
                 </sc-if>
               </span>
             </sc-for>
           </div>
-          <input class="dl-field" type="text" value="{{ newPerson }}" oninput="{{ onNewPerson }}" onkeydown="{{ onAddKey }}" placeholder="Type a name, press Enter to add" style="width:100%; height:40px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px;" />
+          <input type="text" value="{{ newPerson }}" oninput="{{ onNewPerson }}" onkeydown="{{ onAddKey }}" placeholder="Type a name, press Enter to add" class="w-full h-10 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4" />
         </div>
 
-        <div style="display:flex; height:64px; border-top:1px solid var(--border-subtle-01);">
-          <button class="dl-btn-s" onclick="{{ closeModal }}" style="flex:1; border:none; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; transition:background 110ms; font-family:var(--font-family-sans);">Cancel</button>
-          <button class="dl-btn" onclick="{{ createTrip }}" style="flex:1; border:none; background:var(--blue-60); color:var(--text-on-color); display:flex; align-items:center; justify-content:space-between; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; transition:background 110ms; font-family:var(--font-family-sans);">
-            <span style="white-space:nowrap;">Create trip</span>
-            <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+        <div class="flex h-16 border-t border-driftlog-border-subtle">
+          <button onclick="{{ closeModal }}" class="flex-1 border-0 bg-driftlog-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-driftlog-gray-80">Cancel</button>
+          <button onclick="{{ createTrip }}" class="flex-1 border-0 bg-driftlog-blue text-white flex items-center justify-between px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-driftlog-blue-hover">
+            <span class="whitespace-nowrap">Create trip</span>
+            <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" class="invert" />
           </button>
         </div>
+
       </div>
     </div>
   </sc-if>
+
 </div>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:760}}">
 class Component extends DCLogic {
@@ -167,32 +183,32 @@ class Component extends DCLogic {
   };
 
   renderVals() {
-    const C = { blue: "var(--blue-60)", teal: "var(--teal-60)", purple: "var(--purple-60)", magenta: "var(--magenta-60)", cyan: "var(--cyan-60)", gray: "var(--gray-60)" };
+    const C = { blue: "#0f62fe", teal: "#007d79", purple: "#8a3ffc", magenta: "#d02670", cyan: "#0072c3", gray: "#6f6f6f" };
     const av = (initials, bg) => ({ initials, bg });
 
     const trips = [
       {
         name: "Lisbon long weekend", active: true, dateStr: "Jun 12 – 15, 2026",
         avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("TH", C.magenta)],
-        peopleStr: "4 people", balAmount: "+€436.00", balColor: "var(--support-success)", balLabel: "You're owed",
+        peopleStr: "4 people", balAmount: "+€436.00", balColor: "#24a148", balLabel: "You're owed",
         href: "02 Trip Overview.dc.html",
       },
       {
         name: "NYE in Edinburgh", active: false, dateStr: "Dec 30, 2025 – Jan 2, 2026",
         avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("+2", C.gray)],
-        peopleStr: "6 people", balAmount: "−€74.50", balColor: "var(--text-primary)", balLabel: "You owe",
+        peopleStr: "6 people", balAmount: "−€74.50", balColor: "#161616", balLabel: "You owe",
         href: "02 Trip Overview.dc.html",
       },
       {
         name: "Dolomites hut-to-hut", active: false, dateStr: "Sep 5 – 11, 2025",
         avatars: [av("YO", C.blue), av("TH", C.magenta), av("RO", C.cyan), av("+2", C.gray)],
-        peopleStr: "5 people", balAmount: "Settled", balColor: "var(--text-secondary)", balLabel: "All cleared",
+        peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
         href: "02 Trip Overview.dc.html",
       },
       {
         name: "Cousins' beach house", active: false, dateStr: "Aug 12 – 19, 2024",
         avatars: [av("YO", C.blue), av("MA", C.teal), av("EL", C.cyan), av("+2", C.gray)],
-        peopleStr: "5 people", balAmount: "Settled", balColor: "var(--text-secondary)", balLabel: "All cleared",
+        peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
         href: "02 Trip Overview.dc.html",
       },
     ];
@@ -200,7 +216,10 @@ class Component extends DCLogic {
     const chips = this.state.participants.map((name, i) => ({
       name,
       removable: name !== "You",
-      remove: (e) => { e.preventDefault(); e.stopPropagation(); this.setState((s) => ({ participants: s.participants.filter((_, j) => j !== i) })); },
+      remove: (e) => {
+        e.preventDefault(); e.stopPropagation();
+        this.setState((s) => ({ participants: s.participants.filter((_, j) => j !== i) }));
+      },
     }));
 
     const addPerson = () => {
@@ -218,18 +237,19 @@ class Component extends DCLogic {
       end: this.state.end,
       newPerson: this.state.newPerson,
       chips,
-      openModal: () => this.setState({ modalOpen: true }),
-      closeModal: () => this.setState({ modalOpen: false }),
-      stop: (e) => e.stopPropagation(),
-      onTripName: (e) => this.setState({ tripName: e.target.value }),
-      onStart: (e) => this.setState({ start: e.target.value }),
-      onEnd: (e) => this.setState({ end: e.target.value }),
+      openModal:   () => this.setState({ modalOpen: true }),
+      closeModal:  () => this.setState({ modalOpen: false }),
+      stop:        (e) => e.stopPropagation(),
+      onTripName:  (e) => this.setState({ tripName: e.target.value }),
+      onStart:     (e) => this.setState({ start: e.target.value }),
+      onEnd:       (e) => this.setState({ end: e.target.value }),
       onNewPerson: (e) => this.setState({ newPerson: e.target.value }),
-      onAddKey: (e) => { if (e.key === "Enter") { e.preventDefault(); addPerson(); } },
-      createTrip: () => { window.location.href = "02 Trip Overview.dc.html"; },
+      onAddKey:    (e) => { if (e.key === "Enter") { e.preventDefault(); addPerson(); } },
+      createTrip:  () => { window.location.href = "02 Trip Overview.dc.html"; },
     };
   }
 }
+
 </script>
 </body>
 </html>

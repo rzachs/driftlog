@@ -8,136 +8,216 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="carbon/styles.css" />
-<style>
-  :root{
-    --white-0:#ffffff;--black-100:#000000;
-    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
-    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
-    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
-    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
-    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
-    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
-    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
-    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
-    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  .dl-input::placeholder { color: var(--text-placeholder); }
-  .dl-input:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
-  .dl-btn:hover { background: #0050e6 !important; }
-  .dl-btn:active { background: var(--blue-80) !important; }
-  .dl-link:hover { color: var(--link-primary-hover); text-decoration: underline; }
-  .dl-iconbtn:hover { background: var(--field-hover-01); }
-  .dl-social:hover { background: var(--field-hover-01) !important; border-color: var(--border-strong-01) !important; }
-  .dl-social:active { background: var(--layer-hover-01) !important; }
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['IBM Plex Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            driftlog: {
+              panel:           '#161616',
+              blue:            '#0f62fe',
+              'blue-hover':    '#0050e6',
+              'blue-active':   '#002d9c',
+              'blue-accent':   '#4589ff',
+              field:           '#f4f4f4',
+              'field-hover':   '#e8e8e8',
+              'border-subtle': '#c6c6c6',
+              'border-strong': '#8d8d8d',
+              'gray-30':       '#c6c6c6',
+              'gray-40':       '#a8a8a8',
+              'gray-50':       '#8d8d8d',
+              'text-2':        '#525252',
+              'text-helper':   '#6f6f6f',
+            },
+          },
+          letterSpacing: {
+            'ui-sm': '0.16px',
+            'ui-md': '0.32px',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    input, button, select, textarea { font-family: inherit; }
+    input::placeholder { color: rgba(22, 22, 22, 0.40); }
+    input:focus { outline: 2px solid #0f62fe; outline-offset: -2px; }
+  </style>
 </helmet>
-<div data-screen-label="Login" style="min-height:100vh; display:flex; font-family:var(--font-family-sans); background:var(--background); color:var(--text-primary);">
 
-  <!-- Brand panel -->
-  <section style="flex:1 1 50%; background:var(--gray-100); color:var(--white-0); padding:64px; display:flex; flex-direction:column; justify-content:space-between; min-width:0;">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:24px; height:24px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
-        <span style="color:var(--white-0); font-weight:600; font-size:0.9375rem; line-height:1;">$</span>
+<div data-screen-label="Login" class="min-h-screen flex font-sans bg-white text-[#161616]">
+
+  <!-- ── Brand panel ───────────────────────────────────── -->
+  <section class="flex-1 min-w-0 bg-driftlog-panel text-white p-16 flex flex-col justify-between">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+      <div class="w-6 h-6 bg-driftlog-blue-accent flex items-center justify-center">
+        <span class="text-white font-semibold text-[0.9375rem] leading-none">$</span>
       </div>
-      <span style="font-size:0.875rem; font-weight:600; letter-spacing:0.16px;">Driftlog</span>
+      <span class="text-sm font-semibold tracking-[0.16px]">Driftlog</span>
     </div>
 
-    <div style="max-width:440px;">
-      <p style="margin:0 0 16px; font-size:0.75rem; font-weight:400; letter-spacing:0.32px; color:var(--gray-40); text-transform:uppercase;">Trip expense splitter</p>
-      <h1 style="margin:0 0 24px; font-size:3.375rem; line-height:1.199; font-weight:300; letter-spacing:0;">Split the trip, not the friendship.</h1>
-      <p style="margin:0; font-size:1rem; line-height:1.5; color:var(--gray-30); max-width:380px;">Log who paid for what as it happens. See live balances. Settle up at the end with the fewest possible payments.</p>
+    <!-- Hero copy -->
+    <div class="max-w-[440px]">
+      <p class="mb-4 text-xs font-normal tracking-[0.32px] text-driftlog-gray-40 uppercase">Trip expense splitter</p>
+      <h1 class="mb-6 text-[3.375rem] leading-[1.199] font-light">Split the trip, not the friendship.</h1>
+      <p class="text-base leading-[1.5] text-driftlog-gray-30 max-w-[380px]">Log who paid for what as it happens. See live balances. Settle up at the end with the fewest possible payments.</p>
     </div>
 
-    <p style="margin:0; font-size:0.75rem; letter-spacing:0.32px; color:var(--gray-50);">© 2026 Driftlog</p>
+    <!-- Footer -->
+    <p class="text-xs tracking-[0.32px] text-driftlog-gray-50">© 2026 Driftlog</p>
+
   </section>
 
-  <!-- Form panel -->
-  <section style="flex:1 1 50%; display:flex; align-items:center; justify-content:center; padding:48px; min-width:0;">
-    <div style="width:100%; max-width:384px;">
-      <h2 style="margin:0 0 8px; font-size:1.75rem; line-height:1.28572; font-weight:400;">Log in</h2>
-      <p style="margin:0 0 40px; font-size:0.875rem; line-height:1.42857; color:var(--text-secondary);">New to Driftlog? <a href="#" class="dl-link" style="color:var(--link-primary); text-decoration:none;">Create an account</a></p>
+  <!-- ── Form panel ────────────────────────────────────── -->
+  <section class="flex-1 min-w-0 flex items-center justify-center p-12">
+    <div class="w-full max-w-[384px]">
+
+      <h2 class="mb-2 text-[1.75rem] leading-[1.28572] font-normal">Log in</h2>
+      <p class="mb-10 text-sm leading-[1.42857] text-driftlog-text-2">
+        New to Driftlog?&#32;<a href="#" class="text-driftlog-blue no-underline hover:underline hover:text-driftlog-blue-active">Create an account</a>
+      </p>
 
       <form onsubmit="{{ onSubmit }}">
+
         <!-- Email -->
-        <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Email</label>
-        <div style="margin-bottom:24px;">
-          <input class="dl-input" type="email" value="{{ email }}" oninput="{{ onEmail }}" placeholder="you@example.com" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px;" />
+        <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Email</label>
+        <div class="mb-6">
+          <input
+            type="email"
+            value="{{ email }}"
+            oninput="{{ onEmail }}"
+            placeholder="you@example.com"
+            class="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4"
+          />
         </div>
 
         <!-- Password -->
-        <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Password</label>
-        <div style="position:relative; margin-bottom:8px;">
-          <input class="dl-input" type="{{ pwType }}" value="{{ password }}" oninput="{{ onPassword }}" placeholder="Enter password" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 48px 0 16px;" />
-          <button type="button" class="dl-iconbtn" onclick="{{ togglePw }}" aria-label="Show password" style="position:absolute; top:0; right:0; width:48px; height:48px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--icon-secondary);">
+        <label class="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Password</label>
+        <div class="relative mb-2">
+          <input
+            type="{{ pwType }}"
+            value="{{ password }}"
+            oninput="{{ onPassword }}"
+            placeholder="Enter password"
+            class="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm pl-4 pr-12"
+          />
+          <button
+            type="button"
+            onclick="{{ togglePw }}"
+            aria-label="Show password"
+            class="absolute top-0 right-0 w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover"
+          >
             <img src="carbon/icons/view.svg" width="16" height="16" alt="" />
           </button>
         </div>
 
-        <div style="margin-bottom:40px;">
-          <a href="#" class="dl-link" style="font-size:0.75rem; letter-spacing:0.32px; color:var(--link-primary); text-decoration:none;">Forgot password?</a>
+        <div class="mb-10">
+          <a href="#" class="text-xs tracking-[0.32px] text-driftlog-blue no-underline hover:underline hover:text-driftlog-blue-active">Forgot password?</a>
         </div>
 
-        <button type="submit" class="dl-btn" style="width:100%; height:48px; border:none; background:var(--blue-60); color:var(--text-on-color); font-size:0.875rem; font-family:var(--font-family-sans); letter-spacing:0.16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:0 16px; transition:background 110ms cubic-bezier(0.2,0,0.38,0.9);">
-          <span style="white-space:nowrap;">Log in</span>
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="w-full h-12 border-0 bg-driftlog-blue text-white text-sm tracking-[0.16px] cursor-pointer flex items-center justify-between px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover active:bg-driftlog-blue-active"
+        >
+          <span class="whitespace-nowrap">Log in</span>
           <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" style="filter:invert(1);" />
         </button>
+
       </form>
 
       <!-- Divider -->
-      <div style="display:flex; align-items:center; gap:16px; margin:32px 0;">
-        <span style="flex:1; height:1px; background:var(--border-subtle-01);"></span>
-        <span style="font-size:0.75rem; letter-spacing:0.32px; color:var(--text-helper); white-space:nowrap;">or continue with</span>
-        <span style="flex:1; height:1px; background:var(--border-subtle-01);"></span>
+      <div class="flex items-center gap-4 my-8">
+        <span class="flex-1 h-px bg-driftlog-border-subtle"></span>
+        <span class="text-xs tracking-[0.32px] text-driftlog-text-helper whitespace-nowrap">or continue with</span>
+        <span class="flex-1 h-px bg-driftlog-border-subtle"></span>
       </div>
 
       <!-- Social auth -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <button type="button" class="dl-social" onclick="{{ onGoogle }}" aria-label="Continue with Google" style="height:48px; border:1px solid var(--border-subtle-01); background:var(--field-02); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-primary); font-family:var(--font-family-sans); font-size:0.875rem; letter-spacing:0.16px; transition:background 110ms cubic-bezier(0.2,0,0.38,0.9), border-color 110ms cubic-bezier(0.2,0,0.38,0.9);">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62Z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z" fill="#34A853"/><path d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.34Z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z" fill="#EA4335"/></svg>
+      <div class="grid grid-cols-2 gap-2">
+
+        <!-- Google -->
+        <button type="button" onclick="{{ onGoogle }}" aria-label="Continue with Google"
+          class="h-12 border border-driftlog-border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-[#161616] text-sm tracking-[0.16px] transition duration-[110ms] hover:bg-driftlog-field-hover hover:border-driftlog-border-strong active:bg-driftlog-field-hover">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62Z" fill="#4285F4"/>
+            <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z" fill="#34A853"/>
+            <path d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.34Z" fill="#FBBC05"/>
+            <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z" fill="#EA4335"/>
+          </svg>
           <span>Google</span>
         </button>
-        <button type="button" class="dl-social" onclick="{{ onMicrosoft }}" aria-label="Continue with Microsoft" style="height:48px; border:1px solid var(--border-subtle-01); background:var(--field-02); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-primary); font-family:var(--font-family-sans); font-size:0.875rem; letter-spacing:0.16px; transition:background 110ms cubic-bezier(0.2,0,0.38,0.9), border-color 110ms cubic-bezier(0.2,0,0.38,0.9);">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="0" y="0" width="8.5" height="8.5" fill="#F25022"/><rect x="9.5" y="0" width="8.5" height="8.5" fill="#7FBA00"/><rect x="0" y="9.5" width="8.5" height="8.5" fill="#00A4EF"/><rect x="9.5" y="9.5" width="8.5" height="8.5" fill="#FFB900"/></svg>
+
+        <!-- Microsoft -->
+        <button type="button" onclick="{{ onMicrosoft }}" aria-label="Continue with Microsoft"
+          class="h-12 border border-driftlog-border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-[#161616] text-sm tracking-[0.16px] transition duration-[110ms] hover:bg-driftlog-field-hover hover:border-driftlog-border-strong active:bg-driftlog-field-hover">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <rect x="0" y="0" width="8.5" height="8.5" fill="#F25022"/>
+            <rect x="9.5" y="0" width="8.5" height="8.5" fill="#7FBA00"/>
+            <rect x="0" y="9.5" width="8.5" height="8.5" fill="#00A4EF"/>
+            <rect x="9.5" y="9.5" width="8.5" height="8.5" fill="#FFB900"/>
+          </svg>
           <span>Microsoft</span>
         </button>
-        <button type="button" class="dl-social" onclick="{{ onApple }}" aria-label="Continue with Apple" style="height:48px; border:1px solid var(--border-subtle-01); background:var(--field-02); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-primary); font-family:var(--font-family-sans); font-size:0.875rem; letter-spacing:0.16px; transition:background 110ms cubic-bezier(0.2,0,0.38,0.9), border-color 110ms cubic-bezier(0.2,0,0.38,0.9);">
-          <svg width="16" height="18" viewBox="0 0 16 18" fill="var(--text-primary)" aria-hidden="true"><path d="M13.3 9.55c-.02-2.04 1.67-3.02 1.75-3.07-.95-1.4-2.44-1.59-2.97-1.61-1.26-.13-2.46.74-3.1.74-.64 0-1.63-.72-2.68-.7-1.38.02-2.65.8-3.36 2.04-1.43 2.49-.37 6.17 1.03 8.19.68.99 1.5 2.1 2.56 2.06 1.03-.04 1.42-.66 2.66-.66 1.24 0 1.59.66 2.68.64 1.1-.02 1.81-1.01 2.49-2 .78-1.15 1.1-2.26 1.12-2.32-.02-.01-2.15-.83-2.18-3.28-.02-2.05 1.67-3.03 1.75-3.08ZM11.3 3.47c.56-.68.94-1.63.84-2.57-.81.03-1.79.54-2.37 1.22-.52.6-.98 1.56-.86 2.48.9.07 1.83-.46 2.39-1.13Z"/></svg>
+
+        <!-- Apple -->
+        <button type="button" onclick="{{ onApple }}" aria-label="Continue with Apple"
+          class="h-12 border border-driftlog-border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-[#161616] text-sm tracking-[0.16px] transition duration-[110ms] hover:bg-driftlog-field-hover hover:border-driftlog-border-strong active:bg-driftlog-field-hover">
+          <svg width="16" height="18" viewBox="0 0 16 18" fill="#161616" aria-hidden="true">
+            <path d="M13.3 9.55c-.02-2.04 1.67-3.02 1.75-3.07-.95-1.4-2.44-1.59-2.97-1.61-1.26-.13-2.46.74-3.1.74-.64 0-1.63-.72-2.68-.7-1.38.02-2.65.8-3.36 2.04-1.43 2.49-.37 6.17 1.03 8.19.68.99 1.5 2.1 2.56 2.06 1.03-.04 1.42-.66 2.66-.66 1.24 0 1.59.66 2.68.64 1.1-.02 1.81-1.01 2.49-2 .78-1.15 1.1-2.26 1.12-2.32-.02-.01-2.15-.83-2.18-3.28-.02-2.05 1.67-3.03 1.75-3.08ZM11.3 3.47c.56-.68.94-1.63.84-2.57-.81.03-1.79.54-2.37 1.22-.52.6-.98 1.56-.86 2.48.9.07 1.83-.46 2.39-1.13Z"/>
+          </svg>
           <span>Apple</span>
         </button>
-        <button type="button" class="dl-social" onclick="{{ onFacebook }}" aria-label="Continue with Facebook" style="height:48px; border:1px solid var(--border-subtle-01); background:var(--field-02); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-primary); font-family:var(--font-family-sans); font-size:0.875rem; letter-spacing:0.16px; transition:background 110ms cubic-bezier(0.2,0,0.38,0.9), border-color 110ms cubic-bezier(0.2,0,0.38,0.9);">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M18 9a9 9 0 1 0-10.41 8.89v-6.29H5.31V9h2.28V7.02c0-2.25 1.34-3.5 3.4-3.5.98 0 2.01.18 2.01.18v2.22h-1.13c-1.12 0-1.47.69-1.47 1.4V9h2.5l-.4 2.6h-2.1v6.29A9 9 0 0 0 18 9Z" fill="#1877F2"/></svg>
+
+        <!-- Facebook -->
+        <button type="button" onclick="{{ onFacebook }}" aria-label="Continue with Facebook"
+          class="h-12 border border-driftlog-border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-[#161616] text-sm tracking-[0.16px] transition duration-[110ms] hover:bg-driftlog-field-hover hover:border-driftlog-border-strong active:bg-driftlog-field-hover">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M18 9a9 9 0 1 0-10.41 8.89v-6.29H5.31V9h2.28V7.02c0-2.25 1.34-3.5 3.4-3.5.98 0 2.01.18 2.01.18v2.22h-1.13c-1.12 0-1.47.69-1.47 1.4V9h2.5l-.4 2.6h-2.1v6.29A9 9 0 0 0 18 9Z" fill="#1877F2"/>
+          </svg>
           <span>Facebook</span>
         </button>
+
       </div>
 
-      <p style="margin:48px 0 0; font-size:0.75rem; line-height:1.33333; letter-spacing:0.32px; color:var(--text-helper);">By logging in you agree to Driftlog's terms of use and privacy policy.</p>
+      <p class="mt-12 text-xs leading-[1.33333] tracking-[0.32px] text-driftlog-text-helper">By logging in you agree to Driftlog's terms of use and privacy policy.</p>
+
     </div>
   </section>
+
 </div>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = { email: "", password: "", showPw: false };
   renderVals() {
     return {
-      email: this.state.email,
-      password: this.state.password,
-      pwType: this.state.showPw ? "text" : "password",
-      onEmail: (e) => this.setState({ email: e.target.value }),
+      email:      this.state.email,
+      password:   this.state.password,
+      pwType:     this.state.showPw ? "text" : "password",
+      onEmail:    (e) => this.setState({ email: e.target.value }),
       onPassword: (e) => this.setState({ password: e.target.value }),
-      togglePw: () => this.setState((s) => ({ showPw: !s.showPw })),
-      onSubmit: (e) => { e.preventDefault(); window.location.href = "01b My Trips.dc.html"; },
-      onGoogle: () => { window.location.href = "01b My Trips.dc.html"; },
+      togglePw:   () => this.setState((s) => ({ showPw: !s.showPw })),
+      onSubmit:   (e) => { e.preventDefault(); window.location.href = "01b My Trips.dc.html"; },
+      onGoogle:    () => { window.location.href = "01b My Trips.dc.html"; },
       onMicrosoft: () => { window.location.href = "01b My Trips.dc.html"; },
-      onApple: () => { window.location.href = "01b My Trips.dc.html"; },
-      onFacebook: () => { window.location.href = "01b My Trips.dc.html"; },
+      onApple:     () => { window.location.href = "01b My Trips.dc.html"; },
+      onFacebook:  () => { window.location.href = "01b My Trips.dc.html"; },
     };
   }
 }
+
 </script>
 </body>
 </html>

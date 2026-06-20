@@ -8,120 +8,136 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="carbon/styles.css" />
-<style>
-  :root{
-    --white-0:#ffffff;--black-100:#000000;
-    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
-    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
-    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
-    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
-    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
-    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
-    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
-    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
-    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--background); }
-  .dl-back:hover { text-decoration: underline; }
-  .dl-rec:hover { background: var(--gray-80) !important; }
-  .dl-undo:hover { background: var(--background-hover); }
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['IBM Plex Sans','system-ui','-apple-system','BlinkMacSystemFont','sans-serif'] },
+          colors: {
+            driftlog: {
+              panel:           '#161616',
+              blue:            '#0f62fe',
+              'blue-accent':   '#4589ff',
+              field:           '#f4f4f4',
+              'field-hover':   '#e8e8e8',
+              'border-subtle': '#c6c6c6',
+              'gray-40':       '#a8a8a8',
+              'text-2':        '#525252',
+              'text-helper':   '#6f6f6f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    input, button, select, textarea { font-family: inherit; color: inherit; }
+  </style>
 </helmet>
-<div data-screen-label="Settle Up" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--background); color:var(--text-primary);">
 
-  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
-        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+<div data-screen-label="Settle Up" class="min-h-screen font-sans bg-white text-[#161616]">
+
+  <header class="h-12 bg-driftlog-panel text-white flex items-center px-4 sticky top-0 z-10">
+    <div class="flex items-center gap-[10px]">
+      <div class="w-5 h-5 bg-driftlog-blue-accent flex items-center justify-center">
+        <span class="font-semibold text-[0.8125rem] leading-none">$</span>
       </div>
-      <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+      <span class="text-sm"><span class="font-semibold">Driftlog</span> <span class="text-driftlog-gray-40">Trips</span></span>
     </div>
   </header>
 
-  <main style="max-width:720px; margin:0 auto; padding:32px 16px 80px;">
+  <main class="max-w-[720px] mx-auto px-4 pt-8 pb-20">
 
-    <a href="02 Trip Overview.dc.html" class="dl-back" style="display:inline-flex; align-items:center; gap:8px; font-size:0.875rem; color:var(--link-primary); text-decoration:none; margin-bottom:32px;">
+    <a href="02 Trip Overview.dc.html" class="inline-flex items-center gap-2 text-sm text-driftlog-blue no-underline mb-8 hover:underline">
       <img src="carbon/icons/arrow-left.svg" width="16" height="16" alt="" /> Lisbon long weekend
     </a>
 
-    <h1 style="margin:0 0 8px; font-size:1.75rem; line-height:1.28572; font-weight:400;">Settle up</h1>
-    <p style="margin:0 0 32px; font-size:0.875rem; line-height:1.42857; color:var(--text-secondary); max-width:520px;">The fewest payments that zero out everyone's balance. Driftlog found <strong style="color:var(--text-primary);">3 payments</strong> to clear all 4 balances.</p>
+    <h1 class="mb-2 text-[1.75rem] leading-[1.28572] font-normal">Settle up</h1>
+    <p class="mb-8 text-sm leading-[1.42857] text-driftlog-text-2 max-w-[520px]">The fewest payments that zero out everyone's balance. Driftlog found <strong class="text-[#161616]">3 payments</strong> to clear all 4 balances.</p>
 
+    <!-- Success notification -->
     <sc-if value="{{ allSettled }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex; gap:12px; align-items:flex-start; background:var(--green-10); border-left:3px solid var(--support-success); padding:16px; margin-bottom:24px;">
-        <img src="carbon/icons/checkmark-filled.svg" width="20" height="20" alt="" style="margin-top:1px;" />
+      <div class="flex gap-3 items-start p-4 mb-6 bg-[#defbe6]" style="border-left:3px solid #24a148">
+        <img src="carbon/icons/checkmark-filled.svg" width="20" height="20" alt="" class="mt-px" />
         <div>
-          <p style="margin:0 0 2px; font-size:0.875rem; font-weight:600; color:var(--gray-100);">All settled up</p>
-          <p style="margin:0; font-size:0.875rem; color:var(--gray-80);">Every balance is back to zero. Have a good one.</p>
+          <p class="mb-0.5 text-sm font-semibold text-[#161616]">All settled up</p>
+          <p class="text-sm text-[#393939]">Every balance is back to zero. Have a good one.</p>
         </div>
       </div>
     </sc-if>
 
-    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;">
-      <h2 style="margin:0; font-size:0.875rem; font-weight:600; letter-spacing:0.16px;">Suggested payments</h2>
-      <span style="font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">{{ progress }}</span>
+    <!-- Progress -->
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="text-sm font-semibold tracking-[0.16px]">Suggested payments</h2>
+      <span class="text-xs tracking-[0.32px] text-driftlog-text-2">{{ progress }}</span>
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:1px; background:var(--border-subtle-01); border:1px solid var(--border-subtle-01);">
+    <!-- Payment cards -->
+    <div class="flex flex-col gap-px bg-driftlog-border-subtle border border-driftlog-border-subtle">
       <sc-for list="{{ payments }}" as="p" hint-placeholder-count="3">
-        <div style="display:flex; align-items:center; gap:20px; padding:20px; background:var(--layer-02);">
-          <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:0; opacity:{{ p.dim }};">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="width:36px; height:36px; border-radius:50%; background:{{ p.fromBg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600;">{{ p.fromInitials }}</div>
-              <span style="font-size:0.875rem; font-weight:600;">{{ p.from }}</span>
+        <div class="flex items-center gap-5 p-5 bg-white">
+
+          <div class="flex items-center gap-[14px] flex-1 min-w-0" style="opacity:{{ p.dim }}">
+            <div class="flex items-center gap-[10px]">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white" style="background:{{ p.fromBg }}">{{ p.fromInitials }}</div>
+              <span class="text-sm font-semibold">{{ p.from }}</span>
             </div>
-            <img src="carbon/icons/arrow-right.svg" width="16" height="16" alt="" style="opacity:0.5;" />
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="width:36px; height:36px; border-radius:50%; background:{{ p.toBg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600;">{{ p.toInitials }}</div>
-              <span style="font-size:0.875rem; font-weight:600;">{{ p.to }}</span>
+            <img src="carbon/icons/arrow-right.svg" width="16" height="16" alt="" class="opacity-50" />
+            <div class="flex items-center gap-[10px]">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white" style="background:{{ p.toBg }}">{{ p.toInitials }}</div>
+              <span class="text-sm font-semibold">{{ p.to }}</span>
             </div>
           </div>
 
-          <span style="font-size:1.25rem; font-weight:400; font-variant-numeric:tabular-nums; opacity:{{ p.dim }};">{{ p.amountStr }}</span>
+          <span class="text-xl font-normal tabular-nums" style="opacity:{{ p.dim }}">{{ p.amountStr }}</span>
 
-          <div style="flex:none; width:160px; display:flex; justify-content:flex-end;">
+          <div class="flex-none w-40 flex justify-end">
             <sc-if value="{{ p.settled }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex; align-items:center; gap:12px;">
-                <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.875rem; color:var(--support-success);">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-[6px] text-sm text-[#24a148]">
                   <img src="carbon/icons/checkmark-filled.svg" width="16" height="16" alt="" /> Settled
                 </span>
-                <button class="dl-undo" onclick="{{ p.toggle }}" style="border:none; background:transparent; cursor:pointer; font-size:0.75rem; letter-spacing:0.32px; color:var(--link-primary); padding:6px 8px;">Undo</button>
+                <button onclick="{{ p.toggle }}" class="border-0 bg-transparent cursor-pointer text-xs tracking-[0.32px] text-driftlog-blue py-[6px] px-2 hover:bg-[rgba(141,141,141,0.12)]">Undo</button>
               </div>
             </sc-if>
             <sc-if value="{{ p.open }}" hint-placeholder-val="{{ true }}">
-              <button class="dl-rec" onclick="{{ p.toggle }}" style="height:40px; border:none; background:var(--gray-100); color:var(--white-0); font-size:0.875rem; letter-spacing:0.16px; padding:0 16px; cursor:pointer; transition:background 110ms; font-family:var(--font-family-sans);">Record payment</button>
+              <button onclick="{{ p.toggle }}" class="h-10 border-0 bg-driftlog-panel text-white text-sm tracking-[0.16px] px-4 cursor-pointer transition-colors duration-[110ms] hover:bg-[#393939]">Record payment</button>
             </sc-if>
           </div>
+
         </div>
       </sc-for>
     </div>
 
-    <p style="margin:24px 0 0; font-size:0.75rem; line-height:1.33333; letter-spacing:0.32px; color:var(--text-helper);">Recording a payment marks it as transferred outside the app. Balances update once all suggested payments are recorded.</p>
+    <p class="mt-6 text-xs leading-[1.33333] tracking-[0.32px] text-driftlog-text-helper">Recording a payment marks it as transferred outside the app. Balances update once all suggested payments are recorded.</p>
 
   </main>
 </div>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:640}}">
 class Component extends DCLogic {
   state = { settled: [false, false, false] };
   fmt(n) { return "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   renderVals() {
-    const avatars = { You: "var(--blue-60)", Maya: "var(--teal-60)", Sam: "var(--purple-60)", Theo: "var(--magenta-60)" };
-    const initials = { You: "YO", Maya: "MA", Sam: "SA", Theo: "TH" };
+    const avatars  = { You: "#0f62fe", Maya: "#007d79", Sam: "#8a3ffc", Theo: "#d02670" };
+    const initials = { You: "YO",      Maya: "MA",      Sam: "SA",      Theo: "TH"      };
     const base = [
-      { from: "Theo", to: "You", amount: 208 },
-      { from: "Sam", to: "You", amount: 176 },
-      { from: "Maya", to: "You", amount: 52 },
+      { from: "Theo", to: "You",  amount: 208 },
+      { from: "Sam",  to: "You",  amount: 176 },
+      { from: "Maya", to: "You",  amount:  52 },
     ];
     const payments = base.map((p, i) => {
       const settled = this.state.settled[i];
       return {
         from: p.from, to: p.to,
         fromInitials: initials[p.from], toInitials: initials[p.to],
-        fromBg: avatars[p.from], toBg: avatars[p.to],
+        fromBg: avatars[p.from],        toBg: avatars[p.to],
         amountStr: this.fmt(p.amount),
         settled, open: !settled,
         dim: settled ? "0.45" : "1",
@@ -135,11 +151,12 @@ class Component extends DCLogic {
     const done = this.state.settled.filter(Boolean).length;
     return {
       payments,
-      progress: done + " of 3 recorded",
+      progress:   done + " of 3 recorded",
       allSettled: done === 3,
     };
   }
 }
+
 </script>
 </body>
 </html>
