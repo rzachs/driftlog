@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="carbon/styles.css" />
+<style>
+  :root{
+    --white-0:#ffffff;--black-100:#000000;
+    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
+    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
+    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
+    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
+    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
+    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
+    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
+    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
+    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--background); }
+  .dl-row:hover { background: var(--layer-hover-01); }
+  .dl-back:hover { text-decoration: underline; }
+  .dl-btn:hover { background: #0050e6 !important; }
+  .dl-btn:active { background: var(--blue-80) !important; }
+</style>
+</helmet>
+<div data-screen-label="Person Detail" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--background); color:var(--text-primary);">
+
+  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
+        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+      </div>
+      <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+    </div>
+  </header>
+
+  <main style="max-width:768px; margin:0 auto; padding:32px 16px 80px;">
+
+    <a href="02 Trip Overview.dc.html" class="dl-back" style="display:inline-flex; align-items:center; gap:8px; font-size:0.875rem; color:var(--link-primary); text-decoration:none; margin-bottom:32px;">
+      <img src="carbon/icons/arrow-left.svg" width="16" height="16" alt="" /> Lisbon long weekend
+    </a>
+
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:8px;">
+      <div style="width:48px; height:48px; border-radius:50%; background:var(--magenta-60); color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:600;">TH</div>
+      <div>
+        <h1 style="margin:0; font-size:1.75rem; line-height:1.28572; font-weight:400;">Theo</h1>
+        <p style="margin:2px 0 0; font-size:0.875rem; color:var(--text-secondary);">In all 7 expenses</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--border-subtle-01); border:1px solid var(--border-subtle-01); margin:32px 0 48px;">
+      <div style="background:var(--layer-02); padding:20px;">
+        <p style="margin:0 0 8px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Paid</p>
+        <p style="margin:0; font-size:1.5rem; font-weight:400; font-variant-numeric:tabular-nums;">€120.00</p>
+      </div>
+      <div style="background:var(--layer-02); padding:20px;">
+        <p style="margin:0 0 8px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Share of expenses</p>
+        <p style="margin:0; font-size:1.5rem; font-weight:400; font-variant-numeric:tabular-nums;">€328.00</p>
+      </div>
+      <div style="background:var(--layer-02); padding:20px; border-top:3px solid var(--support-error);">
+        <p style="margin:0 0 8px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Net balance</p>
+        <p style="margin:0 0 2px; font-size:1.5rem; font-weight:400; font-variant-numeric:tabular-nums;">−€208.00</p>
+        <p style="margin:0; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Theo owes the group</p>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px;">
+      <h2 style="margin:0; font-size:0.875rem; font-weight:600; letter-spacing:0.16px;">Breakdown by expense</h2>
+      <span style="font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Net impact on Theo's balance</span>
+    </div>
+
+    <div style="border:1px solid var(--border-subtle-01);">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+        <div class="dl-row" style="display:grid; grid-template-columns:1fr 150px; align-items:center; gap:16px; padding:14px 16px; border-bottom:1px solid var(--border-subtle-00); transition:background 70ms;">
+          <div style="min-width:0;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <p style="margin:0; font-size:0.875rem;">{{ r.desc }}</p>
+              <sc-if value="{{ r.paidByTheo }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:0.6875rem; letter-spacing:0.32px; color:var(--blue-70); background:var(--blue-20); padding:1px 8px; border-radius:999px;">Theo paid</span>
+              </sc-if>
+            </div>
+            <p style="margin:4px 0 0; font-size:0.75rem; color:var(--text-secondary);">{{ r.sub }}</p>
+          </div>
+          <div style="text-align:right;">
+            <p style="margin:0; font-size:1rem; color:{{ r.color }}; font-variant-numeric:tabular-nums;">{{ r.netStr }}</p>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:grid; grid-template-columns:1fr 150px; align-items:center; gap:16px; padding:16px; background:var(--layer-01);">
+        <p style="margin:0; font-size:0.875rem; font-weight:600;">Net balance</p>
+        <p style="margin:0; text-align:right; font-size:1rem; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums;">−€208.00</p>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:32px; padding:24px; background:var(--layer-01); border-left:3px solid var(--blue-60);">
+      <div>
+        <p style="margin:0 0 4px; font-size:1rem; font-weight:600;">Theo pays You €208.00</p>
+        <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">A single payment clears Theo's balance.</p>
+      </div>
+      <a href="05 Settle Up.dc.html" class="dl-btn" style="flex:none; height:48px; display:inline-flex; align-items:center; gap:48px; padding:0 16px; background:var(--blue-60); color:var(--text-on-color); font-size:0.875rem; letter-spacing:0.16px; text-decoration:none; transition:background 110ms;">
+        <span>Settle up</span>
+        <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+      </a>
+    </div>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:768,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  fmt(n) { return "€" + Math.abs(n).toLocaleString("en-IE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  renderVals() {
+    const data = [
+      { desc: "Tarts & coffee", date: "Jun 14", payer: "Sam", ways: 4, share: 6, paid: 0 },
+      { desc: "Surf lessons", date: "Jun 14", payer: "Theo", ways: 3, share: 40, paid: 120 },
+      { desc: "Train to Sintra", date: "Jun 13", payer: "Maya", ways: 4, share: 9, paid: 0 },
+      { desc: "Dinner at Time Out Market", date: "Jun 13", payer: "You", ways: 4, share: 41, paid: 0 },
+      { desc: "Groceries", date: "Jun 13", payer: "Sam", ways: 4, share: 22, paid: 0 },
+      { desc: "Rental car", date: "Jun 12", payer: "Maya", ways: 4, share: 60, paid: 0 },
+      { desc: "Airbnb (3 nights)", date: "Jun 12", payer: "You", ways: 4, share: 150, paid: 0 },
+    ];
+    const rows = data.map((e) => {
+      const net = e.paid - e.share;
+      const paidByTheo = e.payer === "Theo";
+      const sub = paidByTheo
+        ? "Theo paid " + this.fmt(e.paid) + " · split " + e.ways + " ways · your share " + this.fmt(e.share)
+        : e.payer + " paid · split " + e.ways + " ways · your share " + this.fmt(e.share);
+      return {
+        desc: e.desc, sub, paidByTheo,
+        netStr: (net > 0 ? "+" : "−") + this.fmt(net),
+        color: net > 0 ? "var(--support-success)" : "var(--text-primary)",
+      };
+    });
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>

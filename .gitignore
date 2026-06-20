@@ -1,0 +1,17 @@
+node_modules/
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+# Environment variables
+.env
+.env.local
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db

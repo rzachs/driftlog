@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driftlog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --white-0:#ffffff; --blue-20:#d0e2ff; --blue-50:#4589ff; --blue-60:#0f62fe;
+      --blue-70:#0043ce; --blue-80:#002d9c; --gray-40:#a8a8a8; --gray-100:#161616;
+      --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      --background:#ffffff; --text-primary:#161616; --text-secondary:#525252;
+      --text-on-color:#ffffff; --layer-01:#f4f4f4; --layer-02:#ffffff;
+      --layer-hover-01:#e8e8e8; --border-subtle-00:#e0e0e0; --border-subtle-01:#c6c6c6;
+      --link-primary:#0f62fe; --support-success:#24a148; --support-error:#da1e28;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--background);font-family:var(--font-family-sans);color:var(--text-primary)}
+    .dl-row:hover{background:var(--layer-hover-01)}
+    .dl-back{display:inline-flex;align-items:center;gap:8px;font-size:0.875rem;color:var(--link-primary);text-decoration:none}
+    .dl-back:hover{text-decoration:underline}
+    .dl-btn:hover{background:#0050e6} .dl-btn:active{background:var(--blue-80)}
+  </style>
+</head>
+<body>
+
+<header style="height:48px;background:var(--gray-100);color:var(--white-0);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:10;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:20px;height:20px;background:var(--blue-50);display:flex;align-items:center;justify-content:center;">
+      <span style="color:var(--white-0);font-weight:600;font-size:0.8125rem;line-height:1;">$</span>
+    </div>
+    <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+  </div>
+</header>
+
+<main id="main" style="max-width:768px;margin:0 auto;padding:32px 16px 80px;">
+  <div style="padding:40px;text-align:center;color:var(--text-secondary);">Loading…</div>
+</main>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const tripId   = params.get('tripId');
+  const memberId = params.get('memberId');
+  if (!tripId || !memberId) location.href = 'trips.html';
+
+  const COLORS = ['#0f62fe','#007d79','#8a3ffc','#d02670','#0072c3','#6f6f6f'];
+  function fmt(n) { return '€' + Math.abs(n).toLocaleString('en-IE',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  async function load() {
+    const [detail, trip] = await Promise.all([
+      fetch(`/api/trips/${tripId}/members/${memberId}/detail`).then(r => r.json()),
+      fetch(`/api/trips/${tripId}`).then(r => r.json()),
+    ]);
+    if (detail.error) { location.href = `trip-overview.html?id=${tripId}`; return; }
+
+    const { member, rows, totalPaid, totalShare, netBalance } = detail;
+    const memberIdx = trip.members.findIndex(m => m.id === memberId);
+    const avatarColor = COLORS[memberIdx >= 0 ? memberIdx % COLORS.length : 0];
+    const initials = member.name.slice(0,2).toUpperCase();
+
+    document.title = `Driftlog — ${member.name}`;
+
+    const accentColor = netBalance >= 0 ? 'var(--support-success)' : 'var(--support-error)';
+    const netLabel = netBalance >= 0 ? `${member.name} is owed` : `${member.name} owes the group`;
+
+    const expRows = rows.map(r => {
+      const paidByThis = r.isPayer;
+      const netStr = (r.net > 0 ? '+' : '−') + fmt(r.net);
+      const netColor = r.net > 0 ? 'var(--support-success)' : 'var(--text-primary)';
+      const payerName = r.payer?.name || '?';
+      const subLine = paidByThis
+        ? `${member.name} paid ${fmt(r.expense.amount)} · split ${r.ways} ways · share ${fmt(r.split.amount)}`
+        : `${payerName} paid · split ${r.ways} ways · share ${fmt(r.split.amount)}`;
+      return `
+        <div class="dl-row" style="display:grid;grid-template-columns:1fr 150px;align-items:center;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border-subtle-00);transition:background 70ms;">
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <p style="margin:0;font-size:0.875rem;">${r.expense.description}</p>
+              ${paidByThis ? `<span style="font-size:0.6875rem;letter-spacing:0.32px;color:var(--blue-70);background:var(--blue-20);padding:1px 8px;border-radius:999px;">${member.name} paid</span>` : ''}
+            </div>
+            <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-secondary);">${subLine}</p>
+          </div>
+          <div style="text-align:right;">
+            <p style="margin:0;font-size:1rem;color:${netColor};font-variant-numeric:tabular-nums;">${netStr}</p>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('main').innerHTML = `
+      <a href="trip-overview.html?id=${tripId}" class="dl-back" style="margin-bottom:32px;">
+        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M14 26l1.41-1.41L7.83 17H28v-2H7.83l7.59-7.59L14 6 4 16z"/></svg>
+        ${trip.name}
+      </a>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;">${initials}</div>
+        <div>
+          <h1 style="margin:0;font-size:1.75rem;line-height:1.28572;font-weight:400;">${member.name}</h1>
+          <p style="margin:2px 0 0;font-size:0.875rem;color:var(--text-secondary);">In ${rows.length} expense${rows.length!==1?'s':''}</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-subtle-01);border:1px solid var(--border-subtle-01);margin:32px 0 48px;">
+        <div style="background:var(--layer-02);padding:20px;">
+          <p style="margin:0 0 8px;font-size:0.75rem;letter-spacing:0.32px;color:var(--text-secondary);">Paid</p>
+          <p style="margin:0;font-size:1.5rem;font-weight:400;font-variant-numeric:tabular-nums;">${fmt(totalPaid)}</p>
+        </div>
+        <div style="background:var(--layer-02);padding:20px;">
+          <p style="margin:0 0 8px;font-size:0.75rem;letter-spacing:0.32px;color:var(--text-secondary);">Share of expenses</p>
+          <p style="margin:0;font-size:1.5rem;font-weight:400;font-variant-numeric:tabular-nums;">${fmt(totalShare)}</p>
+        </div>
+        <div style="background:var(--layer-02);padding:20px;border-top:3px solid ${accentColor};">
+          <p style="margin:0 0 8px;font-size:0.75rem;letter-spacing:0.32px;color:var(--text-secondary);">Net balance</p>
+          <p style="margin:0 0 2px;font-size:1.5rem;font-weight:400;font-variant-numeric:tabular-nums;">${netBalance >= 0 ? '+' : '−'}${fmt(netBalance)}</p>
+          <p style="margin:0;font-size:0.75rem;letter-spacing:0.32px;color:var(--text-secondary);">${netLabel}</p>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+        <h2 style="margin:0;font-size:0.875rem;font-weight:600;letter-spacing:0.16px;">Breakdown by expense</h2>
+        <span style="font-size:0.75rem;letter-spacing:0.32px;color:var(--text-secondary);">Net impact on ${member.name}'s balance</span>
+      </div>
+      <div style="border:1px solid var(--border-subtle-01);">
+        ${expRows}
+        <div style="display:grid;grid-template-columns:1fr 150px;align-items:center;gap:16px;padding:16px;background:var(--layer-01);">
+          <p style="margin:0;font-size:0.875rem;font-weight:600;">Net balance</p>
+          <p style="margin:0;text-align:right;font-size:1rem;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;">${netBalance >= 0 ? '+' : '−'}${fmt(netBalance)}</p>
+        </div>
+      </div>
+
+      ${netBalance < 0 ? `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:32px;padding:24px;background:var(--layer-01);border-left:3px solid var(--blue-60);">
+        <div>
+          <p style="margin:0 0 4px;font-size:1rem;font-weight:600;">${member.name} owes ${fmt(Math.abs(netBalance))}</p>
+          <p style="margin:0;font-size:0.875rem;color:var(--text-secondary);">See the settle up screen to clear all balances.</p>
+        </div>
+        <a href="settle-up.html?tripId=${tripId}" class="dl-btn" style="flex:none;height:48px;display:inline-flex;align-items:center;gap:48px;padding:0 16px;background:var(--blue-60);color:var(--text-on-color);font-size:0.875rem;letter-spacing:0.16px;text-decoration:none;transition:background 110ms;font-family:var(--font-family-sans);">
+          <span>Settle up</span>
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z"/></svg>
+        </a>
+      </div>` : ''}`;
+  }
+
+  load();
+</script>
+</body>
+</html>

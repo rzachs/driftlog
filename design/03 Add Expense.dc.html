@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="carbon/styles.css" />
+<style>
+  :root{
+    --white-0:#ffffff;--black-100:#000000;
+    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
+    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
+    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
+    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
+    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
+    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
+    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
+    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
+    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--background); }
+  .dl-field:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
+  .dl-field::placeholder { color: var(--text-placeholder); }
+  .dl-btn-p:hover { background: #0050e6 !important; }
+  .dl-btn-p:active { background: var(--blue-80) !important; }
+  .dl-btn-s:hover { background: var(--gray-80) !important; }
+  .dl-pill:hover { background: var(--field-hover-01); }
+  .dl-back:hover { text-decoration: underline; }
+  select.dl-field { -webkit-appearance:none; appearance:none; }
+</style>
+</helmet>
+<div data-screen-label="Add Expense" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--background); color:var(--text-primary);">
+
+  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
+        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+      </div>
+      <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+    </div>
+  </header>
+
+  <main style="max-width:640px; margin:0 auto; padding:32px 16px 120px;">
+
+    <a href="02 Trip Overview.dc.html" class="dl-back" style="display:inline-flex; align-items:center; gap:8px; font-size:0.875rem; color:var(--link-primary); text-decoration:none; margin-bottom:24px;">
+      <img src="carbon/icons/arrow-left.svg" width="16" height="16" alt="" /> Lisbon long weekend
+    </a>
+
+    <h1 style="margin:0 0 40px; font-size:1.75rem; line-height:1.28572; font-weight:400;">Add expense</h1>
+
+    <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Amount</label>
+    <div style="display:flex; align-items:stretch; margin-bottom:32px; border-bottom:1px solid var(--border-strong-01); background:var(--field-01);">
+      <span style="display:flex; align-items:center; padding:0 16px; font-size:1.75rem; font-weight:300; color:var(--text-secondary);">€</span>
+      <input class="dl-field" type="text" inputmode="decimal" value="{{ amount }}" oninput="{{ onAmount }}" placeholder="0.00" style="flex:1; height:64px; border:none; background:transparent; color:var(--text-primary); font-size:1.75rem; font-weight:300; padding:0; font-variant-numeric:tabular-nums;" />
+    </div>
+
+    <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Description</label>
+    <input class="dl-field" type="text" value="{{ desc }}" oninput="{{ onDesc }}" placeholder="e.g. Dinner at Time Out Market" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; margin-bottom:32px;" />
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px;">
+      <div>
+        <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Paid by</label>
+        <div style="position:relative;">
+          <select class="dl-field" value="{{ payer }}" onchange="{{ onPayer }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 40px 0 16px; cursor:pointer; font-family:var(--font-family-sans);">
+            <option value="You">You</option>
+            <option value="Maya">Maya</option>
+            <option value="Sam">Sam</option>
+            <option value="Theo">Theo</option>
+          </select>
+          <img src="carbon/icons/chevron-down.svg" width="16" height="16" alt="" style="position:absolute; right:16px; top:16px; pointer-events:none; opacity:0.7;" />
+        </div>
+      </div>
+      <div>
+        <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Date</label>
+        <input class="dl-field" type="date" value="{{ date }}" onchange="{{ onDate }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; font-family:var(--font-family-sans);" />
+      </div>
+    </div>
+
+    <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:12px;">Split method</label>
+    <div style="display:flex; gap:32px; margin-bottom:32px;">
+      <label class="dl-radio" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.875rem;">
+        <span onclick="{{ setEven }}" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border-strong-01); display:flex; align-items:center; justify-content:center;">
+          <sc-if value="{{ isEven }}" hint-placeholder-val="{{ true }}"><span style="width:8px; height:8px; border-radius:50%; background:var(--blue-60);"></span></sc-if>
+        </span>
+        <span onclick="{{ setEven }}">Split evenly</span>
+      </label>
+      <label class="dl-radio" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.875rem;">
+        <span onclick="{{ setCustom }}" style="width:18px; height:18px; border-radius:50%; border:1px solid var(--border-strong-01); display:flex; align-items:center; justify-content:center;">
+          <sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}"><span style="width:8px; height:8px; border-radius:50%; background:var(--blue-60);"></span></sc-if>
+        </span>
+        <span onclick="{{ setCustom }}">Custom amounts</span>
+      </label>
+    </div>
+
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+      <label style="font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Split between</label>
+      <span style="font-size:0.75rem; letter-spacing:0.32px; color:{{ remainColor }};">{{ remainNote }}</span>
+    </div>
+    <div style="border:1px solid var(--border-subtle-01); margin-bottom:48px;">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; min-height:56px; border-bottom:1px solid var(--border-subtle-00); background:{{ r.bg }};">
+          <span onclick="{{ r.toggle }}" style="width:18px; height:18px; flex:none; border:1px solid var(--border-strong-01); background:{{ r.boxBg }}; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <sc-if value="{{ r.checked }}" hint-placeholder-val="{{ true }}"><img src="carbon/icons/checkmark.svg" width="14" height="14" alt="" style="filter:invert(1);" /></sc-if>
+          </span>
+          <div style="width:28px; height:28px; border-radius:50%; background:{{ r.avatarBg }}; color:var(--white-0); flex:none; display:flex; align-items:center; justify-content:center; font-size:0.6875rem; font-weight:600;">{{ r.initials }}</div>
+          <span onclick="{{ r.toggle }}" style="flex:1; font-size:0.875rem; cursor:pointer; color:{{ r.nameColor }};">{{ r.name }}</span>
+          <sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:4px; opacity:{{ r.editOpacity }};">
+              <span style="font-size:0.875rem; color:var(--text-secondary);">€</span>
+              <input class="dl-field" type="text" inputmode="decimal" value="{{ r.customVal }}" oninput="{{ r.onCustom }}" disabled="{{ r.disabled }}" style="width:80px; height:40px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-02); color:var(--text-primary); font-size:0.875rem; padding:0 8px; text-align:right; font-variant-numeric:tabular-nums;" />
+            </div>
+          </sc-if>
+          <sc-if value="{{ isEven }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size:0.875rem; color:{{ r.nameColor }}; font-variant-numeric:tabular-nums;">{{ r.shareStr }}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+
+  <div style="position:fixed; bottom:0; left:0; right:0; display:flex; height:64px; border-top:1px solid var(--border-subtle-01);">
+    <a href="02 Trip Overview.dc.html" class="dl-btn-s" style="flex:1; max-width:50%; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; text-decoration:none; transition:background 110ms;">Cancel</a>
+    <button class="dl-btn-p" onclick="{{ onAdd }}" style="flex:1; max-width:50%; border:none; background:var(--blue-60); color:var(--text-on-color); display:flex; align-items:center; justify-content:space-between; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; transition:background 110ms;">
+      <span>Add expense</span>
+      <img src="carbon/icons/add.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:640,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    amount: "164.00",
+    desc: "Dinner at Time Out Market",
+    payer: "You",
+    date: "2026-06-13",
+    method: "even",
+    selected: { You: true, Maya: true, Sam: true, Theo: true },
+    custom: { You: "", Maya: "", Sam: "", Theo: "" },
+  };
+
+  fmt(n) { return "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  renderVals() {
+    const s = this.state;
+    const avatars = { You: "var(--blue-60)", Maya: "var(--teal-60)", Sam: "var(--purple-60)", Theo: "var(--magenta-60)" };
+    const initials = { You: "YO", Maya: "MA", Sam: "SA", Theo: "TH" };
+    const names = ["You", "Maya", "Sam", "Theo"];
+    const total = parseFloat(s.amount) || 0;
+    const sel = names.filter((n) => s.selected[n]);
+    const evenShare = sel.length ? total / sel.length : 0;
+    const isCustom = s.method === "custom";
+
+    const customSum = sel.reduce((a, n) => a + (parseFloat(s.custom[n]) || 0), 0);
+    const remaining = total - customSum;
+
+    const rows = names.map((n) => {
+      const checked = !!s.selected[n];
+      return {
+        name: n,
+        initials: initials[n],
+        avatarBg: avatars[n],
+        checked,
+        bg: checked ? "var(--layer-02)" : "var(--layer-01)",
+        boxBg: checked ? "var(--blue-60)" : "transparent",
+        nameColor: checked ? "var(--text-primary)" : "var(--text-secondary)",
+        shareStr: checked ? this.fmt(evenShare) : "—",
+        customVal: s.custom[n],
+        disabled: !checked,
+        editOpacity: checked ? "1" : "0.35",
+        toggle: () => this.setState((st) => ({ selected: { ...st.selected, [n]: !st.selected[n] } })),
+        onCustom: (e) => this.setState((st) => ({ custom: { ...st.custom, [n]: e.target.value } })),
+      };
+    });
+
+    let remainNote, remainColor;
+    if (isCustom) {
+      const r = Math.round(remaining * 100) / 100;
+      if (Math.abs(r) < 0.005) { remainNote = "Fully allocated"; remainColor = "var(--support-success)"; }
+      else if (r > 0) { remainNote = this.fmt(r) + " left"; remainColor = "var(--support-error)"; }
+      else { remainNote = this.fmt(-r) + " over"; remainColor = "var(--support-error)"; }
+    } else {
+      remainNote = sel.length + " people · " + this.fmt(evenShare) + " each";
+      remainColor = "var(--text-secondary)";
+    }
+
+    return {
+      amount: s.amount, desc: s.desc, payer: s.payer, date: s.date,
+      isEven: !isCustom, isCustom, rows, remainNote, remainColor,
+      onAmount: (e) => this.setState({ amount: e.target.value }),
+      onDesc: (e) => this.setState({ desc: e.target.value }),
+      onPayer: (e) => this.setState({ payer: e.target.value }),
+      onDate: (e) => this.setState({ date: e.target.value }),
+      setEven: () => this.setState({ method: "even" }),
+      setCustom: () => this.setState({ method: "custom" }),
+      onAdd: () => { window.location.href = "02 Trip Overview.dc.html"; },
+    };
+  }
+}
+</script>
+</body>
+</html>

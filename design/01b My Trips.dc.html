@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="carbon/styles.css" />
+<style>
+  :root{
+    --white-0:#ffffff;--black-100:#000000;
+    --blue-20:#d0e2ff;--blue-40:#78a9ff;--blue-50:#4589ff;--blue-60:#0f62fe;--blue-70:#0043ce;--blue-80:#002d9c;
+    --gray-10:#f4f4f4;--gray-20:#e0e0e0;--gray-30:#c6c6c6;--gray-40:#a8a8a8;--gray-50:#8d8d8d;--gray-60:#6f6f6f;--gray-70:#525252;--gray-80:#393939;--gray-90:#262626;--gray-100:#161616;
+    --teal-60:#007d79;--purple-60:#8a3ffc;--magenta-60:#d02670;--cyan-60:#0072c3;--green-10:#defbe6;--green-50:#24a148;--red-60:#da1e28;
+    --font-family-sans:'IBM Plex Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    --background:#ffffff;--text-primary:#161616;--text-secondary:#525252;--text-helper:#6f6f6f;--text-placeholder:rgba(22,22,22,0.4);--text-on-color:#ffffff;
+    --layer-01:#f4f4f4;--layer-02:#ffffff;--layer-hover-01:#e8e8e8;--layer-hover-02:#e8e8e8;
+    --field-01:#f4f4f4;--field-02:#ffffff;--field-hover-01:#e8e8e8;
+    --border-subtle-00:#e0e0e0;--border-subtle-01:#c6c6c6;--border-strong-01:#8d8d8d;
+    --link-primary:#0f62fe;--link-primary-hover:#0043ce;--icon-secondary:#525252;
+    --support-success:#24a148;--support-error:#da1e28;--focus:#0f62fe;--background-hover:rgba(141,141,141,0.12);--overlay:rgba(0,0,0,0.6);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--layer-01); }
+  .dl-row:hover { background: var(--layer-hover-01); }
+  .dl-btn:hover { background: #0050e6 !important; }
+  .dl-btn:active { background: var(--blue-80) !important; }
+  .dl-btn-s:hover { background: var(--gray-80) !important; }
+  .dl-hicon:hover { background: var(--layer-hover-02); }
+  .dl-field:focus { outline: 2px solid var(--focus); outline-offset: -2px; }
+  .dl-field::placeholder { color: var(--text-placeholder); }
+  .dl-chipx:hover { background: rgba(255,255,255,0.25); }
+</style>
+</helmet>
+<div data-screen-label="My Trips" style="min-height:100vh; font-family:var(--font-family-sans); background:var(--layer-01); color:var(--text-primary);">
+
+  <header style="height:48px; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; position:sticky; top:0; z-index:10;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:20px; height:20px; background:var(--blue-50); display:flex; align-items:center; justify-content:center;">
+        <span style="color:var(--white-0); font-weight:600; font-size:0.8125rem; line-height:1;">$</span>
+      </div>
+      <span style="font-size:0.875rem;"><span style="font-weight:600;">Driftlog</span> <span style="color:var(--gray-40);">Trips</span></span>
+    </div>
+    <div style="margin-left:auto; display:flex; align-items:center; height:100%;">
+      <button class="dl-hicon" aria-label="Settings" style="width:48px; height:48px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+        <img src="carbon/icons/settings.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+      </button>
+      <div style="width:32px; height:32px; border-radius:50%; background:var(--blue-60); color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; margin-left:8px;">YO</div>
+    </div>
+  </header>
+
+  <main style="max-width:880px; margin:0 auto; padding:48px 16px 80px;">
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:32px;">
+      <div>
+        <h1 style="margin:0 0 6px; font-size:2rem; line-height:1.25; font-weight:400;">Your trips</h1>
+        <p style="margin:0; font-size:0.875rem; color:var(--text-secondary);">{{ summaryLine }}</p>
+      </div>
+      <button class="dl-btn" onclick="{{ openModal }}" style="flex:none; height:48px; border:none; background:var(--blue-60); color:var(--text-on-color); font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; display:inline-flex; align-items:center; gap:48px; padding:0 16px; transition:background 110ms; font-family:var(--font-family-sans);">
+        <span style="white-space:nowrap;">Create trip</span>
+        <img src="carbon/icons/add.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+      </button>
+    </div>
+
+    <div style="border:1px solid var(--border-subtle-01); background:var(--layer-02);">
+      <sc-for list="{{ trips }}" as="t" hint-placeholder-count="4">
+        <a href="{{ t.href }}" class="dl-row" style="display:flex; align-items:center; gap:24px; padding:20px 24px; border-bottom:1px solid var(--border-subtle-00); text-decoration:none; color:inherit; transition:background 70ms;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+              <span style="font-size:1rem; font-weight:600;">{{ t.name }}</span>
+              <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:0.6875rem; letter-spacing:0.32px; color:var(--blue-70); background:var(--blue-20); padding:1px 8px; border-radius:999px;">Active</span>
+              </sc-if>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+              <span style="display:inline-flex; align-items:center; gap:6px; font-size:0.8125rem; color:var(--text-secondary);">
+                <img src="carbon/icons/calendar.svg" width="14" height="14" alt="" style="opacity:0.55;" /> {{ t.dateStr }}
+              </span>
+              <span style="width:1px; height:14px; background:var(--border-subtle-01);"></span>
+              <div style="display:flex; align-items:center;">
+                <sc-for list="{{ t.avatars }}" as="a" hint-placeholder-count="4">
+                  <div style="width:24px; height:24px; border-radius:50%; background:{{ a.bg }}; color:var(--white-0); display:flex; align-items:center; justify-content:center; font-size:0.625rem; font-weight:600; margin-left:-5px; border:2px solid var(--layer-02);">{{ a.initials }}</div>
+                </sc-for>
+                <span style="margin-left:10px; font-size:0.8125rem; color:var(--text-secondary);">{{ t.peopleStr }}</span>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right; flex:none;">
+            <p style="margin:0 0 2px; font-size:1.125rem; font-weight:400; color:{{ t.balColor }}; font-variant-numeric:tabular-nums;">{{ t.balAmount }}</p>
+            <p style="margin:0; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">{{ t.balLabel }}</p>
+          </div>
+          <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" style="opacity:0.4; flex:none;" />
+        </a>
+      </sc-for>
+    </div>
+  </main>
+
+  <!-- Create trip modal -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ closeModal }}" style="position:fixed; inset:0; background:var(--overlay); z-index:50; display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onclick="{{ stop }}" style="width:100%; max-width:480px; background:var(--layer-02); box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; padding:20px 20px 8px;">
+          <div>
+            <p style="margin:0 0 2px; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary);">Driftlog</p>
+            <h2 style="margin:0; font-size:1.25rem; font-weight:400;">Create trip</h2>
+          </div>
+          <button class="dl-hicon" onclick="{{ closeModal }}" aria-label="Close" style="width:40px; height:40px; border:none; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--icon-secondary);">
+            <img src="carbon/icons/close.svg" width="20" height="20" alt="" />
+          </button>
+        </div>
+
+        <div style="padding:16px 20px 24px;">
+          <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Trip name</label>
+          <input class="dl-field" type="text" value="{{ tripName }}" oninput="{{ onTripName }}" placeholder="e.g. Lisbon long weekend" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; margin-bottom:24px;" />
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+            <div>
+              <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">Start date</label>
+              <input class="dl-field" type="date" value="{{ start }}" onchange="{{ onStart }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; font-family:var(--font-family-sans);" />
+            </div>
+            <div>
+              <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">End date</label>
+              <input class="dl-field" type="date" value="{{ end }}" onchange="{{ onEnd }}" style="width:100%; height:48px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px; font-family:var(--font-family-sans);" />
+            </div>
+          </div>
+
+          <label style="display:block; font-size:0.75rem; letter-spacing:0.32px; color:var(--text-secondary); margin-bottom:8px;">People</label>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="2">
+              <span style="display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 4px 0 12px; background:var(--gray-80); color:var(--white-0); font-size:0.8125rem; border-radius:999px;">
+                {{ c.name }}
+                <sc-if value="{{ c.removable }}" hint-placeholder-val="{{ true }}">
+                  <button class="dl-chipx" onclick="{{ c.remove }}" aria-label="Remove" style="width:24px; height:24px; border:none; background:transparent; cursor:pointer; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0;">
+                    <img src="carbon/icons/close.svg" width="14" height="14" alt="" style="filter:invert(1);" />
+                  </button>
+                </sc-if>
+              </span>
+            </sc-for>
+          </div>
+          <input class="dl-field" type="text" value="{{ newPerson }}" oninput="{{ onNewPerson }}" onkeydown="{{ onAddKey }}" placeholder="Type a name, press Enter to add" style="width:100%; height:40px; border:none; border-bottom:1px solid var(--border-strong-01); background:var(--field-01); color:var(--text-primary); font-size:0.875rem; padding:0 16px;" />
+        </div>
+
+        <div style="display:flex; height:64px; border-top:1px solid var(--border-subtle-01);">
+          <button class="dl-btn-s" onclick="{{ closeModal }}" style="flex:1; border:none; background:var(--gray-100); color:var(--white-0); display:flex; align-items:center; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; transition:background 110ms; font-family:var(--font-family-sans);">Cancel</button>
+          <button class="dl-btn" onclick="{{ createTrip }}" style="flex:1; border:none; background:var(--blue-60); color:var(--text-on-color); display:flex; align-items:center; justify-content:space-between; padding:0 16px; font-size:0.875rem; letter-spacing:0.16px; cursor:pointer; transition:background 110ms; font-family:var(--font-family-sans);">
+            <span style="white-space:nowrap;">Create trip</span>
+            <img src="carbon/icons/arrow-right.svg" width="20" height="20" alt="" style="filter:invert(1);" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:760}}">
+class Component extends DCLogic {
+  state = {
+    modalOpen: false,
+    tripName: "",
+    start: "",
+    end: "",
+    participants: ["You", "Maya", "Sam"],
+    newPerson: "",
+  };
+
+  renderVals() {
+    const C = { blue: "var(--blue-60)", teal: "var(--teal-60)", purple: "var(--purple-60)", magenta: "var(--magenta-60)", cyan: "var(--cyan-60)", gray: "var(--gray-60)" };
+    const av = (initials, bg) => ({ initials, bg });
+
+    const trips = [
+      {
+        name: "Lisbon long weekend", active: true, dateStr: "Jun 12 – 15, 2026",
+        avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("TH", C.magenta)],
+        peopleStr: "4 people", balAmount: "+€436.00", balColor: "var(--support-success)", balLabel: "You're owed",
+        href: "02 Trip Overview.dc.html",
+      },
+      {
+        name: "NYE in Edinburgh", active: false, dateStr: "Dec 30, 2025 – Jan 2, 2026",
+        avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("+2", C.gray)],
+        peopleStr: "6 people", balAmount: "−€74.50", balColor: "var(--text-primary)", balLabel: "You owe",
+        href: "02 Trip Overview.dc.html",
+      },
+      {
+        name: "Dolomites hut-to-hut", active: false, dateStr: "Sep 5 – 11, 2025",
+        avatars: [av("YO", C.blue), av("TH", C.magenta), av("RO", C.cyan), av("+2", C.gray)],
+        peopleStr: "5 people", balAmount: "Settled", balColor: "var(--text-secondary)", balLabel: "All cleared",
+        href: "02 Trip Overview.dc.html",
+      },
+      {
+        name: "Cousins' beach house", active: false, dateStr: "Aug 12 – 19, 2024",
+        avatars: [av("YO", C.blue), av("MA", C.teal), av("EL", C.cyan), av("+2", C.gray)],
+        peopleStr: "5 people", balAmount: "Settled", balColor: "var(--text-secondary)", balLabel: "All cleared",
+        href: "02 Trip Overview.dc.html",
+      },
+    ];
+
+    const chips = this.state.participants.map((name, i) => ({
+      name,
+      removable: name !== "You",
+      remove: (e) => { e.preventDefault(); e.stopPropagation(); this.setState((s) => ({ participants: s.participants.filter((_, j) => j !== i) })); },
+    }));
+
+    const addPerson = () => {
+      const n = this.state.newPerson.trim();
+      if (!n) return;
+      this.setState((s) => ({ participants: [...s.participants, n], newPerson: "" }));
+    };
+
+    return {
+      trips,
+      summaryLine: "4 trips · 1 active",
+      modalOpen: this.state.modalOpen,
+      tripName: this.state.tripName,
+      start: this.state.start,
+      end: this.state.end,
+      newPerson: this.state.newPerson,
+      chips,
+      openModal: () => this.setState({ modalOpen: true }),
+      closeModal: () => this.setState({ modalOpen: false }),
+      stop: (e) => e.stopPropagation(),
+      onTripName: (e) => this.setState({ tripName: e.target.value }),
+      onStart: (e) => this.setState({ start: e.target.value }),
+      onEnd: (e) => this.setState({ end: e.target.value }),
+      onNewPerson: (e) => this.setState({ newPerson: e.target.value }),
+      onAddKey: (e) => { if (e.key === "Enter") { e.preventDefault(); addPerson(); } },
+      createTrip: () => { window.location.href = "02 Trip Overview.dc.html"; },
+    };
+  }
+}
+</script>
+</body>
+</html>
