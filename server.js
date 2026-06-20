@@ -5,7 +5,7 @@ const { db, init, calculateBalances, calculateSettlements } = require('./db');
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 init();
 
@@ -180,6 +180,12 @@ app.delete('/api/trips/:tripId/settle/:recordId', (req, res) => {
     'UPDATE settlement_records SET recorded_at = NULL WHERE id = ? AND trip_id = ?'
   ).run(req.params.recordId, req.params.tripId);
   res.json({ ok: true });
+});
+
+// ── SPA fallback ──────────────────────────────────────────────────────────
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────
