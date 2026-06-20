@@ -65,6 +65,14 @@ app.get('/api/trips/:id', (req, res) => {
   res.json({ ...trip, members, balances, expenses: expenseDetails });
 });
 
+app.patch('/api/trips/:id', (req, res) => {
+  const { name } = req.body;
+  if (!name?.trim()) return res.status(400).json({ error: 'Name required' });
+  const result = db.prepare('UPDATE trips SET name = ? WHERE id = ?').run(name.trim(), req.params.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
+  res.json({ ok: true });
+});
+
 // ── Expenses ──────────────────────────────────────────────────────────────
 
 app.post('/api/trips/:id/expenses', (req, res) => {

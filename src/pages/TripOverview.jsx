@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { col, fmt, fmtDate, initials } from '../utils'
@@ -7,6 +7,7 @@ export default function TripOverview() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [trip, setTrip] = useState(null)
+  const titleRef = useRef(null)
 
   useEffect(() => {
     if (!id) { navigate('/trips'); return }
@@ -18,6 +19,12 @@ export default function TripOverview() {
         setTrip(data)
       })
   }, [id])
+
+  useEffect(() => {
+    if (trip && titleRef.current) {
+      titleRef.current.textContent = trip.name
+    }
+  }, [trip?.name])
 
   if (!trip) return (
     <div className="font-sans bg-white text-[#161616]">
@@ -40,7 +47,35 @@ export default function TripOverview() {
         <div className="flex items-start gap-6 mb-12">
           <div className="min-w-0">
             <p className="mb-2 text-xs tracking-[0.32px] text-[#525252] uppercase">Trip</p>
-            <h1 className="mb-3 text-[2rem] leading-[1.25] font-normal">{trip.name}</h1>
+            <h1
+              ref={titleRef}
+              contentEditable
+              suppressContentEditableWarning
+              spellCheck={false}
+              aria-label="Trip name"
+              className="mb-3 -mx-2 px-2 text-[2rem] leading-[1.25] font-normal rounded-none outline-none cursor-text border-b-2 border-transparent hover:border-[#c6c6c6] focus:border-[#0f62fe] transition-colors duration-[110ms]"
+              onBlur={e => {
+                const next = (e.currentTarget.textContent || '').replace(/\s+/g, ' ').trim() || trip.name
+                e.currentTarget.textContent = next
+                if (next === trip.name) return
+                fetch(`/api/trips/${id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name: next }),
+                }).then(() => {
+                  document.title = `Driftlog — ${next}`
+                  setTrip(t => ({ ...t, name: next }))
+                })
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur() }
+                if (e.key === 'Escape') {
+                  e.preventDefault()
+                  e.currentTarget.textContent = trip.name
+                  e.currentTarget.blur()
+                }
+              }}
+            />
             <div className="flex items-center gap-4 flex-wrap">
               <span className="inline-flex items-center gap-2 text-sm text-[#525252]">
                 <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" className="opacity-60">

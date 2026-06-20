@@ -66,7 +66,16 @@
     <div class="flex items-start gap-6 mb-12">
       <div class="min-w-0">
         <p class="mb-2 text-xs tracking-[0.32px] text-driftlog-text-2 uppercase">Trip</p>
-        <h1 class="mb-3 text-[2rem] leading-[1.25] font-normal">Lisbon long weekend</h1>
+        <h1
+          contentEditable="true"
+          suppressContentEditableWarning="{{ true }}"
+          ref="{{ titleRef }}"
+          onBlur="{{ onTitleBlur }}"
+          onKeyDown="{{ onTitleKeyDown }}"
+          spellcheck="false"
+          aria-label="Trip name"
+          class="mb-3 -mx-2 px-2 text-[2rem] leading-[1.25] font-normal rounded-none outline-none cursor-text border-b-2 border-transparent hover:border-driftlog-border-subtle focus:border-driftlog-blue transition-colors duration-[110ms]"
+        >{{ tripName }}</h1>
         <div class="flex items-center gap-4 flex-wrap">
           <span class="inline-flex items-center gap-2 text-sm text-driftlog-text-2">
             <img src="carbon/icons/calendar.svg" width="16" height="16" alt="" class="opacity-60" /> Jun 12 – 15, 2026
@@ -152,7 +161,29 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1056,&quot;height&quot;:900}}">
 class Component extends DCLogic {
+  state = { tripName: (() => {
+    try { return localStorage.getItem("driftlog.tripName") || "Lisbon long weekend"; }
+    catch (e) { return "Lisbon long weekend"; }
+  })() };
+
+  commitTitle = (el) => {
+    const next = (el.textContent || "").replace(/\s+/g, " ").trim() || "Lisbon long weekend";
+    el.textContent = next;
+    try { localStorage.setItem("driftlog.tripName", next); } catch (e) {}
+    this.setState({ tripName: next });
+  };
+
   renderVals() {
+    const titleRef = (el) => { this._titleEl = el; };
+    const onTitleBlur = (e) => this.commitTitle(e.currentTarget);
+    const onTitleKeyDown = (e) => {
+      if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.currentTarget.textContent = this.state.tripName;
+        e.currentTarget.blur();
+      }
+    };
     const fmt = (n) => "€" + n.toLocaleString("en-IE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const avatars = { You: "#0f62fe", Maya: "#007d79", Sam: "#8a3ffc", Theo: "#d02670" };
     const ledger = [
@@ -193,7 +224,7 @@ class Component extends DCLogic {
       amountStr:    fmt(e.amount),
     }));
 
-    return { people, expenses };
+    return { people, expenses, tripName: this.state.tripName, titleRef, onTitleBlur, onTitleKeyDown };
   }
 }
 
