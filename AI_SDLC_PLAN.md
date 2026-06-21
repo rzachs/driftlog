@@ -54,11 +54,19 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 ### 4. Spec-gated implementation
 **Goal:** AI only writes logic for cases that exist in a spec table. No invented behavior.
 
-**Approach:** Before implementing any feature or fixing any logic bug, AI must cite the relevant `/specs/business-rules/` row(s). If no row covers the case, AI surfaces the gap to the human rather than guessing.
+**Approach:** Features flow through a three-command pipeline. Each command is a human-gated checkpoint — nothing proceeds without explicit approval.
 
-**AI role:** Implement exactly what specs say. Refuse to implement undecided cases.
+```
+/sdlc-spec <description>   → draft or update a feature spec → human approves
+/sdlc-plan <spec-path>     → read spec + code, output implementation + test plan → human approves
+/sdlc-implement <spec-path>→ execute plan (spec-gated code + tests + verify)
+```
 
-**Status:** 🟡 4-step pre-implementation checklist live in CLAUDE.md. Hard enforcement (hook that blocks without spec citation) not yet built.
+Before writing any logic, `sdlc-implement` cites the exact spec AC item or business-rules row it satisfies. If a case arises with no spec coverage, it surfaces the gap rather than guessing. Idempotency check runs first — re-running on an already-implemented feature is safe.
+
+**AI role:** Implement exactly what specs say. Refuse to implement undecided cases. Surface gaps to the human.
+
+**Status:** ✅ Done. Three-command pipeline built and live. The CLAUDE.md checklist remains as a fallback for ad-hoc changes made outside the pipeline.
 
 ---
 
