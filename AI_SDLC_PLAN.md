@@ -25,7 +25,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Read before touching any logic. Flag when an implementation covers a case not in the table (potential spec gap). Never fill in the table autonomously.
 
-**Status:** 🟡 Scaffold created. Pipeline enforcement (hook / pre-task checklist) not yet wired.
+**Status:** 🟡 Scaffold created. Convention enforced via 4-step CLAUDE.md checklist; hard tooling hook not yet built.
 
 ---
 
@@ -58,7 +58,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Implement exactly what specs say. Refuse to implement undecided cases.
 
-**Status:** ⬜ Convention established in CLAUDE.md. Enforcement workflow (hook or checklist) not yet built.
+**Status:** 🟡 4-step pre-implementation checklist live in CLAUDE.md. Hard enforcement (hook that blocks without spec citation) not yet built.
 
 ---
 

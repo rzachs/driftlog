@@ -66,10 +66,19 @@ driftlog/
 │       ├── AddExpense.jsx
 │       ├── PersonDetail.jsx
 │       └── SettleUp.jsx
-├── design/          # Claude Design comp files (.dc.html) — design reference only
-├── server.js        # Express server + all API routes
-├── db.js            # SQLite schema, queries, balance/settlement logic
-├── index.html       # Vite SPA entry point
+├── specs/
+│   ├── business-rules/       # Human-authored behavioral decision tables (source of truth)
+│   │   └── _template.md
+│   └── features/             # Human-authored user stories + acceptance criteria
+│       └── _template.md
+├── design/                   # Claude Design comp files (.dc.html) — design reference only
+├── .claude/
+│   └── commands/             # Custom Claude Code slash commands
+├── server.js                 # Express server + all API routes
+├── db.js                     # SQLite schema, queries, balance/settlement logic
+├── index.html                # Vite SPA entry point
+├── AI_SDLC_PLAN.md           # AI SDLC experiment — phase-by-phase plan and progress
+├── CLAUDE.md                 # Claude Code instructions for this repo
 ├── vite.config.mjs
 ├── tailwind.config.js
 └── package.json
