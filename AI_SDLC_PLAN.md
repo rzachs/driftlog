@@ -62,20 +62,35 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
-### 5. Testing pipeline
-**Goal:** Tests derived mechanically from specs — not invented, not duplicated from code.
+### 5. Unit & integration tests
+**Goal:** Business logic verified at the function level — fast, no browser, no server required.
 
-**Approach (two layers):**
-- **Unit/integration:** Each row in a business-rules table → one test case. AI generates test stubs from the table; human adds any setup fixtures needed.
-- **E2E:** Each Given/When/Then in a feature file → one Playwright scenario. playwright-bdd wires `.feature` files to Playwright tests.
+**Approach:** Each row in a business-rules table → one test case. AI generates test stubs from the table; human adds any setup fixtures needed. Focus areas: `calculateBalances()`, `calculateSettlements()`, API route logic.
 
-**AI role:** Generate test stubs from spec files. A failing test always traces back to a specific spec row.
+**Tool:** Vitest (already aligned with the Vite build setup).
 
-**Status:** ⬜ Not started. playwright-bdd setup deferred.
+**AI role:** Read a business-rules file, generate a test file with one `it()` per row. A failing test always cites the spec row it came from.
+
+**Status:** ⬜ Not started.
 
 ---
 
-### 6. Spec-aware code review
+### 6. E2E (End-to-End) tests
+**Goal:** Browser-driven flows that verify the full stack — UI action → API → database → visible result.
+
+**What E2E means:** A real browser opens, clicks buttons, fills forms, and asserts what appears on screen. It tests the entire chain from the user's perspective, which unit tests cannot catch (routing bugs, rendering failures, API wiring errors).
+
+**Approach:** Each Given/When/Then in a feature file → one Playwright scenario. playwright-bdd wires `.feature` files under `specs/features/` to Playwright tests, keeping specs and tests in sync by design.
+
+**Tool:** Playwright + playwright-bdd.
+
+**AI role:** Generate `.feature` scenario stubs from feature spec AC. A failing E2E scenario always traces back to a specific feature file.
+
+**Status:** ⬜ Not started. playwright-bdd setup deferred pending unit test phase.
+
+---
+
+### 7. Spec-aware code review
 **Goal:** Code review that checks correctness *against specs*, not just code quality.
 
 **Approach:** Extend the existing `/code-review` skill with a spec-aware mode: given the changed files, find the relevant spec files, and verify the implementation matches every referenced spec row. Flag rows that are not covered by any test.
@@ -86,7 +101,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
-### 7. Documentation generation
+### 8. Documentation generation
 **Goal:** Docs that are always in sync with specs and code — because they're generated from them.
 
 **Three targets:**
@@ -100,7 +115,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
-### 8. CI/CD & deployment
+### 9. CI/CD & deployment
 **Goal:** Automated gates that prevent a deploy if specs, tests, and docs are out of sync.
 
 **Approach:**
@@ -114,7 +129,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
-### 9. Monitoring & maintenance
+### 10. Monitoring & maintenance
 **Goal:** Production errors classified by whether they represent a spec gap or a spec violation.
 
 **Approach:** When a bug is filed, AI checks whether the failing case exists in any business-rules table.
@@ -133,9 +148,10 @@ This makes the spec system self-correcting: every production bug is either a mis
 
 | Priority | Phase | Why |
 |---|---|---|
-| 1 | Testing pipeline | Highest ROI; business-rules table row → test stub is near-mechanical |
+| 1 | Unit & integration tests | Highest ROI; business-rules table row → test stub is near-mechanical |
 | 2 | Spec-gated implementation enforcement | Locks the "no guessing" rule into the workflow |
-| 3 | Spec-aware code review | Extends an existing skill; catches drift between specs and code |
-| 4 | Documentation generation | Straightforward once specs are stable |
-| 5 | CI/CD integration | Ties the pipeline together; release notes from spec diffs |
-| 6 | Monitoring / maintenance | Most speculative; requires production data to prove out |
+| 3 | E2E tests | Layered on top of unit tests once specs are stable |
+| 4 | Spec-aware code review | Extends an existing skill; catches drift between specs and code |
+| 5 | Documentation generation | Straightforward once specs are stable |
+| 6 | CI/CD integration | Ties the pipeline together; release notes from spec diffs |
+| 7 | Monitoring / maintenance | Most speculative; requires production data to prove out |
