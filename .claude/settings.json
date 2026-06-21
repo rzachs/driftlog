@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "pwsh -NonInteractive -File .claude/hooks/doc-check.ps1",
+            "timeout": 10,
+            "statusMessage": "Checking doc files are staged..."
+          }
+        ]
+      }
+    ]
+  }
+}

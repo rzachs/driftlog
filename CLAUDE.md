@@ -8,6 +8,18 @@ Full plan with phase statuses: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
 
 **`AI_SDLC_PLAN.md` is the single source of truth for phase status.** `README.md` links to it but does not duplicate the table. Whenever phase status changes, update only `AI_SDLC_PLAN.md`.
 
+## Before every git commit
+
+Before staging and committing, always check these three files and update them if the commit touches anything relevant:
+
+| File | Update when... |
+|------|---------------|
+| `AI_SDLC_PLAN.md` | A phase status changes (built ✅ / validated ✅ / partial 🟡) |
+| `CLAUDE.md` | Skills are added/renamed, conventions change, or new workflow rules are introduced |
+| `README.md` | Project structure, routes, API endpoints, or slash commands change |
+
+A pre-commit hook (`.claude/hooks/doc-check.ps1`) will remind you automatically if significant files are staged but these docs are not. Do not dismiss the reminder without checking.
+
 **Core principle:** Humans author intent (specs, design comps). AI derives everything downstream (code, tests, docs, release notes). The spec files are the only place behavioral decisions live — AI must never invent behavior that isn't in a spec table.
 
 ## Running the app
