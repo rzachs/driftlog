@@ -1,7 +1,7 @@
 Generate a Vitest test file from a business-rules spec. One `it()` per spec table row, each citing the row it covers.
 
-**Usage:** `/generate-tests <spec-name>`
-Example: `/generate-tests balance-calculation`
+**Usage:** `/sdlc-generate-tests <spec-name>`
+Example: `/sdlc-generate-tests balance-calculation`
 
 The spec name matches the filename in `specs/business-rules/` without the `.md` extension.
 

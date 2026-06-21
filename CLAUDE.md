@@ -77,10 +77,22 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 
 ## Slash commands
 
+All custom commands are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
+
+### Feature development pipeline
+
 | Command | What it does |
 |---------|-------------|
-| `/sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
-| `/generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
+| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval. Then tells you to run `/sdlc-plan`. |
+| `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval. Then tells you to run `/sdlc-implement`. |
+| `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify. Idempotency check first — will not re-implement what's already done. |
+
+### Other
+
+| Command | What it does |
+|---------|-------------|
+| `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
+| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
 
 ## Key conventions
 

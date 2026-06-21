@@ -15,7 +15,7 @@ Full plan and rationale: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
 | # | Phase | Approach | Status |
 |---|---|---|---|
 | 1 | Business rules | `/specs/business-rules/` — human-authored decision tables | 🟡 Scaffold done |
-| 2 | Feature specification | `/specs/features/` — user stories + AC linked to rules | 🟡 Scaffold done |
+| 2 | Feature specification | `/specs/features/` — user stories + AC linked to rules | ✅ Done |
 | 3 | Design → code | `DesignSync` + `/sync-app-design` — comp changes → React | ✅ Done |
 | 4 | Spec-gated implementation | AI cites spec row before writing any logic | 🟡 Convention set in CLAUDE.md |
 | 5 | Unit & integration tests | Business-rules table row → Vitest test case | ✅ Done |
@@ -71,7 +71,10 @@ driftlog/
 │   ├── business-rules/       # Human-authored behavioral decision tables (source of truth)
 │   │   └── _template.md
 │   └── features/             # Human-authored user stories + acceptance criteria
-│       └── _template.md
+│       ├── trips/            # Create trip, view trips, rename trip
+│       ├── expenses/         # Add expense (even split, custom split)
+│       ├── balances/         # View trip balances, expense history, person breakdown
+│       └── settle-up/        # View suggested payments, record payment, undo payment
 ├── design/                   # Claude Design comp files (.dc.html) — design reference only
 ├── .claude/
 │   └── commands/             # Custom Claude Code slash commands
@@ -116,12 +119,22 @@ driftlog/
 
 ## Slash commands
 
-Custom Claude Code commands live in `.claude/commands/`. Run them from the Claude Code chat with `/command-name`.
+Custom Claude Code commands live in `.claude/commands/`. All are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
+
+### Feature development pipeline
 
 | Command | What it does |
 |---------|-------------|
-| `/sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
-| `/generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
+| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval |
+| `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval |
+| `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify; idempotency check first |
+
+### Other
+
+| Command | What it does |
+|---------|-------------|
+| `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
+| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
 
 ## Design sync
 

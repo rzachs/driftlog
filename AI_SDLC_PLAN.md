@@ -36,7 +36,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Given a business rule file, draft AC stubs for human review. Never fill in feature files autonomously.
 
-**Status:** 🟡 Scaffold created. Spec-to-story drafting workflow not yet defined.
+**Status:** ✅ Done. 11 feature stubs created across 4 epics (`trips/`, `expenses/`, `balances/`, `settle-up/`), each following the user-story + AC template and referencing the relevant business-rules files. Spec gaps surfaced inline where the current code has undecided behaviour. Three-command pipeline defined and built: `/sdlc-spec` (draft spec → human approval) → `/sdlc-plan` (read spec + code → implementation + test plan → human approval) → `/sdlc-implement` (execute plan with idempotency check + test run).
 
 ---
 
@@ -47,7 +47,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Translate design intent into code. Never change behavior — only structure and style.
 
-**Status:** ✅ Done.
+**Status:** ✅ Done. `/sdlc-sync-app-design` fetches a comp, diffs it visually, and applies the structural/style changes to the corresponding `src/pages/*.jsx` file.
 
 ---
 
@@ -73,7 +73,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **Status:** ✅ Done. `calc.js` holds pure business-logic functions (`calculateBalancesFromData`, `calculateSettlementsFromBalances`); `db.js` are thin DB wrappers. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
 
-**Reusable command:** `/generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically.
+**Reusable command:** `/sdlc-generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically.
 
 ---
 
