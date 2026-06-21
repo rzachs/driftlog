@@ -1,5 +1,13 @@
 # Driftlog — Claude Code guide
 
+## Project intent
+
+Driftlog is a **trip expense splitter** and simultaneously a testbed for **AI-augmented SDLC**. The app is the vehicle; the workflow is the experiment. Every SDLC phase (requirements → design → code → tests → docs → deploy → monitoring) is being mapped to an AI workflow and proven out in this repo.
+
+Full plan with phase statuses: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
+
+**Core principle:** Humans author intent (specs, design comps). AI derives everything downstream (code, tests, docs, release notes). The spec files are the only place behavioral decisions live — AI must never invent behavior that isn't in a spec table.
+
 ## Running the app
 
 ```bash
@@ -50,9 +58,20 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 
 ## Specs
 
-`/specs/business-rules/` and `/specs/features/` must be read as context before implementing any logic or generating tests.
+`/specs/business-rules/` and `/specs/features/` are the **single source of truth for all behavioral decisions**.
 
-**These folders are human-authored input, not generated output.** Nothing in `/specs/business-rules/` or `/specs/features/` should be created, edited, or filled in by an agent without explicit human review. An agent may reference them but must not write to them autonomously.
+### Before implementing any logic or generating any tests
+
+1. Read the relevant `/specs/business-rules/` file(s)
+2. Identify the exact row(s) that cover the case being implemented
+3. Cite those rows explicitly before writing any code
+4. If no spec row covers the case → **stop and surface the gap to the human** — do not guess or infer
+
+### Rules
+
+- **These folders are human-authored input, not generated output.** Nothing in `/specs/business-rules/` or `/specs/features/` should be created, edited, or filled in by an agent without explicit human review.
+- An agent may read and reference spec files freely, but must never write to them autonomously.
+- A missing spec row is not a bug to fix — it is an undecided case that needs a human decision first.
 
 ## Key conventions
 
