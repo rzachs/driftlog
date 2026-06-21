@@ -74,7 +74,7 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 
 ## Specs
 
-`/specs/business-rules/` and `/specs/features/` are the **single source of truth for all behavioral decisions**.
+`/specs/features/` and `/specs/business-rules/` are the **single source of truth for all behavioral decisions**.
 
 ### Before implementing any logic or generating any tests
 

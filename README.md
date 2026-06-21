@@ -57,13 +57,13 @@ driftlog/
 │       ├── PersonDetail.jsx
 │       └── SettleUp.jsx
 ├── specs/
-│   ├── business-rules/       # Human-authored behavioral decision tables (source of truth)
-│   │   └── _template.md
-│   └── features/             # Human-authored user stories + acceptance criteria
-│       ├── trips/            # Create trip, view trips, rename trip
-│       ├── expenses/         # Add expense (even split, custom split)
-│       ├── balances/         # View trip balances, expense history, person breakdown
-│       └── settle-up/        # View suggested payments, record payment, undo payment
+│   ├── features/             # Human-authored user stories + acceptance criteria
+│   │   ├── trips/            # Create trip, view trips, rename trip
+│   │   ├── expenses/         # Add expense (even split, custom split)
+│   │   ├── balances/         # View trip balances, expense history, person breakdown
+│   │   └── settle-up/        # View suggested payments, record payment, undo payment
+│   └── business-rules/       # Human-authored behavioral decision tables (source of truth)
+│       └── _template.md
 ├── design/                   # Claude Design comp files (.dc.html) — design reference only
 ├── .claude/
 │   └── skills/               # Custom Claude Code skills (slash commands)
