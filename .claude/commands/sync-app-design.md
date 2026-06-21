@@ -1,6 +1,6 @@
 Sync one or all screens from the Claude Design project into the local codebase.
 
-**Claude Design project ID:** `CLAUDE_DESIGN_PROJECT_ID`
+**Claude Design project ID:** Read from `.env` — the value of `CLAUDE_DESIGN_PROJECT_ID`. Read that file at the start of execution and use the value wherever a project ID is required.
 
 **File mapping** (design comp → JSX file):
 | Design file | JSX file |

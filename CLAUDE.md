@@ -35,7 +35,7 @@ npm start
 
 ## Design sync workflow (SDLC)
 
-UI screens live in a **Claude Design** project (project ID `CLAUDE_DESIGN_PROJECT_ID`). The `design/` folder mirrors those files locally as `.dc.html` design comps.
+UI screens live in a **Claude Design** project (project ID is in `.env` as `CLAUDE_DESIGN_PROJECT_ID`). The `design/` folder mirrors those files locally as `.dc.html` design comps.
 
 **Pulling designer changes → local:**
 1. Fetch the updated `.dc.html` from Claude Design using `DesignSync.get_file`

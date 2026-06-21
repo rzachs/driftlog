@@ -43,7 +43,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 ### 3. Design → code
 **Goal:** Designer pushes UI comps; AI translates visual changes into React code automatically.
 
-**Approach:** Design comps live in `/design/` as `.dc.html` files synced from Claude Design (project `CLAUDE_DESIGN_PROJECT_ID`). The `/sync-app-design` skill fetches a comp, diffs it visually, and applies the structural/style changes to the corresponding `src/pages/*.jsx` file.
+**Approach:** Design comps live in `/design/` as `.dc.html` files synced from Claude Design (project ID in `.env` as `CLAUDE_DESIGN_PROJECT_ID`). The `/sync-app-design` skill fetches a comp, diffs it visually, and applies the structural/style changes to the corresponding `src/pages/*.jsx` file.
 
 **AI role:** Translate design intent into code. Never change behavior — only structure and style.
 
