@@ -48,6 +48,12 @@ UI screens live in a **Claude Design** project (project ID `CLAUDE_DESIGN_PROJEC
 
 The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ }}` templates) with static data. The `src/pages/*.jsx` files are the real app with live API calls — never overwrite one with the other directly.
 
+## Specs
+
+`/specs/business-rules/` and `/specs/features/` must be read as context before implementing any logic or generating tests.
+
+**These folders are human-authored input, not generated output.** Nothing in `/specs/business-rules/` or `/specs/features/` should be created, edited, or filled in by an agent without explicit human review. An agent may reference them but must not write to them autonomously.
+
 ## Key conventions
 
 - Vite builds the React SPA to `dist/`; Express serves `dist/` via `express.static`
