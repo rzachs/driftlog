@@ -1,6 +1,7 @@
 const { DatabaseSync } = require('node:sqlite');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const { calculateBalancesFromData, calculateSettlementsFromBalances } = require('./calc');
 
 const db = new DatabaseSync(path.join(__dirname, 'driftlog.db'));
 db.exec('PRAGMA journal_mode = WAL');
@@ -104,52 +105,20 @@ function seed() {
 // ── Balance calculation ───────────────────────────────────────────────────
 
 function calculateBalances(tripId) {
-  const members = db.prepare(
-    'SELECT * FROM trip_members WHERE trip_id = ?'
-  ).all(tripId);
-
-  const bal = {};
-  members.forEach(m => { bal[m.id] = 0; });
-
-  const expenses = db.prepare(
-    'SELECT * FROM expenses WHERE trip_id = ?'
-  ).all(tripId);
-
-  expenses.forEach(exp => {
-    bal[exp.paid_by_id] = (bal[exp.paid_by_id] || 0) + exp.amount;
-    const splits = db.prepare(
-      'SELECT * FROM expense_splits WHERE expense_id = ?'
-    ).all(exp.id);
-    splits.forEach(s => {
-      bal[s.person_id] = (bal[s.person_id] || 0) - s.amount;
-    });
-  });
-
-  return members.map(m => ({
-    ...m,
-    balance: Math.round((bal[m.id] || 0) * 100) / 100,
+  const members  = db.prepare('SELECT * FROM trip_members WHERE trip_id = ?').all(tripId);
+  const expenses = db.prepare('SELECT * FROM expenses WHERE trip_id = ?').all(tripId).map(exp => ({
+    ...exp,
+    splits: db.prepare('SELECT * FROM expense_splits WHERE expense_id = ?').all(exp.id),
   }));
+  const settlements = db.prepare(
+    'SELECT * FROM settlement_records WHERE trip_id = ? AND recorded_at IS NOT NULL'
+  ).all(tripId);
+  return calculateBalancesFromData(members, expenses, settlements);
 }
 
 // Greedy minimum-payments algorithm
 function calculateSettlements(tripId) {
-  const balances = calculateBalances(tripId);
-  const creditors = balances.filter(b => b.balance > 0.005).map(b => ({ ...b }));
-  const debtors   = balances.filter(b => b.balance < -0.005).map(b => ({ ...b }));
-  const payments  = [];
-
-  while (creditors.length && debtors.length) {
-    creditors.sort((a, b) => b.balance - a.balance);
-    debtors.sort((a, b) => a.balance - b.balance);
-    const c = creditors[0], d = debtors[0];
-    const amount = Math.min(c.balance, -d.balance);
-    payments.push({ from: d, to: c, amount: Math.round(amount * 100) / 100 });
-    c.balance -= amount;
-    d.balance += amount;
-    if (Math.abs(c.balance) < 0.005) creditors.shift();
-    if (Math.abs(d.balance) < 0.005) debtors.shift();
-  }
-  return payments;
+  return calculateSettlementsFromBalances(calculateBalances(tripId));
 }
 
 module.exports = { db, init, calculateBalances, calculateSettlements };

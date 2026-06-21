@@ -31,7 +31,9 @@ npm start
 | `src/App.jsx` | Route definitions (React Router v6) |
 | `design/` | Claude Design comp files (`.dc.html`) — design reference, not served |
 | `server.js` | Express server; all API routes are defined here |
-| `db.js` | SQLite setup, schema init, `calculateBalances()`, `calculateSettlements()` |
+| `db.js` | SQLite setup, schema init, thin wrappers `calculateBalances()`, `calculateSettlements()` |
+| `calc.js` | Pure business-logic functions: `calculateBalancesFromData()`, `calculateSettlementsFromBalances()` — no DB I/O, tested directly |
+| `tests/` | Vitest unit tests — one file per business-rules spec, one `it()` per table row |
 
 ## Design sync workflow (SDLC)
 
@@ -72,6 +74,13 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 - **These folders are human-authored input, not generated output.** Nothing in `/specs/business-rules/` or `/specs/features/` should be created, edited, or filled in by an agent without explicit human review.
 - An agent may read and reference spec files freely, but must never write to them autonomously.
 - A missing spec row is not a bug to fix — it is an undecided case that needs a human decision first.
+
+## Slash commands
+
+| Command | What it does |
+|---------|-------------|
+| `/sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
+| `/generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
 
 ## Key conventions
 

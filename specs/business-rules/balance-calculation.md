@@ -11,6 +11,7 @@
 | Positive balance = others owe you | Balance +$80 | Person is a creditor |
 | Negative balance = you owe others | Balance −$40 | Person is a debtor |
 | Zero balance = nothing to settle | Balance $0.00 | No payment required |
+| Recorded settlement offsets both parties' balances | Settlement of $50 recorded: Bob paid Alice | Bob balance +$50; Alice balance −$50 |
 
 > Examples in this table ARE the spec. If a case isn't listed here, it hasn't been decided — don't infer or guess it.
 

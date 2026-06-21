@@ -18,7 +18,7 @@ Full plan and rationale: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
 | 2 | Feature specification | `/specs/features/` — user stories + AC linked to rules | 🟡 Scaffold done |
 | 3 | Design → code | `DesignSync` + `/sync-app-design` — comp changes → React | ✅ Done |
 | 4 | Spec-gated implementation | AI cites spec row before writing any logic | 🟡 Convention set in CLAUDE.md |
-| 5 | Unit & integration tests | Business-rules table row → Vitest test case | ⬜ Not started |
+| 5 | Unit & integration tests | Business-rules table row → Vitest test case | ✅ Done |
 | 6 | E2E tests | Feature AC (Given/When/Then) → Playwright scenario via playwright-bdd | ⬜ Not started |
 | 7 | Spec-aware code review | `/code-review` cross-referenced against spec tables | 🟡 Skill exists, spec-aware mode not built |
 | 8 | Documentation generation | Docs derived from specs + routes; never hand-edited | ⬜ Not started |
@@ -76,11 +76,16 @@ driftlog/
 ├── .claude/
 │   └── commands/             # Custom Claude Code slash commands
 ├── server.js                 # Express server + all API routes
-├── db.js                     # SQLite schema, queries, balance/settlement logic
+├── db.js                     # SQLite schema, seed data, thin DB wrappers for balances/settlements
+├── calc.js                   # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances
+├── tests/
+│   ├── balance-calculation.test.js    # One test per spec row in specs/business-rules/balance-calculation.md
+│   └── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
 ├── index.html                # Vite SPA entry point
 ├── AI_SDLC_PLAN.md           # AI SDLC experiment — phase-by-phase plan and progress
 ├── CLAUDE.md                 # Claude Code instructions for this repo
 ├── vite.config.mjs
+├── vitest.config.mjs
 ├── tailwind.config.js
 └── package.json
 ```
@@ -108,6 +113,15 @@ driftlog/
 | GET | `/api/trips/:id/settle` | Suggested settlement payments |
 | POST | `/api/trips/:id/settle` | Record a payment |
 | DELETE | `/api/trips/:tripId/settle/:recordId` | Undo a recorded payment |
+
+## Slash commands
+
+Custom Claude Code commands live in `.claude/commands/`. Run them from the Claude Code chat with `/command-name`.
+
+| Command | What it does |
+|---------|-------------|
+| `/sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
+| `/generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
 
 ## Design sync
 

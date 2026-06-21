@@ -71,7 +71,9 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Read a business-rules file, generate a test file with one `it()` per row. A failing test always cites the spec row it came from.
 
-**Status:** ⬜ Not started.
+**Status:** ✅ Done. `calc.js` holds pure business-logic functions (`calculateBalancesFromData`, `calculateSettlementsFromBalances`); `db.js` are thin DB wrappers. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
+
+**Reusable command:** `/generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically.
 
 ---
 

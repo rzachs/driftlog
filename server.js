@@ -137,25 +137,7 @@ app.get('/api/trips/:id/settle', (req, res) => {
   if (!trip) return res.status(404).json({ error: 'Not found' });
 
   const payments = calculateSettlements(req.params.id);
-  const records  = db.prepare(
-    'SELECT * FROM settlement_records WHERE trip_id = ?'
-  ).all(req.params.id);
-
-  const result = payments.map(p => {
-    const record = records.find(r =>
-      r.from_person_id === p.from.id &&
-      r.to_person_id   === p.to.id &&
-      Math.abs(r.amount - p.amount) < 0.005
-    );
-    return {
-      id:       record?.id ?? null,
-      from:     p.from,
-      to:       p.to,
-      amount:   p.amount,
-      recorded: record ? !!record.recorded_at : false,
-    };
-  });
-  res.json(result);
+  res.json(payments.map(p => ({ id: null, from: p.from, to: p.to, amount: p.amount, recorded: false })));
 });
 
 app.post('/api/trips/:id/settle', (req, res) => {

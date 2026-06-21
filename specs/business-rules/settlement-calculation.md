@@ -16,4 +16,3 @@
 These cases are not handled by the current code and have no decided behavior. A spec row must be added here before any implementation or test is written for them.
 
 - **Rounding residuals** — When split amounts are rounded individually, the sum of splits may not exactly equal the expense total. The effect on settlement amounts across a full trip has not been decided.
-- **Already-recorded settlements** — The settlement calculation does not account for payments that have already been recorded. It always returns the full theoretical settlement, not the remaining balance after partial payments.
