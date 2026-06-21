@@ -7,7 +7,7 @@ Driftlog is a testbed for **AI-augmented software development**. The app itself 
 ```
 Human intent
     ↓  (human writes)
-Specs  (/specs/business-rules/ + /specs/features/)
+Specs  (/specs/features/ + /specs/business-rules/)
     ↓  (AI reads, never writes without human review)
 Design comps → Code → Tests → Docs → Release notes
 ```
@@ -22,11 +22,11 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 | # | Phase | Built | Validated |
 |---|---|---|---|
-| 1 | Requirements — Business rules | 🟡 partial | ⬜ |
-| 2 | Feature specification | ✅ | ⬜ |
+| 1 | Feature specification | ✅ | ⬜ |
+| 2 | Business rules | 🟡 partial | ⬜ |
 | 3 | Design → code | ✅ | ✅ |
-| 4 | Spec-gated implementation | ✅ | ⬜ |
-| 5 | Unit & integration tests | ✅ | ⬜ |
+| 4 | Implementation | ✅ | ⬜ |
+| 5 | Unit tests | ✅ | ⬜ |
 | 6 | E2E tests | ⬜ | ⬜ |
 | 7 | Spec-aware code review | 🟡 partial | ⬜ |
 | 8 | Documentation generation | ⬜ | ⬜ |
@@ -37,27 +37,29 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ## SDLC phases
 
-### 1. Requirements — Business rules
-**Goal:** Human-authored tables that are the single source of truth for every behavioral decision.
+### 1. Feature specification
+**Goal:** Structured feature files that capture what is being built — user stories, acceptance criteria, and scope boundaries.
 
-**Approach:** `/specs/business-rules/` holds one file per rule domain. Each file is a Markdown table: Scenario | Input | Expected output. Every row is a decided case. Undecided cases are simply absent.
-
-**AI role:** Read before touching any logic. Flag when an implementation covers a case not in the table (potential spec gap). Never fill in the table autonomously.
-
-**Status:** 🟡 Scaffold created. Convention enforced via CLAUDE.md checklist. A pre-commit hook (`.claude/hooks/doc-check.ps1`, wired in `.claude/settings.json`) automatically warns Claude when significant files are staged without also updating `README.md`, `CLAUDE.md`, or `AI_SDLC_PLAN.md`. Hard enforcement that checks spec-table coverage before a commit is not yet built.
-
----
-
-### 2. Feature specification
-**Goal:** Structured feature files that link user stories to business rules and define acceptance criteria.
-
-**Approach:** `/specs/features/` holds one file per feature. Each file follows the template: user story → AC (Given/When/Then) → business rules referenced → out of scope → edge cases (by reference, not re-stated).
+**Approach:** `/specs/features/` holds one file per feature. Each file follows the template: user story → AC (Given/When/Then) → business rules referenced → out of scope → edge cases (by reference, not re-stated). Features are defined first, at a high level; business rules (Phase 2) detail the logic within them.
 
 **Tool:** `/sdlc-spec <description>` — takes a plain-English description, auto-detects whether it's a new feature or an update to an existing one, drafts the spec file, and waits for human approval before writing anything. On approval, instructs you to proceed to Phase 4 with `/sdlc-plan`.
 
 **AI role:** Draft spec stubs from plain English. Never fill in feature files autonomously. Never proceed to implementation — that's Phase 4.
 
 **Status:** ✅ Done. 11 feature stubs created across 4 epics (`trips/`, `expenses/`, `balances/`, `settle-up/`), each following the user-story + AC template and referencing the relevant business-rules files. Spec gaps surfaced inline where the current code has undecided behaviour.
+
+---
+
+### 2. Business rules
+**Goal:** Human-authored decision tables that are the single source of truth for every behavioural edge case within a feature.
+
+**Approach:** `/specs/business-rules/` holds one file per rule domain. Each file is a Markdown table: Scenario | Input | Expected output. Every row is a decided case. Undecided cases are simply absent — not guessed. Business rules are derived from features (Phase 1): once you know what a feature does, you nail down exactly how the logic behaves.
+
+**AI role:** Read before touching any logic. Flag when an implementation covers a case not in any table (potential spec gap). Never fill in the table autonomously.
+
+**No AI authoring tool by design.** Features get `/sdlc-spec` because the shape of a feature spec is mechanical and AI can scaffold it. Business rules are different — each row is a human decision about exact edge-case behaviour. Drafting them is analysis work, not scaffolding. A future tool that proposes decision-table rows from a feature spec for human review is a viable addition, but it hasn't been built.
+
+**Status:** 🟡 Scaffold created. Convention enforced via CLAUDE.md checklist. A pre-commit hook (`.claude/hooks/doc-check.ps1`, wired in `.claude/settings.json`) automatically warns Claude when significant files are staged without also updating `README.md`, `CLAUDE.md`, or `AI_SDLC_PLAN.md`. Hard enforcement that checks spec-table coverage before a commit is not yet built.
 
 ---
 
@@ -74,32 +76,40 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
-### 4. Spec-gated implementation
-**Goal:** AI only writes logic for cases that exist in a spec table. No invented behaviour.
+### 4. Implementation
+**Goal:** AI writes only logic that is covered by a spec. No invented behaviour — for either features or business rules.
 
-**Approach:** Given an approved feature spec from Phase 2, implementation follows a two-step human-gated pipeline:
+**Scope:** Implementation has two distinct inputs:
+- **Feature specs** (Phase 1) → UI behaviour, API routes, component logic
+- **Business rules** (Phase 2) → pure logic functions in `calc.js`
+
+Both are spec-gated: before writing any logic, the exact spec row or AC item it satisfies must be cited. If a case has no coverage, the gap is surfaced to the human rather than guessed.
+
+**Feature implementation — two-step human-gated pipeline:**
 
 ```
 /sdlc-plan <spec-path>       → read spec + existing code → output implementation + test plan → human approves
-/sdlc-implement <spec-path>  → execute approved plan: spec-gated code changes + tests + verify
+/sdlc-implement <spec-path>  → execute approved plan: code changes + tests + verify
 ```
 
-Before writing any logic, `/sdlc-implement` cites the exact AC item or business-rules row it satisfies. If a case arises with no spec coverage, it surfaces the gap rather than guessing. Idempotency check runs first — re-running on an already-implemented feature is safe.
+Idempotency check runs first — re-running on an already-implemented feature is safe.
+
+**Business rules implementation — currently manual, no dedicated tool.** When a business-rules table is written or updated, the corresponding `calc.js` function is implemented by hand following the same cite-before-you-write discipline. A `/sdlc-implement-rules` skill (parallel to `/sdlc-implement` for features) is a natural future addition.
 
 **AI role:** Implement exactly what specs say. Refuse to implement undecided cases. Surface gaps to the human.
 
-**Status:** ✅ Done. Both skills built and live. Full workflow: `/sdlc-spec` (Phase 2) → `/sdlc-plan` → `/sdlc-implement` (Phase 4).
+**Status:** ✅ Done for feature implementation. Both skills built and live. Full feature workflow: `/sdlc-spec` (Phase 1) → `/sdlc-plan` → `/sdlc-implement` (Phase 4). Business rules implementation is manual.
 
 ---
 
-### 5. Unit & integration tests
+### 5. Unit tests
 **Goal:** Business logic verified at the function level — fast, no browser, no server required.
 
-**Approach:** Each row in a business-rules table → one test case. `calc.js` holds pure business-logic functions with no DB I/O so they can be called directly with plain-array fixtures.
+**Approach:** Each row in a business-rules table → one test case. `calc.js` holds pure business-logic functions with no DB I/O so they can be called directly with plain-array fixtures. A failing test always cites the spec row it came from.
 
 **Tool:** Vitest. **Skill:** `/sdlc-generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically, one `it()` per row, skipping known gaps.
 
-**AI role:** Read a business-rules file, generate a test file with one `it()` per row. A failing test always cites the spec row it came from.
+**AI role:** Read a business-rules file, generate a test file with one `it()` per row.
 
 **Status:** ✅ Done. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
 
@@ -123,11 +133,11 @@ Before writing any logic, `/sdlc-implement` cites the exact AC item or business-
 ### 7. Spec-aware code review
 **Goal:** Code review that checks correctness *against specs*, not just code quality.
 
-**Approach:** Extend the existing `/code-review` skill with a spec-aware mode: given the changed files, find the relevant spec files, and verify the implementation matches every referenced spec row. Flag rows that are not covered by any test.
+**Approach:** Extend the existing `/code-review` command with a spec-aware mode: given the changed files, find the relevant spec files, and verify the implementation matches every referenced spec row. Flag rows that are not covered by any test.
 
 **AI role:** Cross-reference implementation against spec tables. Surface mismatches and coverage gaps.
 
-**Status:** 🟡 `/code-review` (built-in skill) exists. Spec-aware extension not yet built.
+**Status:** 🟡 `/code-review ultra` (built-in Claude Code command) exists. Spec-aware extension not yet built.
 
 ---
 
