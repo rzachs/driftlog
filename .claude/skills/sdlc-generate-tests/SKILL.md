@@ -1,4 +1,7 @@
-Generate a Vitest test file from a business-rules spec. One `it()` per spec table row, each citing the row it covers.
+---
+description: Generate a Vitest test file from a business-rules spec. One `it()` per spec table row, each citing the row it covers.
+disable-model-invocation: true
+---
 
 **Usage:** `/sdlc-generate-tests <spec-name>`
 Example: `/sdlc-generate-tests balance-calculation`

@@ -1,4 +1,7 @@
-Read an approved feature spec and the existing codebase, check what's already implemented, and output an implementation + test plan for user approval. Read-only — makes no changes.
+---
+description: Read an approved feature spec and the existing codebase, check what's already implemented, and output an implementation + test plan for user approval. Read-only — makes no changes.
+disable-model-invocation: true
+---
 
 **Usage:** `/sdlc-plan <path to spec file>`
 Example: `/sdlc-plan specs/features/expenses/add-expense-even-split.md`

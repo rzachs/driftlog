@@ -1,4 +1,7 @@
-Sync one or all screens from the Claude Design project into the local codebase.
+---
+description: Sync one or all screens from the Claude Design project into the local codebase.
+disable-model-invocation: true
+---
 
 **Claude Design project ID:** Read from `.env` — the value of `CLAUDE_DESIGN_PROJECT_ID`. Read that file at the start of execution and use the value wherever a project ID is required.
 

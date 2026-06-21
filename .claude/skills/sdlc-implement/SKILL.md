@@ -1,4 +1,7 @@
-Execute an approved implementation plan: make code changes, create or update tests, verify with a test run. Checks idempotency first — will not re-implement what is already done.
+---
+description: Execute an approved implementation plan: make code changes, create or update tests, verify with a test run. Checks idempotency first — will not re-implement what is already done.
+disable-model-invocation: true
+---
 
 **Usage:** `/sdlc-implement <path to spec file>`
 Example: `/sdlc-implement specs/features/expenses/add-expense-even-split.md`

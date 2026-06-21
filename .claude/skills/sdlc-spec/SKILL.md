@@ -1,4 +1,7 @@
-Draft or update a feature spec from a plain-English description. Detects new vs existing, writes the spec file only after user approval, then tells you to run /sdlc-plan.
+---
+description: Draft or update a feature spec from a plain-English description. Detects new vs existing, writes the spec file only after user approval, then tells you to run /sdlc-plan.
+disable-model-invocation: true
+---
 
 **Usage:** `/sdlc-spec <plain English description of the feature>`
 Example: `/sdlc-spec Add the ability to delete an expense from a trip`
