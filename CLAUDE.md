@@ -79,7 +79,7 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 
 ## Slash commands
 
-All custom commands are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
+All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands. Skills live in `.claude/skills/<name>/SKILL.md`.
 
 ### Feature development pipeline
 

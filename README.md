@@ -66,7 +66,7 @@ driftlog/
 │       └── settle-up/        # View suggested payments, record payment, undo payment
 ├── design/                   # Claude Design comp files (.dc.html) — design reference only
 ├── .claude/
-│   └── commands/             # Custom Claude Code slash commands
+│   └── skills/               # Custom Claude Code skills (slash commands)
 ├── server.js                 # Express server + all API routes
 ├── db.js                     # SQLite schema, seed data, thin DB wrappers for balances/settlements
 ├── calc.js                   # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances
@@ -108,7 +108,7 @@ driftlog/
 
 ## Slash commands
 
-Custom Claude Code commands live in `.claude/commands/`. All are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
+Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
 
 ### Feature development pipeline
 
