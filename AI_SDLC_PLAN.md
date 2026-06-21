@@ -44,7 +44,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Read before touching any logic. Flag when an implementation covers a case not in the table (potential spec gap). Never fill in the table autonomously.
 
-**Status:** 🟡 Scaffold created. Convention enforced via 4-step CLAUDE.md checklist; hard tooling hook not yet built.
+**Status:** 🟡 Scaffold created. Convention enforced via CLAUDE.md checklist. A pre-commit hook (`.claude/hooks/doc-check.ps1`, wired in `.claude/settings.json`) automatically warns Claude when significant files are staged without also updating `README.md`, `CLAUDE.md`, or `AI_SDLC_PLAN.md`. Hard enforcement that checks spec-table coverage before a commit is not yet built.
 
 ---
 
@@ -53,58 +53,59 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **Approach:** `/specs/features/` holds one file per feature. Each file follows the template: user story → AC (Given/When/Then) → business rules referenced → out of scope → edge cases (by reference, not re-stated).
 
-**AI role:** Given a business rule file, draft AC stubs for human review. Never fill in feature files autonomously.
+**Tool:** `/sdlc-spec <description>` — takes a plain-English description, auto-detects whether it's a new feature or an update to an existing one, drafts the spec file, and waits for human approval before writing anything. On approval, instructs you to proceed to Phase 4 with `/sdlc-plan`.
 
-**Status:** ✅ Done. 11 feature stubs created across 4 epics (`trips/`, `expenses/`, `balances/`, `settle-up/`), each following the user-story + AC template and referencing the relevant business-rules files. Spec gaps surfaced inline where the current code has undecided behaviour. Three-command pipeline defined and built: `/sdlc-spec` (draft spec → human approval) → `/sdlc-plan` (read spec + code → implementation + test plan → human approval) → `/sdlc-implement` (execute plan with idempotency check + test run).
+**AI role:** Draft spec stubs from plain English. Never fill in feature files autonomously. Never proceed to implementation — that's Phase 4.
+
+**Status:** ✅ Done. 11 feature stubs created across 4 epics (`trips/`, `expenses/`, `balances/`, `settle-up/`), each following the user-story + AC template and referencing the relevant business-rules files. Spec gaps surfaced inline where the current code has undecided behaviour.
 
 ---
 
 ### 3. Design → code
-**Goal:** Designer pushes UI comps; AI translates visual changes into React code automatically.
+**Goal:** Designer pushes UI comps; AI translates visual changes into React code.
 
-**Approach:** Design comps live in `/design/` as `.dc.html` files synced from Claude Design (project ID in `.env` as `CLAUDE_DESIGN_PROJECT_ID`). The `/sync-app-design` skill fetches a comp, diffs it visually, and applies the structural/style changes to the corresponding `src/pages/*.jsx` file.
+**Approach:** Design comps live in `/design/` as `.dc.html` files synced from Claude Design (project ID in `.env` as `CLAUDE_DESIGN_PROJECT_ID`). This is an **ongoing parallel workflow** — not a one-time sequential gate. Whenever the designer pushes an update, run the sync for the affected screen(s).
 
-**AI role:** Translate design intent into code. Never change behavior — only structure and style.
+**Tool:** `/sdlc-sync-app-design` — fetches a comp from Claude Design, diffs it visually against the local file, and applies only structural/style changes to the corresponding `src/pages/*.jsx` file. Never overwrites business logic, API calls, or routing.
 
-**Status:** ✅ Done. `/sdlc-sync-app-design` fetches a comp, diffs it visually, and applies the structural/style changes to the corresponding `src/pages/*.jsx` file.
+**AI role:** Translate design intent into code. Never change behaviour — only structure and style.
+
+**Status:** ✅ Done and validated. `/sdlc-sync-app-design` built and exercised end-to-end.
 
 ---
 
 ### 4. Spec-gated implementation
-**Goal:** AI only writes logic for cases that exist in a spec table. No invented behavior.
+**Goal:** AI only writes logic for cases that exist in a spec table. No invented behaviour.
 
-**Approach:** Features flow through a three-command pipeline. Each command is a human-gated checkpoint — nothing proceeds without explicit approval.
+**Approach:** Given an approved feature spec from Phase 2, implementation follows a two-step human-gated pipeline:
 
 ```
-/sdlc-spec <description>   → draft or update a feature spec → human approves
-/sdlc-plan <spec-path>     → read spec + code, output implementation + test plan → human approves
-/sdlc-implement <spec-path>→ execute plan (spec-gated code + tests + verify)
+/sdlc-plan <spec-path>       → read spec + existing code → output implementation + test plan → human approves
+/sdlc-implement <spec-path>  → execute approved plan: spec-gated code changes + tests + verify
 ```
 
-Before writing any logic, `sdlc-implement` cites the exact spec AC item or business-rules row it satisfies. If a case arises with no spec coverage, it surfaces the gap rather than guessing. Idempotency check runs first — re-running on an already-implemented feature is safe.
+Before writing any logic, `/sdlc-implement` cites the exact AC item or business-rules row it satisfies. If a case arises with no spec coverage, it surfaces the gap rather than guessing. Idempotency check runs first — re-running on an already-implemented feature is safe.
 
 **AI role:** Implement exactly what specs say. Refuse to implement undecided cases. Surface gaps to the human.
 
-**Status:** ✅ Done. Three-command pipeline built and live. The CLAUDE.md checklist remains as a fallback for ad-hoc changes made outside the pipeline.
+**Status:** ✅ Done. Both skills built and live. Full workflow: `/sdlc-spec` (Phase 2) → `/sdlc-plan` → `/sdlc-implement` (Phase 4).
 
 ---
 
 ### 5. Unit & integration tests
 **Goal:** Business logic verified at the function level — fast, no browser, no server required.
 
-**Approach:** Each row in a business-rules table → one test case. AI generates test stubs from the table; human adds any setup fixtures needed. Focus areas: `calculateBalances()`, `calculateSettlements()`, API route logic.
+**Approach:** Each row in a business-rules table → one test case. `calc.js` holds pure business-logic functions with no DB I/O so they can be called directly with plain-array fixtures.
 
-**Tool:** Vitest (already aligned with the Vite build setup).
+**Tool:** Vitest. **Skill:** `/sdlc-generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically, one `it()` per row, skipping known gaps.
 
 **AI role:** Read a business-rules file, generate a test file with one `it()` per row. A failing test always cites the spec row it came from.
 
-**Status:** ✅ Done. `calc.js` holds pure business-logic functions (`calculateBalancesFromData`, `calculateSettlementsFromBalances`); `db.js` are thin DB wrappers. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
-
-**Reusable command:** `/sdlc-generate-tests <spec-name>` — reads any `specs/business-rules/<spec-name>.md` file and generates the corresponding test file automatically.
+**Status:** ✅ Done. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
 
 ---
 
-### 6. E2E (End-to-End) tests
+### 6. E2E tests
 **Goal:** Browser-driven flows that verify the full stack — UI action → API → database → visible result.
 
 **What E2E means:** A real browser opens, clicks buttons, fills forms, and asserts what appears on screen. It tests the entire chain from the user's perspective, which unit tests cannot catch (routing bugs, rendering failures, API wiring errors).
@@ -115,7 +116,7 @@ Before writing any logic, `sdlc-implement` cites the exact spec AC item or busin
 
 **AI role:** Generate `.feature` scenario stubs from feature spec AC. A failing E2E scenario always traces back to a specific feature file.
 
-**Status:** ⬜ Not started. playwright-bdd setup deferred pending unit test phase.
+**Status:** ⬜ Not started. Deferred until unit test phase is fully validated.
 
 ---
 
@@ -126,7 +127,7 @@ Before writing any logic, `sdlc-implement` cites the exact spec AC item or busin
 
 **AI role:** Cross-reference implementation against spec tables. Surface mismatches and coverage gaps.
 
-**Status:** 🟡 `/code-review` skill exists. Spec-aware mode not yet built.
+**Status:** 🟡 `/code-review` (built-in skill) exists. Spec-aware extension not yet built.
 
 ---
 
@@ -136,7 +137,7 @@ Before writing any logic, `sdlc-implement` cites the exact spec AC item or busin
 **Three targets:**
 - **API docs** — derived from `server.js` route definitions (mechanical)
 - **User-facing docs** — derived from `/specs/features/` user stories
-- **Changelog** — derived from git commits + spec file diffs (which spec row changed → what user-visible behavior changed)
+- **Changelog** — derived from git commits + spec file diffs (which spec row changed → what user-visible behaviour changed)
 
 **AI role:** Generate docs on demand or as part of a release workflow. Docs are output, not source — never edit them directly.
 
@@ -170,17 +171,3 @@ This makes the spec system self-correcting: every production bug is either a mis
 **AI role:** Bug triage, spec gap detection, routing bugs to the right fix workflow.
 
 **Status:** ⬜ Not started.
-
----
-
-## Recommended build order
-
-| Priority | Phase | Why |
-|---|---|---|
-| 1 | Unit & integration tests | Highest ROI; business-rules table row → test stub is near-mechanical |
-| 2 | Spec-gated implementation enforcement | Locks the "no guessing" rule into the workflow |
-| 3 | E2E tests | Layered on top of unit tests once specs are stable |
-| 4 | Spec-aware code review | Extends an existing skill; catches drift between specs and code |
-| 5 | Documentation generation | Straightforward once specs are stable |
-| 6 | CI/CD integration | Ties the pipeline together; release notes from spec diffs |
-| 7 | Monitoring / maintenance | Most speculative; requires production data to prove out |
