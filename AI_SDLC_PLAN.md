@@ -16,6 +16,25 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 ---
 
+## Phase status
+
+**Built** — tooling/scaffold exists. **Validated** — exercised in a real workflow and confirmed working.
+
+| # | Phase | Built | Validated |
+|---|---|---|---|
+| 1 | Requirements — Business rules | 🟡 partial | ⬜ |
+| 2 | Feature specification | ✅ | ⬜ |
+| 3 | Design → code | ✅ | ✅ |
+| 4 | Spec-gated implementation | ✅ | ⬜ |
+| 5 | Unit & integration tests | ✅ | ⬜ |
+| 6 | E2E tests | ⬜ | ⬜ |
+| 7 | Spec-aware code review | 🟡 partial | ⬜ |
+| 8 | Documentation generation | ⬜ | ⬜ |
+| 9 | CI/CD & deployment | ⬜ | ⬜ |
+| 10 | Monitoring & maintenance | ⬜ | ⬜ |
+
+---
+
 ## SDLC phases
 
 ### 1. Requirements — Business rules

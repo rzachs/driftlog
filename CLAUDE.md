@@ -6,6 +6,8 @@ Driftlog is a **trip expense splitter** and simultaneously a testbed for **AI-au
 
 Full plan with phase statuses: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
 
+**`AI_SDLC_PLAN.md` is the single source of truth for phase status.** `README.md` links to it but does not duplicate the table. Whenever phase status changes, update only `AI_SDLC_PLAN.md`.
+
 **Core principle:** Humans author intent (specs, design comps). AI derives everything downstream (code, tests, docs, release notes). The spec files are the only place behavioral decisions live — AI must never invent behavior that isn't in a spec table.
 
 ## Running the app

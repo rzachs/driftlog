@@ -12,18 +12,7 @@ Full plan and rationale: [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md)
 
 ### Phase progress
 
-| # | Phase | Approach | Status |
-|---|---|---|---|
-| 1 | Business rules | `/specs/business-rules/` — human-authored decision tables | 🟡 Scaffold done |
-| 2 | Feature specification | `/specs/features/` — user stories + AC linked to rules | ✅ Done |
-| 3 | Design → code | `DesignSync` + `/sync-app-design` — comp changes → React | ✅ Done |
-| 4 | Spec-gated implementation | AI cites spec row before writing any logic | 🟡 Convention set in CLAUDE.md |
-| 5 | Unit & integration tests | Business-rules table row → Vitest test case | ✅ Done |
-| 6 | E2E tests | Feature AC (Given/When/Then) → Playwright scenario via playwright-bdd | ⬜ Not started |
-| 7 | Spec-aware code review | `/code-review` cross-referenced against spec tables | 🟡 Skill exists, spec-aware mode not built |
-| 8 | Documentation generation | Docs derived from specs + routes; never hand-edited | ⬜ Not started |
-| 9 | CI/CD & deployment | Spec coverage gate + AI-generated release notes | ⬜ Not started |
-| 10 | Monitoring & maintenance | Production bugs classified as spec gap vs. spec violation | ⬜ Not started |
+See [`AI_SDLC_PLAN.md`](./AI_SDLC_PLAN.md) for the full phase breakdown and current built/validated status.
 
 ---
 
