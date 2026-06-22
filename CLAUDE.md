@@ -35,6 +35,24 @@ npm run build
 npm start
 ```
 
+## Running tests
+
+```bash
+# Unit tests (Vitest — no browser, no server)
+npm test
+
+# E2E tests (Playwright — builds app, starts server, runs browser)
+npx bddgen && npx playwright test                        # all features
+npx bddgen && npx playwright test --grep @trips          # one domain
+npx bddgen && npx playwright test --grep "Create a trip" # one feature
+npx bddgen && npx playwright test --headed               # watch the browser
+```
+
+If the test run fails with a locked DB error, kill any running node process first:
+```
+Stop-Process -Name node -Force
+```
+
 ## Project structure
 
 | Path | Purpose |
@@ -48,6 +66,12 @@ npm start
 | `db.js` | SQLite setup, schema init, thin wrappers `calculateBalances()`, `calculateSettlements()` |
 | `calc.js` | Pure business-logic functions: `calculateBalancesFromData()`, `calculateSettlementsFromBalances()` — no DB I/O, tested directly |
 | `tests/` | Vitest unit tests — one file per business-rules spec, one `it()` per table row |
+| `e2e/features/` | Gherkin `.feature` files — one per feature spec, domain-tagged (`@trips`, `@expenses`, `@balances`, `@settle-up`) |
+| `e2e/steps/` | Playwright step definitions — one file per domain, all import from `e2e/fixtures.js` |
+| `e2e/fixtures.js` | `createBdd(test)` + `seededTrip` fixture shared by all step files |
+| `e2e/global-setup.js` | Deletes `driftlog-test.db` before each E2E run |
+| `e2e/cleanup-db.js` | Deletes test DB as part of the webServer startup command |
+| `playwright.config.js` | Playwright + playwright-bdd config; webServer builds and starts the app on `:3000` |
 
 ## Design sync workflow (SDLC)
 
@@ -107,10 +131,13 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 |---------|-------------|
 | `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
 | `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
+| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a feature spec `.md` — one Scenario per AC item, `@wip` on spec-gap scenarios |
 
 ## Key conventions
 
 - Vite builds the React SPA to `dist/`; Express serves `dist/` via `express.static`
 - All API routes are prefixed `/api/`
 - SQLite DB file (`driftlog.db`) is gitignored — run `npm start` to auto-create it on first launch
+- E2E tests use a separate `driftlog-test.db` (set via `DB_PATH` env var); seeding is skipped via `SKIP_SEED=true`
+- `bddgen` must run before `playwright test` whenever `.feature` files change — it generates `.features-gen/` (gitignored)
 - "You" is always the logged-in user's display name in the DB

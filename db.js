@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { calculateBalancesFromData, calculateSettlementsFromBalances } = require('./calc');
 
-const db = new DatabaseSync(path.join(__dirname, 'driftlog.db'));
+const db = new DatabaseSync(path.resolve(process.env.DB_PATH || path.join(__dirname, 'driftlog.db')));
 db.exec('PRAGMA journal_mode = WAL');
 db.exec('PRAGMA foreign_keys = ON');
 
@@ -51,7 +51,7 @@ function init() {
   `);
 
   const { c } = db.prepare('SELECT COUNT(*) AS c FROM trips').get();
-  if (c === 0) seed();
+  if (c === 0 && !process.env.SKIP_SEED) seed();
 }
 
 function seed() {

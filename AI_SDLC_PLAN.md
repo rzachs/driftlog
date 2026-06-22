@@ -27,7 +27,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 | 3 | Design → code | ✅ | ✅ |
 | 4 | Implementation | ✅ | ⬜ |
 | 5 | Unit tests | ✅ | ⬜ |
-| 6 | E2E tests | ⬜ | ⬜ |
+| 6 | E2E tests | ✅ | 🟡 partial |
 | 7 | Spec-aware code review | 🟡 partial | ⬜ |
 | 8 | Documentation generation | ⬜ | ⬜ |
 | 9 | CI/CD & deployment | ⬜ | ⬜ |
@@ -126,7 +126,7 @@ Idempotency check runs first — re-running on an already-implemented feature is
 
 **AI role:** Generate `.feature` scenario stubs from feature spec AC. A failing E2E scenario always traces back to a specific feature file.
 
-**Status:** ⬜ Not started. Deferred until unit test phase is fully validated.
+**Status:** ✅ Built. 🟡 Partially validated. Infrastructure complete: Playwright + playwright-bdd installed, `playwright.config.js`, `e2e/fixtures.js`, `e2e/global-setup.js`, 5 step definition files, 11 `.feature` files (one per feature spec, domain-tagged with `@trips` / `@expenses` / `@balances` / `@settle-up`), and `/sdlc-generate-e2e` skill. "Create a trip" feature (8 scenarios) passing end-to-end. Remaining features not yet validated — to be run as features are implemented and specs filled in.
 
 ---
 

@@ -39,6 +39,19 @@ npm run build
 npm start
 ```
 
+**Unit tests** (Vitest — no browser):
+```bash
+npm test
+```
+
+**E2E tests** (Playwright — builds app, opens Chromium):
+```bash
+npx bddgen && npx playwright test                        # all features
+npx bddgen && npx playwright test --grep @trips          # one domain
+npx bddgen && npx playwright test --grep "Create a trip" # one feature
+npx bddgen && npx playwright test --headed               # watch the browser
+```
+
 ## Project structure
 
 ```
@@ -73,6 +86,17 @@ driftlog/
 ├── tests/
 │   ├── balance-calculation.test.js    # One test per spec row in specs/business-rules/balance-calculation.md
 │   └── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
+├── e2e/
+│   ├── features/             # Gherkin .feature files (one per feature spec, domain-tagged)
+│   │   ├── trips/
+│   │   ├── expenses/
+│   │   ├── balances/
+│   │   └── settle-up/
+│   ├── steps/                # Playwright step definitions (one file per domain)
+│   ├── fixtures.js           # createBdd(test) + seededTrip fixture
+│   ├── global-setup.js       # Deletes test DB before each run
+│   └── cleanup-db.js         # DB cleanup run inside webServer command
+├── playwright.config.js      # Playwright + playwright-bdd config
 ├── index.html                # Vite SPA entry point
 ├── AI_SDLC_PLAN.md           # AI SDLC experiment — phase-by-phase plan and progress
 ├── CLAUDE.md                 # Claude Code instructions for this repo
@@ -124,6 +148,7 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 |---------|-------------|
 | `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
 | `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
+| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a feature spec `.md` — one Scenario per AC item |
 
 ## Design sync
 

@@ -19,3 +19,9 @@ Thumbs.db
 
 # Playwright
 .playwright-mcp/
+.features-gen/
+playwright-report/
+test-results/
+
+# Saved conversations
+.claude/conversations/
