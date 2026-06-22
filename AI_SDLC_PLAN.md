@@ -57,7 +57,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **AI role:** Read before touching any logic. Flag when an implementation covers a case not in any table (potential spec gap). Never fill in the table autonomously.
 
-**No AI authoring tool by design.** Features get `/sdlc-spec` because the shape of a feature spec is mechanical and AI can scaffold it. Business rules are different — each row is a human decision about exact edge-case behaviour. Drafting them is analysis work, not scaffolding. A future tool that proposes decision-table rows from a feature spec for human review is a viable addition, but it hasn't been built.
+**Tool:** `/sdlc-rules <spec-path>` — reads an approved feature spec, infers which scenarios need business-rules rows, proposes them as a draft table for human review, and writes only after explicit approval. Each proposed row is traced back to a specific AC item. Rows the human removes or rejects are simply absent — not guessed or filled in by the AI.
 
 **Status:** ✅ Convention and files established. Decision-table spec files created in `specs/business-rules/` covering all implemented domains: `trips.md`, `expenses.md`, `person-detail.md`, `balance-display.md`, `settlement-recording.md` (new), plus the pre-existing `balance-calculation.md` and `settlement-calculation.md`. All 11 E2E feature specs now link to their referenced business-rules rows. Pre-commit hook (`.claude/hooks/doc-check.ps1`) warns when docs are not updated. Hard enforcement (spec coverage gate before commit) not yet built.
 

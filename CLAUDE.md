@@ -113,6 +113,10 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 - An agent may read and reference spec files freely, but must never write to them autonomously.
 - A missing spec row is not a bug to fix — it is an undecided case that needs a human decision first.
 
+## Conversation logs
+
+When the user asks to "save the conversation", write a summary to `.claude/conversations/YYYY-MM-DD-<short-slug>.md`. Include: what was done, key decisions, and next steps. Match the format of existing files in that folder.
+
 ## Slash commands
 
 All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands. Skills live in `.claude/skills/<name>/SKILL.md`.
@@ -121,7 +125,8 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 
 | Command | What it does |
 |---------|-------------|
-| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval. Then tells you to run `/sdlc-plan`. |
+| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval. Then tells you to run `/sdlc-rules`. |
+| `/sdlc-rules <spec-path>` | Proposes business-rules table rows from a feature spec for human review; writes only after approval. Then tells you to update design comps and run `/sdlc-plan`. |
 | `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval. Then tells you to run `/sdlc-implement`. |
 | `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify. Idempotency check first — will not re-implement what's already done. |
 

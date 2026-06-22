@@ -16,6 +16,8 @@
 | Rename: Enter commits the edit | User types new name, presses Enter | Name saved |
 | Rename: Escape reverts without saving | User types new name, presses Escape | Name unchanged |
 | Rename a non-existent trip | PATCH /api/trips/:id, id not found | 404 error: "Not found" |
+| Deleting a trip permanently removes it and all related data | DELETE /api/trips/:id | Trip, its expenses, its members, and its settlements are deleted; 200 OK |
+| Deleting a non-existent trip | DELETE /api/trips/:id, id not found | 404 error: "Not found" |
 
 > Examples in this table ARE the spec. If a case isn't listed here, it hasn't been decided — don't infer or guess it.
 
@@ -24,4 +26,3 @@
 - **End date before start date** — No validation prevents end_date earlier than start_date. Whether this is blocked or silently allowed is undecided.
 - **Duplicate member names** — No uniqueness constraint prevents two members named "Alice" on the same trip. Behavior is undefined.
 - **"You" case-sensitivity** — The server filters `people.filter(p => p !== 'You')` (exact match). Sending "you" lowercase creates a second member alongside "You". Case-handling for member names has not been decided.
-- **Trip deletion** — No API endpoint or UI exists to delete a trip. Whether this is intentional or a missing feature is undecided.
