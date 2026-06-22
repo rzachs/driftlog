@@ -153,6 +153,7 @@ export default function AddExpense() {
             return (
               <div
                 key={m.id}
+                data-member={m.name}
                 className={`flex items-center gap-3 px-4 min-h-14${i < members.length - 1 ? ' border-b border-[#e0e0e0]' : ''}`}
                 style={{ background: checked ? '#ffffff' : '#f4f4f4' }}
               >
@@ -183,6 +184,7 @@ export default function AddExpense() {
                     <input
                       type="text"
                       inputMode="decimal"
+                      data-person={m.name}
                       value={custom[m.id]}
                       disabled={!checked}
                       onChange={e => setCustom(c => ({ ...c, [m.id]: e.target.value }))}

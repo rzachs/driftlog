@@ -1,8 +1,17 @@
 const { Given, When, Then, expect } = require('../fixtures');
 
-Given('a member has a positive balance', async ({ page }) => {
-  // The seededTrip fixture + expense setup in common.steps already created this;
-  // "You" paid for all 3 → positive balance
+Given('a member has a positive balance', async ({ page, request, seededTrip }) => {
+  // Maya paid for everyone → Maya has positive balance
+  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+    data: {
+      description: 'Maya paid',
+      amount: 90,
+      paidById: seededTrip.members.find(m => m.name === 'Maya').id,
+      date: '2026-01-02',
+      splits: seededTrip.members.map(m => ({ personId: m.id, amount: 30 })),
+    },
+  });
+  await page.goto(`/trips/${seededTrip.id}`);
   await page.waitForLoadState('networkidle');
 });
 
@@ -31,22 +40,29 @@ Given('I am on a person detail page for a member in a trip with expenses',
         splits: seededTrip.members.map(m => ({ personId: m.id, amount: 30 })),
       },
     });
-    const maya = seededTrip.members.find(m => m.name === 'Maya');
-    await page.goto(`/trips/${seededTrip.id}/members/${maya.id}`);
+    // Navigate to You's page (You is the payer for this expense)
+    const you = seededTrip.members.find(m => m.name === 'You');
+    await page.goto(`/trips/${seededTrip.id}/members/${you.id}`);
     await page.waitForLoadState('networkidle');
   }
 );
 
 Given('the member paid for an expense', async ({ page }) => {
-  // Established by the Given above — "You" paid
+  // Already on You's (payer's) page from the main Given
 });
 
 Given('the member did not pay but was included in the split', async ({ page }) => {
-  // Maya is in the split but didn't pay
+  // Navigate from You's page to Maya's page (non-payer) via trip overview
+  const url = page.url();
+  const tripId = url.match(/\/trips\/([^/]+)/)?.[1];
+  await page.goto(`/trips/${tripId}`);
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('link', { name: /Maya/i }).first().click();
+  await page.waitForLoadState('networkidle');
 });
 
 Given('the member paid and was split into the expense', async ({ page }) => {
-  // "You" paid $90 and also has a $30 share
+  // Already on You's page — You paid $90 and also has a $30 share
 });
 
 Given('the member has a negative net balance', async ({ page, request, seededTrip }) => {
@@ -115,16 +131,16 @@ Then('I see the member\'s total paid, total share, and net balance', async ({ pa
 });
 
 Then('the net impact is positive', async ({ page }) => {
-  await expect(page.locator('text=/\\+€/')).toBeVisible();
+  await expect(page.locator('text=/\\+€/').first()).toBeVisible();
 });
 
 Then('the net impact is negative', async ({ page }) => {
-  await expect(page.locator('text=/−€|-€/')).toBeVisible();
+  await expect(page.locator('text=/−€|-€/').first()).toBeVisible();
 });
 
 Then('the net impact reflects the payer-nets-out rule', async ({ page }) => {
   // You paid $90, share $30 → net +$60
-  await expect(page.locator('text=/\\+€60|\\+60/')).toBeVisible();
+  await expect(page.locator('text=/\\+€60|\\+60/').first()).toBeVisible();
 });
 
 Then('a {string} call-to-action is shown linking to the settle up page', async ({ page }, label) => {

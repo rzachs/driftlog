@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { db, init, calculateBalances, calculateSettlements } = require('./db');
+const { calculatePersonDetail } = require('./calc');
 
 const app = express();
 app.use(express.json());
@@ -74,6 +75,12 @@ app.patch('/api/trips/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+app.delete('/api/trips/:id', (req, res) => {
+  const result = db.prepare('DELETE FROM trips WHERE id = ?').run(req.params.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
+  res.json({ ok: true });
+});
+
 // ── Expenses ──────────────────────────────────────────────────────────────
 
 app.post('/api/trips/:id/expenses', (req, res) => {
@@ -108,25 +115,13 @@ app.get('/api/trips/:tripId/members/:memberId/detail', (req, res) => {
 
   const expenses = db.prepare(
     'SELECT * FROM expenses WHERE trip_id = ? ORDER BY date DESC, created_at DESC'
-  ).all(tripId);
+  ).all(tripId).map(exp => ({
+    ...exp,
+    payer:  db.prepare('SELECT * FROM trip_members WHERE id = ?').get(exp.paid_by_id),
+    splits: db.prepare('SELECT * FROM expense_splits WHERE expense_id = ?').all(exp.id),
+  }));
 
-  const rows = expenses.map(exp => {
-    const split = db.prepare(
-      'SELECT * FROM expense_splits WHERE expense_id = ? AND person_id = ?'
-    ).get(exp.id, memberId);
-    if (!split) return null;
-
-    const payer     = db.prepare('SELECT * FROM trip_members WHERE id = ?').get(exp.paid_by_id);
-    const allSplits = db.prepare('SELECT * FROM expense_splits WHERE expense_id = ?').all(exp.id);
-    const isPayer   = exp.paid_by_id === memberId;
-    const net       = Math.round(((isPayer ? exp.amount : 0) - split.amount) * 100) / 100;
-    return { expense: exp, payer, split, net, isPayer, ways: allSplits.length };
-  }).filter(Boolean);
-
-  const totalPaid  = rows.filter(r => r.isPayer).reduce((s, r) => s + r.expense.amount, 0);
-  const totalShare = rows.reduce((s, r) => s + r.split.amount, 0);
-  const netBalance = Math.round((totalPaid - totalShare) * 100) / 100;
-
+  const { rows, totalPaid, totalShare, netBalance } = calculatePersonDetail(memberId, expenses);
   res.json({ member, rows, totalPaid, totalShare, netBalance });
 });
 

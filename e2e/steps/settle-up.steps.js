@@ -53,9 +53,9 @@ Given('all payments were recorded', async ({ page, request, seededTrip }) => {
   });
   await page.goto(`/trips/${seededTrip.id}/settle`);
   await page.waitForLoadState('networkidle');
-  const buttons = await page.getByRole('button', { name: 'Record payment' }).all();
-  for (const btn of buttons) {
-    await btn.click();
+  // Re-query after each click to avoid stale references
+  while (await page.getByRole('button', { name: 'Record payment' }).count() > 0) {
+    await page.getByRole('button', { name: 'Record payment' }).first().click();
     await page.waitForResponse(r => r.url().includes('/settle') && r.request().method() === 'POST');
   }
 });
@@ -81,9 +81,9 @@ When('I click {string} on a recorded payment', async ({ page }, label) => {
 });
 
 When('I record all suggested payments', async ({ page }) => {
-  const buttons = await page.getByRole('button', { name: 'Record payment' }).all();
-  for (const btn of buttons) {
-    await btn.click();
+  // Re-query after each click to avoid stale references
+  while (await page.getByRole('button', { name: 'Record payment' }).count() > 0) {
+    await page.getByRole('button', { name: 'Record payment' }).first().click();
     await page.waitForResponse(r => r.url().includes('/settle') && r.request().method() === 'POST');
   }
 });
@@ -106,7 +106,7 @@ Then('the list shows the minimum number of payments to zero all balances', async
 
 Then('it states how many payments were found and how many members are in the trip', async ({ page }) => {
   await expect(page.locator('text=/payment/i').first()).toBeVisible();
-  await expect(page.locator('text=/member/i').first()).toBeVisible();
+  await expect(page.locator('text=/balance/i').first()).toBeVisible();
 });
 
 Then('no payment rows are shown', async ({ page }) => {

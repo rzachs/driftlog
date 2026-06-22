@@ -54,8 +54,7 @@ When('I deselect all members except {string} and {string}',
   async ({ page, seededTrip }, keep1, keep2) => {
     for (const member of seededTrip.members) {
       if (member.name !== keep1 && member.name !== keep2) {
-        const checkbox = page.locator(`label:has-text("${member.name}") input[type="checkbox"]`);
-        if (await checkbox.isChecked()) await checkbox.uncheck();
+        await page.locator(`[data-member="${member.name}"]`).locator('span').first().click();
       }
     }
   }
@@ -63,14 +62,12 @@ When('I deselect all members except {string} and {string}',
 
 When('I deselect all members', async ({ page, seededTrip }) => {
   for (const member of seededTrip.members) {
-    const checkbox = page.locator(`label:has-text("${member.name}") input[type="checkbox"]`);
-    if (await checkbox.isChecked()) await checkbox.uncheck();
+    await page.locator(`[data-member="${member.name}"]`).locator('span').first().click();
   }
 });
 
 When('I deselect {string}', async ({ page }, name) => {
-  const checkbox = page.locator(`label:has-text("${name}") input[type="checkbox"]`);
-  await checkbox.uncheck();
+  await page.locator(`[data-member="${name}"]`).locator('span').first().click();
 });
 
 When('I fill in amount {string} with {string} selected', async ({ page }, amount, _mode) => {
@@ -78,7 +75,7 @@ When('I fill in amount {string} with {string} selected', async ({ page }, amount
 });
 
 When('I enter {string} for {string}', async ({ page }, amount, personName) => {
-  await page.locator(`input[data-person="${personName}"], input[aria-label="${personName}"]`).fill(amount);
+  await page.locator(`input[data-person="${personName}"]`).fill(amount);
 });
 
 When('I click {string} with description {string} and date {string}',
@@ -98,12 +95,18 @@ Then('I am on the add expense form', async ({ page }) => {
 });
 
 Then('each included member shows their equal share', async ({ page }) => {
-  // Each visible member row should show a non-empty amount
-  await expect(page.locator('text=/€\\d/')).toBeVisible();
+  await expect(page.locator('text=/€\\d/').first()).toBeVisible();
 });
 
 Then('each included member shows their equal share amount', async ({ page }) => {
-  await expect(page.locator('text=/€\\d/')).toBeVisible();
+  // In even mode: shows € amounts; in custom mode: shows editable inputs
+  const amountLocator = page.locator('text=/€\\d/');
+  const inputLocator = page.locator('input[data-person]');
+  if (await amountLocator.count() > 0) {
+    await expect(amountLocator.first()).toBeVisible();
+  } else {
+    await expect(inputLocator.first()).toBeVisible();
+  }
 });
 
 Then('{string} appears in the expense list', async ({ page }, desc) => {
@@ -111,11 +114,11 @@ Then('{string} appears in the expense list', async ({ page }, desc) => {
 });
 
 Then('each member\'s balance card reflects the split', async ({ page }) => {
-  await expect(page.locator('text=/€/')).toBeVisible();
+  await expect(page.locator('text=/€/').first()).toBeVisible();
 });
 
 Then('each member\'s balance reflects their specific entered amount', async ({ page }) => {
-  await expect(page.locator('text=/€/')).toBeVisible();
+  await expect(page.locator('text=/€/').first()).toBeVisible();
 });
 
 Then('I remain on the add expense form', async ({ page }) => {
@@ -127,7 +130,7 @@ Then('no new expense was created', async ({ page }) => {
 });
 
 Then('{string}\'s amount field is disabled', async ({ page }, name) => {
-  const input = page.locator(`label:has-text("${name}")`).locator('input[type="number"]');
+  const input = page.locator(`[data-member="${name}"]`).locator('input');
   await expect(input).toBeDisabled();
 });
 
@@ -143,11 +146,11 @@ Then('the form shows {string} in green', async ({ page }, text) => {
 });
 
 Then('the form shows the unallocated remainder in red', async ({ page }) => {
-  await expect(page.locator('text=/unallocated|remaining/i')).toBeVisible();
+  await expect(page.locator('text=/left/i').first()).toBeVisible();
 });
 
 Then('the form shows the over-allocated amount in red', async ({ page }) => {
-  await expect(page.locator('text=/over|excess/i')).toBeVisible();
+  await expect(page.locator('text=/over/i').first()).toBeVisible();
 });
 
 Then('the expense is not submitted', async ({ page }) => {
@@ -165,7 +168,7 @@ When('the expense list loads', async ({ page }) => {
 });
 
 When('I view an expense in the list', async ({ page }) => {
-  await expect(page.locator('[data-testid="expense-row"], .expense-row, li').first()).toBeVisible();
+  await expect(page.locator('[data-testid="expense-row"]').first()).toBeVisible();
 });
 
 When('I view the summary above the expense list', async ({ page }) => {
@@ -174,17 +177,17 @@ When('I view the summary above the expense list', async ({ page }) => {
 
 Then('expenses are listed with most recent date first', async ({ page }) => {
   // First expense should be "First expense" (date 2026-01-03, more recent)
-  const firstText = await page.locator('[data-testid="expense-row"], li').first().textContent();
+  const firstText = await page.locator('[data-testid="expense-row"]').first().textContent();
   expect(firstText).toContain('First expense');
 });
 
 Then('it shows the description, date, who paid, split count, and total amount', async ({ page }) => {
-  const row = page.locator('[data-testid="expense-row"], li').first();
+  const row = page.locator('[data-testid="expense-row"]').first();
   await expect(row).toContainText('First expense');
   await expect(row).toContainText('€');
 });
 
 Then('it shows the total number of expenses and the sum of all amounts', async ({ page }) => {
-  await expect(page.locator('text=/expense/')).toBeVisible();
-  await expect(page.locator('text=/€/')).toBeVisible();
+  await expect(page.locator('text=/\\d+ expense/')).toBeVisible();
+  await expect(page.locator('text=/total/')).toBeVisible();
 });

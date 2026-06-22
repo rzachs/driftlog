@@ -163,6 +163,7 @@ export default function TripOverview() {
             return (
               <div
                 key={exp.id}
+                data-testid="expense-row"
                 className="grid grid-cols-[1fr_140px_140px_120px_40px] items-center px-4 min-h-14 border-b border-[#e0e0e0] transition-colors duration-[70ms] hover:bg-[#e8e8e8] cursor-pointer"
                 onClick={() => navigate(`/trips/${id}/members/${members[0]?.id}`)}
               >

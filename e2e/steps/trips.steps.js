@@ -3,7 +3,12 @@ const { Given, When, Then, expect } = require('../fixtures');
 // ── Shared click helper ───────────────────────────────────────────────────────
 
 When('I click {string}', async ({ page }, label) => {
-  await page.getByRole('button', { name: label }).click();
+  const btn = page.getByRole('button', { name: label });
+  if (await btn.count() > 0) {
+    await btn.click();
+  } else {
+    await page.getByRole('link', { name: label }).click();
+  }
 });
 
 // ── Create trip ───────────────────────────────────────────────────────────────
@@ -73,15 +78,13 @@ When('I click the trip name', async ({ page }) => {
 });
 
 When('I clear the name and type {string}', async ({ page }, name) => {
-  const input = page.locator('input[aria-label="Trip name"]');
-  await input.selectText();
-  await input.fill(name);
+  const field = page.locator('[aria-label="Trip name"]');
+  await field.fill(name);
 });
 
 When('I clear the name entirely', async ({ page }) => {
-  const input = page.locator('input[aria-label="Trip name"]');
-  await input.selectText();
-  await input.fill('');
+  const field = page.locator('[aria-label="Trip name"]');
+  await field.fill('');
 });
 
 When('I press Enter', async ({ page }) => {
@@ -97,7 +100,7 @@ When('I click away from the name field', async ({ page }) => {
 });
 
 Then('the trip name field is editable', async ({ page }) => {
-  await expect(page.locator('input[aria-label="Trip name"]')).toBeVisible();
+  await expect(page.locator('[aria-label="Trip name"]')).toBeVisible();
 });
 
 Then('the trip name displayed is {string}', async ({ page }, name) => {
@@ -120,8 +123,12 @@ Given('trips exist', async ({ page, seededTrip }) => {
   await page.waitForLoadState('networkidle');
 });
 
-Given('no trips exist', async ({ page }) => {
-  // Fresh test DB (SKIP_SEED=true) starts empty; no trips created yet
+Given('no trips exist', async ({ page, request }) => {
+  // Delete all existing trips so the page renders the empty state
+  const trips = await (await request.get('/api/trips')).json();
+  for (const trip of trips) {
+    await request.delete(`/api/trips/${trip.id}`);
+  }
   await page.goto('/trips');
   await page.waitForLoadState('networkidle');
 });
