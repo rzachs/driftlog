@@ -64,7 +64,7 @@ Stop-Process -Name node -Force
 | `design/` | Claude Design comp files (`.dc.html`) — design reference, not served |
 | `server.js` | Express server; all API routes are defined here |
 | `db.js` | SQLite setup, schema init, thin wrappers `calculateBalances()`, `calculateSettlements()` |
-| `calc.js` | Pure business-logic functions: `calculateBalancesFromData()`, `calculateSettlementsFromBalances()` — no DB I/O, tested directly |
+| `calc.js` | Pure business-logic functions: `calculateBalancesFromData()`, `calculateSettlementsFromBalances()`, `calculatePersonDetail()` — no DB I/O, tested directly |
 | `tests/` | Vitest unit tests — one file per business-rules spec, one `it()` per table row |
 | `e2e/features/` | Gherkin `.feature` files — one per feature spec, domain-tagged (`@trips`, `@expenses`, `@balances`, `@settle-up`) |
 | `e2e/steps/` | Playwright step definitions — one file per domain, all import from `e2e/fixtures.js` |

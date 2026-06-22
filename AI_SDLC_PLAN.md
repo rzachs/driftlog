@@ -23,11 +23,11 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 | # | Phase | Built | Validated |
 |---|---|---|---|
 | 1 | Feature specification | ✅ | ⬜ |
-| 2 | Business rules | 🟡 partial | ⬜ |
+| 2 | Business rules | ✅ | ⬜ |
 | 3 | Design → code | ✅ | ✅ |
 | 4 | Implementation | ✅ | ⬜ |
-| 5 | Unit tests | ✅ | ⬜ |
-| 6 | E2E tests | ✅ | 🟡 partial |
+| 5 | Unit tests | ✅ | ✅ |
+| 6 | E2E tests | ✅ | ✅ |
 | 7 | Spec-aware code review | 🟡 partial | ⬜ |
 | 8 | Documentation generation | ⬜ | ⬜ |
 | 9 | CI/CD & deployment | ⬜ | ⬜ |
@@ -59,7 +59,7 @@ Everything downstream is AI-generated *from* specs. Specs are the only place hum
 
 **No AI authoring tool by design.** Features get `/sdlc-spec` because the shape of a feature spec is mechanical and AI can scaffold it. Business rules are different — each row is a human decision about exact edge-case behaviour. Drafting them is analysis work, not scaffolding. A future tool that proposes decision-table rows from a feature spec for human review is a viable addition, but it hasn't been built.
 
-**Status:** 🟡 Scaffold created. Convention enforced via CLAUDE.md checklist. A pre-commit hook (`.claude/hooks/doc-check.ps1`, wired in `.claude/settings.json`) automatically warns Claude when significant files are staged without also updating `README.md`, `CLAUDE.md`, or `AI_SDLC_PLAN.md`. Hard enforcement that checks spec-table coverage before a commit is not yet built.
+**Status:** ✅ Convention and files established. Decision-table spec files created in `specs/business-rules/` covering all implemented domains: `trips.md`, `expenses.md`, `person-detail.md`, `balance-display.md`, `settlement-recording.md` (new), plus the pre-existing `balance-calculation.md` and `settlement-calculation.md`. All 11 E2E feature specs now link to their referenced business-rules rows. Pre-commit hook (`.claude/hooks/doc-check.ps1`) warns when docs are not updated. Hard enforcement (spec coverage gate before commit) not yet built.
 
 ---
 
@@ -111,7 +111,7 @@ Idempotency check runs first — re-running on an already-implemented feature is
 
 **AI role:** Read a business-rules file, generate a test file with one `it()` per row.
 
-**Status:** ✅ Done. `tests/balance-calculation.test.js` and `tests/settlement-calculation.test.js` cover every spec row with plain-array fixtures — no DB, no server required. 16 tests, all passing.
+**Status:** ✅ Done and validated. Three test files cover all spec-able business logic: `tests/balance-calculation.test.js`, `tests/settlement-calculation.test.js`, and `tests/person-detail.test.js` (generated after extracting `calculatePersonDetail` into `calc.js` as a pure function). 22 tests, all passing. Vitest configured to exclude Playwright generated files.
 
 ---
 
@@ -126,7 +126,7 @@ Idempotency check runs first — re-running on an already-implemented feature is
 
 **AI role:** Generate `.feature` scenario stubs from feature spec AC. A failing E2E scenario always traces back to a specific feature file.
 
-**Status:** ✅ Built. 🟡 Partially validated. Infrastructure complete: Playwright + playwright-bdd installed, `playwright.config.js`, `e2e/fixtures.js`, `e2e/global-setup.js`, 5 step definition files, 11 `.feature` files (one per feature spec, domain-tagged with `@trips` / `@expenses` / `@balances` / `@settle-up`), and `/sdlc-generate-e2e` skill. "Create a trip" feature (8 scenarios) passing end-to-end. Remaining features not yet validated — to be run as features are implemented and specs filled in.
+**Status:** ✅ Built and validated. 61 of 62 tests pass across all 11 feature files and all 4 domains (`@trips`, `@expenses`, `@balances`, `@settle-up`). The single failing test is `@wip` ("Zero balance card display" — a declared spec gap with no decided behaviour). Every feature-spec AC item is exercised end-to-end through a real browser → API → SQLite chain. Infrastructure: Playwright + playwright-bdd, `playwright.config.js`, `e2e/fixtures.js`, `e2e/global-setup.js`, 5 step-definition files, 11 `.feature` files, and `/sdlc-generate-e2e` skill.
 
 ---
 

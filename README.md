@@ -76,16 +76,24 @@ driftlog/
 │   │   ├── balances/         # View trip balances, expense history, person breakdown
 │   │   └── settle-up/        # View suggested payments, record payment, undo payment
 │   └── business-rules/       # Human-authored behavioral decision tables (source of truth)
+│       ├── balance-calculation.md
+│       ├── settlement-calculation.md
+│       ├── trips.md
+│       ├── expenses.md
+│       ├── person-detail.md
+│       ├── balance-display.md
+│       ├── settlement-recording.md
 │       └── _template.md
 ├── design/                   # Claude Design comp files (.dc.html) — design reference only
 ├── .claude/
 │   └── skills/               # Custom Claude Code skills (slash commands)
 ├── server.js                 # Express server + all API routes
 ├── db.js                     # SQLite schema, seed data, thin DB wrappers for balances/settlements
-├── calc.js                   # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances
+├── calc.js                   # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances, calculatePersonDetail
 ├── tests/
 │   ├── balance-calculation.test.js    # One test per spec row in specs/business-rules/balance-calculation.md
-│   └── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
+│   ├── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
+│   └── person-detail.test.js          # One test per spec row in specs/business-rules/person-detail.md
 ├── e2e/
 │   ├── features/             # Gherkin .feature files (one per feature spec, domain-tagged)
 │   │   ├── trips/
@@ -124,6 +132,8 @@ driftlog/
 | GET | `/api/trips` | List all trips |
 | POST | `/api/trips` | Create a trip |
 | GET | `/api/trips/:id` | Trip detail (members, balances, expenses) |
+| PATCH | `/api/trips/:id` | Rename a trip |
+| DELETE | `/api/trips/:id` | Delete a trip |
 | POST | `/api/trips/:id/expenses` | Add an expense |
 | GET | `/api/trips/:tripId/members/:memberId/detail` | Per-person breakdown |
 | GET | `/api/trips/:id/settle` | Suggested settlement payments |
