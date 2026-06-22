@@ -149,6 +149,7 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 | Command | What it does |
 |---------|-------------|
 | `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval |
+| `/sdlc-rules <spec-path>` | Proposes business-rules table rows from a feature spec for human review; writes only after approval |
 | `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval |
 | `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify; idempotency check first |
 
