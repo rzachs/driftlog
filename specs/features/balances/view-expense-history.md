@@ -13,7 +13,7 @@ As a trip member, I want to see the full expense list on a trip so I can review 
 
 ## Business rules referenced
 
-None — expense history is display only; balance effects are covered in `specs/business-rules/balance-calculation.md`.
+- `specs/business-rules/balance-display.md` — expense list ordered by date DESC then created_at DESC (row 8)
 
 ## Out of scope
 

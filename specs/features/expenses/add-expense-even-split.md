@@ -16,6 +16,7 @@ As a user, I want to log an expense split evenly among selected members so balan
 
 ## Business rules referenced
 
+- `specs/business-rules/expenses.md` — all fields required (row 1); date defaults to today (row 2); payer defaults to first member (row 3); all members pre-selected (row 4); even split = total ÷ selected members (row 5); deselecting removes member from split (row 6)
 - `specs/business-rules/balance-calculation.md` — payer's balance increases by full amount (row 1); each participant's balance decreases by their share (row 2); payer who is also a participant nets out (row 3)
 
 ## Out of scope

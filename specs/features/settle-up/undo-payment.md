@@ -12,6 +12,7 @@ As a user, I want to undo a recorded payment so I can correct mistakes.
 
 ## Business rules referenced
 
+- `specs/business-rules/settlement-recording.md` — undo sets recorded_at to NULL, record is kept not deleted (row 3); only settlements with recorded_at IS NOT NULL count toward balances (row 4)
 - `specs/business-rules/balance-calculation.md` — recorded settlement offsets both parties' balances (row 10); undoing removes that offset
 
 ## Out of scope

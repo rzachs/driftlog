@@ -47,4 +47,22 @@ function calculateSettlementsFromBalances(balances) {
   return payments;
 }
 
-module.exports = { calculateBalancesFromData, calculateSettlementsFromBalances };
+// memberId: string
+// expenses: [{ id, amount, paid_by_id, payer: { id, name }, splits: [{ person_id, amount }] }]
+function calculatePersonDetail(memberId, expenses) {
+  const rows = expenses.map(exp => {
+    const split = exp.splits.find(s => s.person_id === memberId);
+    if (!split) return null;
+    const isPayer = exp.paid_by_id === memberId;
+    const net = Math.round(((isPayer ? exp.amount : 0) - split.amount) * 100) / 100;
+    return { expense: exp, payer: exp.payer, split, net, isPayer, ways: exp.splits.length };
+  }).filter(Boolean);
+
+  const totalPaid  = rows.filter(r => r.isPayer).reduce((s, r) => s + r.expense.amount, 0);
+  const totalShare = rows.reduce((s, r) => s + r.split.amount, 0);
+  const netBalance = Math.round((totalPaid - totalShare) * 100) / 100;
+
+  return { rows, totalPaid, totalShare, netBalance };
+}
+
+module.exports = { calculateBalancesFromData, calculateSettlementsFromBalances, calculatePersonDetail };

@@ -14,7 +14,7 @@ As a user, I want to rename a trip so I can correct it after creation.
 
 ## Business rules referenced
 
-None yet — trip rename rules have not been added to `/specs/business-rules/`.
+- `specs/business-rules/trips.md` — rename: empty/whitespace reverts to prior name (row 10); name trimmed before saving (row 11); Enter commits the edit (row 12); Escape reverts without saving (row 13)
 
 ## Out of scope
 

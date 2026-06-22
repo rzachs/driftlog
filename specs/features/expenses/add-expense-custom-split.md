@@ -15,6 +15,7 @@ As a user, I want to log an expense with custom per-person amounts so unequal sp
 
 ## Business rules referenced
 
+- `specs/business-rules/expenses.md` — custom split remaining display: "Fully allocated" when remainder < €0.005 (row 8); "X left" in red when positive remainder (row 9); "X over" in red when negative remainder (row 10); unchecked members' amount inputs disabled (row 11)
 - `specs/business-rules/balance-calculation.md` — each participant's balance decreases by their split amount (row 2); payer nets out (row 3)
 
 ## Out of scope

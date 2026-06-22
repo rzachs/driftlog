@@ -16,7 +16,7 @@ As a user, I want to create a trip with a name, dates, and initial members so I 
 
 ## Business rules referenced
 
-None yet — trip creation rules have not been added to `/specs/business-rules/`.
+- `specs/business-rules/trips.md` — trip name required (row 1); name trimmed before saving (row 2); start/end dates optional (row 3); "You" always added as first member (row 4); "You" cannot be removed from participant list (row 5)
 
 ## Out of scope
 

@@ -15,6 +15,7 @@ As a trip member, I want to see a specific person's per-expense breakdown so I u
 
 ## Business rules referenced
 
+- `specs/business-rules/person-detail.md` — expenses without a split for this member excluded (row 1); net per expense for payer = paid minus share (row 2); net for non-payer = negative share (row 3); totalPaid (row 4); totalShare (row 5); netBalance rounded to 2 dp (row 6); settle up CTA shown only when netBalance < 0 (row 7); CTA hidden when zero or positive (row 8)
 - `specs/business-rules/balance-calculation.md` — payer's balance increases by full amount (row 1); participant's balance decreases by share (row 2); payer who is also a participant nets out (row 3); non-payer participant (row 4)
 
 ## Out of scope

@@ -16,6 +16,8 @@ As a user, I want to see all my trips with my current balance so I know where I 
 
 ## Business rules referenced
 
+- `specs/business-rules/trips.md` — ordered by created_at DESC (row 6); active trip definition: start_date ≤ today AND end_date ≥ today or absent (rows 7–9)
+- `specs/business-rules/balance-display.md` — settled threshold abs(balance) < €0.005 (row 1); "You're owed" label (row 2); "You owe" label (row 3)
 - `specs/business-rules/balance-calculation.md` — positive balance = creditor (rows 7–9)
 
 ## Out of scope

@@ -13,6 +13,7 @@ As a trip member, I want to see everyone's net balance on the trip overview so I
 
 ## Business rules referenced
 
+- `specs/business-rules/balance-display.md` — "You are owed" label for logged-in user with positive balance (row 5); "Is owed" for other members with positive balance (row 6); "Owes the group" for negative balance (row 7)
 - `specs/business-rules/balance-calculation.md` — positive balance = creditor (row 7); negative balance = debtor (row 8); zero balance = nothing to settle (row 9)
 
 ## Out of scope

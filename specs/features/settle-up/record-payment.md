@@ -13,6 +13,7 @@ As a user, I want to mark a suggested payment as done so the group knows it's be
 
 ## Business rules referenced
 
+- `specs/business-rules/settlement-recording.md` — recording creates a record with recorded_at = now (row 1); duplicate recording re-activates existing record (row 2); balance updates immediately on each recording (row 5); "all settled" banner when all payments recorded (row 6)
 - `specs/business-rules/balance-calculation.md` — recorded settlement offsets both parties' balances (row 10)
 
 ## Out of scope

@@ -14,6 +14,7 @@ As a user, I want to see the minimum set of payments that zero out all balances 
 ## Business rules referenced
 
 - `specs/business-rules/settlement-calculation.md` — fewest possible payments via greedy match (row 3); near-zero balances ignored (row 2); simple 2-person case (row 1)
+- `specs/business-rules/settlement-recording.md` — zero payments when all balances already zero (row 7)
 
 ## Out of scope
 
