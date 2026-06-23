@@ -78,7 +78,7 @@
 
     <div class="border border-driftlog-border-subtle bg-white">
       <sc-for list="{{ trips }}" as="t" hint-placeholder-count="4">
-        <a href="{{ t.href }}" class="flex items-center gap-6 py-5 px-6 border-b border-[#e0e0e0] no-underline text-[#161616] transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+        <a href="{{ t.href }}" class="group flex items-center gap-6 py-5 px-6 border-b border-[#e0e0e0] no-underline text-[#161616] transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-[10px] mb-2">
               <span class="text-base font-semibold">{{ t.name }}</span>
@@ -103,10 +103,19 @@
             <p class="mb-[2px] text-lg font-normal tabular-nums" style="color:{{ t.balColor }}">{{ t.balAmount }}</p>
             <p class="text-xs tracking-[0.32px] text-driftlog-text-2">{{ t.balLabel }}</p>
           </div>
+          <button onclick="{{ t.requestDelete }}" aria-label="Delete trip" title="Delete trip" class="flex-none w-10 h-10 -my-2 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-colors duration-[70ms] hover:bg-[#fff1f1] hover:text-[#da1e28]">
+            <img src="carbon/icons/trash-can.svg" width="16" height="16" alt="" />
+          </button>
           <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" class="opacity-40 flex-none" />
         </a>
       </sc-for>
     </div>
+
+    <sc-if value="{{ noTrips }}" hint-placeholder-val="{{ false }}">
+      <div class="border border-t-0 border-driftlog-border-subtle bg-white py-16 text-center">
+        <p class="text-sm text-driftlog-text-2">No trips yet. Create one to get started.</p>
+      </div>
+    </sc-if>
 
   </main>
 
@@ -168,6 +177,37 @@
     </div>
   </sc-if>
 
+  <!-- Delete trip confirmation -->
+  <sc-if value="{{ deleteOpen }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ cancelDelete }}" class="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6">
+      <div onclick="{{ stop }}" class="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+
+        <div class="flex items-start justify-between p-5 pb-2">
+          <div>
+            <p class="mb-[2px] text-xs tracking-[0.32px] text-driftlog-text-2">Driftlog</p>
+            <h2 class="text-xl font-normal">Delete trip</h2>
+          </div>
+          <button onclick="{{ cancelDelete }}" aria-label="Close" class="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover">
+            <img src="carbon/icons/close.svg" width="20" height="20" alt="" />
+          </button>
+        </div>
+
+        <div class="px-5 pb-6 pt-4">
+          <p class="text-sm leading-[1.4] text-[#161616]">Permanently delete <span class="font-semibold">{{ deleteName }}</span>? This removes the trip and all of its expenses for everyone in the group. This can't be undone.</p>
+        </div>
+
+        <div class="flex h-16 border-t border-driftlog-border-subtle">
+          <button onclick="{{ cancelDelete }}" class="flex-1 border-0 bg-driftlog-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-driftlog-gray-80">Cancel</button>
+          <button onclick="{{ confirmDelete }}" class="flex-1 border-0 bg-[#da1e28] text-white flex items-center justify-between px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-[#ba1b23]">
+            <span class="whitespace-nowrap">Delete</span>
+            <img src="carbon/icons/trash-can.svg" width="20" height="20" alt="" class="invert" />
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </sc-if>
+
 </div>
 
 </x-dc>
@@ -180,38 +220,54 @@ class Component extends DCLogic {
     end: "",
     participants: ["You", "Maya", "Sam"],
     newPerson: "",
+    deleteIndex: null,
+    tripsData: (() => {
+      const C = { blue: "#0f62fe", teal: "#007d79", purple: "#8a3ffc", magenta: "#d02670", cyan: "#0072c3", gray: "#6f6f6f" };
+      const av = (initials, bg) => ({ initials, bg });
+      return [
+        {
+          name: "Lisbon long weekend", active: true, dateStr: "Jun 12 – 15, 2026",
+          avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("TH", C.magenta)],
+          peopleStr: "4 people", balAmount: "+€436.00", balColor: "#24a148", balLabel: "You're owed",
+          href: "02 Trip Overview.dc.html",
+        },
+        {
+          name: "NYE in Edinburgh", active: false, dateStr: "Dec 30, 2025 – Jan 2, 2026",
+          avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("+2", C.gray)],
+          peopleStr: "6 people", balAmount: "−€74.50", balColor: "#161616", balLabel: "You owe",
+          href: "02 Trip Overview.dc.html",
+        },
+        {
+          name: "Dolomites hut-to-hut", active: false, dateStr: "Sep 5 – 11, 2025",
+          avatars: [av("YO", C.blue), av("TH", C.magenta), av("RO", C.cyan), av("+2", C.gray)],
+          peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
+          href: "02 Trip Overview.dc.html",
+        },
+        {
+          name: "Cousins' beach house", active: false, dateStr: "Aug 12 – 19, 2024",
+          avatars: [av("YO", C.blue), av("MA", C.teal), av("EL", C.cyan), av("+2", C.gray)],
+          peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
+          href: "02 Trip Overview.dc.html",
+        },
+      ];
+    })(),
   };
 
   renderVals() {
-    const C = { blue: "#0f62fe", teal: "#007d79", purple: "#8a3ffc", magenta: "#d02670", cyan: "#0072c3", gray: "#6f6f6f" };
-    const av = (initials, bg) => ({ initials, bg });
-
-    const trips = [
-      {
-        name: "Lisbon long weekend", active: true, dateStr: "Jun 12 – 15, 2026",
-        avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("TH", C.magenta)],
-        peopleStr: "4 people", balAmount: "+€436.00", balColor: "#24a148", balLabel: "You're owed",
-        href: "02 Trip Overview.dc.html",
+    const trips = this.state.tripsData.map((t, i) => ({
+      ...t,
+      requestDelete: (e) => {
+        e.preventDefault(); e.stopPropagation();
+        this.setState({ deleteIndex: i });
       },
-      {
-        name: "NYE in Edinburgh", active: false, dateStr: "Dec 30, 2025 – Jan 2, 2026",
-        avatars: [av("YO", C.blue), av("MA", C.teal), av("SA", C.purple), av("+2", C.gray)],
-        peopleStr: "6 people", balAmount: "−€74.50", balColor: "#161616", balLabel: "You owe",
-        href: "02 Trip Overview.dc.html",
-      },
-      {
-        name: "Dolomites hut-to-hut", active: false, dateStr: "Sep 5 – 11, 2025",
-        avatars: [av("YO", C.blue), av("TH", C.magenta), av("RO", C.cyan), av("+2", C.gray)],
-        peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
-        href: "02 Trip Overview.dc.html",
-      },
-      {
-        name: "Cousins' beach house", active: false, dateStr: "Aug 12 – 19, 2024",
-        avatars: [av("YO", C.blue), av("MA", C.teal), av("EL", C.cyan), av("+2", C.gray)],
-        peopleStr: "5 people", balAmount: "Settled", balColor: "#525252", balLabel: "All cleared",
-        href: "02 Trip Overview.dc.html",
-      },
-    ];
+    }));
+    const activeCount = this.state.tripsData.filter((t) => t.active).length;
+    const n = this.state.tripsData.length;
+    const summaryLine = n === 0
+      ? "No trips yet"
+      : n + (n === 1 ? " trip" : " trips") + " · " + activeCount + " active";
+    const dt = this.state.deleteIndex;
+    const deleteName = dt != null && this.state.tripsData[dt] ? this.state.tripsData[dt].name : "";
 
     const chips = this.state.participants.map((name, i) => ({
       name,
@@ -230,7 +286,15 @@ class Component extends DCLogic {
 
     return {
       trips,
-      summaryLine: "4 trips · 1 active",
+      summaryLine,
+      noTrips: n === 0,
+      deleteOpen: dt != null,
+      deleteName,
+      cancelDelete: () => this.setState({ deleteIndex: null }),
+      confirmDelete: () => this.setState((s) => ({
+        tripsData: s.tripsData.filter((_, j) => j !== s.deleteIndex),
+        deleteIndex: null,
+      })),
       modalOpen: this.state.modalOpen,
       tripName: this.state.tripName,
       start: this.state.start,

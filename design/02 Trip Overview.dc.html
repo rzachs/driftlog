@@ -89,10 +89,25 @@
           </div>
         </div>
       </div>
-      <a href="03 Add Expense.dc.html" class="ml-auto flex-none h-12 bg-driftlog-blue text-white text-sm tracking-[0.16px] no-underline inline-flex items-center gap-12 px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover">
-        <span>Add expense</span>
-        <img src="carbon/icons/add.svg" width="20" height="20" alt="" class="invert" />
-      </a>
+      <div class="ml-auto flex-none flex items-stretch gap-px">
+        <a href="03 Add Expense.dc.html" class="h-12 bg-driftlog-blue text-white text-sm tracking-[0.16px] no-underline inline-flex items-center gap-12 px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover">
+          <span>Add expense</span>
+          <img src="carbon/icons/add.svg" width="20" height="20" alt="" class="invert" />
+        </a>
+        <div class="relative">
+          <button onclick="{{ toggleMenu }}" aria-label="More actions" class="h-12 w-12 border border-driftlog-border-subtle bg-white text-[#161616] cursor-pointer flex items-center justify-center transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+            <img src="carbon/icons/overflow-menu-vertical.svg" width="20" height="20" alt="" />
+          </button>
+          <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="absolute right-0 top-full mt-px w-[200px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.3)] z-20">
+              <button onclick="{{ requestDelete }}" class="w-full h-10 border-0 bg-white text-[#da1e28] text-sm text-left px-4 cursor-pointer flex items-center gap-3 transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+                <img src="carbon/icons/trash-can.svg" width="16" height="16" alt="" />
+                Delete trip
+              </button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
     </div>
 
     <!-- Balances -->
@@ -158,10 +173,44 @@
   </main>
 </div>
 
+<!-- Delete trip confirmation -->
+<sc-if value="{{ deleteOpen }}" hint-placeholder-val="{{ false }}">
+  <div onclick="{{ cancelDelete }}" class="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6">
+    <div onclick="{{ stop }}" class="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+
+      <div class="flex items-start justify-between p-5 pb-2">
+        <div>
+          <p class="mb-[2px] text-xs tracking-[0.32px] text-driftlog-text-2">Driftlog</p>
+          <h2 class="text-xl font-normal">Delete trip</h2>
+        </div>
+        <button onclick="{{ cancelDelete }}" aria-label="Close" class="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover">
+          <img src="carbon/icons/close.svg" width="20" height="20" alt="" />
+        </button>
+      </div>
+
+      <div class="px-5 pb-6 pt-4">
+        <p class="text-sm leading-[1.4] text-[#161616]">Permanently delete <span class="font-semibold">{{ tripName }}</span>? This removes the trip and all of its expenses for everyone in the group. This can't be undone.</p>
+      </div>
+
+      <div class="flex h-16 border-t border-driftlog-border-subtle">
+        <button onclick="{{ cancelDelete }}" class="flex-1 border-0 bg-driftlog-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-[#393939]">Cancel</button>
+        <button onclick="{{ confirmDelete }}" class="flex-1 border-0 bg-[#da1e28] text-white flex items-center justify-between px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-[#ba1b23]">
+          <span class="whitespace-nowrap">Delete</span>
+          <img src="carbon/icons/trash-can.svg" width="20" height="20" alt="" class="invert" />
+        </button>
+      </div>
+
+    </div>
+  </div>
+</sc-if>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1056,&quot;height&quot;:900}}">
 class Component extends DCLogic {
-  state = { tripName: (() => {
+  state = {
+    menuOpen: false,
+    deleteOpen: false,
+    tripName: (() => {
     try { return localStorage.getItem("driftlog.tripName") || "Lisbon long weekend"; }
     catch (e) { return "Lisbon long weekend"; }
   })() };
@@ -224,7 +273,15 @@ class Component extends DCLogic {
       amountStr:    fmt(e.amount),
     }));
 
-    return { people, expenses, tripName: this.state.tripName, titleRef, onTitleBlur, onTitleKeyDown };
+    return { people, expenses, tripName: this.state.tripName, titleRef, onTitleBlur, onTitleKeyDown,
+      menuOpen: this.state.menuOpen,
+      deleteOpen: this.state.deleteOpen,
+      stop: (e) => e.stopPropagation(),
+      toggleMenu: () => this.setState((s) => ({ menuOpen: !s.menuOpen })),
+      requestDelete: () => this.setState({ menuOpen: false, deleteOpen: true }),
+      cancelDelete: () => this.setState({ deleteOpen: false }),
+      confirmDelete: () => { window.location.href = "01b My Trips.dc.html"; },
+    };
   }
 }
 

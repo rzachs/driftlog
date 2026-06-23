@@ -5,6 +5,7 @@ const base = 'inline-flex items-center justify-between gap-12 h-12 px-4 text-sm 
 const variants = {
   primary: 'bg-brand text-white hover:bg-brand-hover active:bg-brand-active',
   secondary: 'bg-panel text-white hover:bg-gray-80',
+  danger: 'bg-danger text-white hover:bg-[#ba1b23]',
 }
 
 export function Button({ variant = 'primary', className = '', children, ...props }) {

@@ -10,7 +10,10 @@ export default function TripOverview() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [trip, setTrip] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const titleRef = useRef(null)
+  const menuRef = useRef(null)
 
   useEffect(() => {
     if (!id) { navigate('/trips'); return }
@@ -28,6 +31,20 @@ export default function TripOverview() {
       titleRef.current.textContent = trip.name
     }
   }, [trip?.name])
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function handler(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
+
+  async function confirmDelete() {
+    await fetch(`/api/trips/${id}`, { method: 'DELETE' })
+    navigate('/trips')
+  }
 
   if (!trip) return (
     <PageShell maxWidth="1056px">
@@ -92,10 +109,39 @@ export default function TripOverview() {
               </div>
             </div>
           </div>
-          <ButtonLink to={`/trips/${id}/add-expense`} className="ml-auto flex-none">
-            <span>Add expense</span>
-            <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>
-          </ButtonLink>
+          <div className="ml-auto flex-none flex items-stretch gap-px">
+            <ButtonLink to={`/trips/${id}/add-expense`}>
+              <span>Add expense</span>
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M17 15V8h-2v7H8v2h7v7h2v-7h7v-2z"/></svg>
+            </ButtonLink>
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(o => !o)}
+                aria-label="More actions"
+                className="h-12 w-12 border border-subtle bg-white text-panel cursor-pointer flex items-center justify-center transition-colors duration-[70ms] hover:bg-field-hover"
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                  <circle cx="16" cy="8" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="16" cy="24" r="2"/>
+                </svg>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-px w-[200px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.3)] z-20">
+                  <button
+                    type="button"
+                    onClick={() => { setMenuOpen(false); setDeleteOpen(true) }}
+                    className="w-full h-10 border-0 bg-white text-danger text-sm text-left px-4 cursor-pointer flex items-center gap-3 transition-colors duration-[70ms] hover:bg-field-hover"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
+                      <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+                      <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+                    </svg>
+                    Delete trip
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <h2 className="mb-4 text-sm font-semibold tracking-[0.16px]">Balances</h2>
@@ -189,6 +235,51 @@ export default function TripOverview() {
           }
         />
       </div>
+
+      {deleteOpen && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6"
+          onClick={e => { if (e.target === e.currentTarget) setDeleteOpen(false) }}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+            <div className="flex items-start justify-between p-5 pb-2">
+              <div>
+                <p className="mb-[2px] text-xs tracking-[0.32px] text-muted">Driftlog</p>
+                <h2 className="text-xl font-normal">Delete trip</h2>
+              </div>
+              <button
+                onClick={() => setDeleteOpen(false)}
+                aria-label="Close"
+                className="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-muted hover:bg-field-hover"
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4l6.6 6.6L8 22.6 9.4 24l6.6-6.6 6.6 6.6 1.4-1.4-6.6-6.6z"/></svg>
+              </button>
+            </div>
+            <div className="px-5 pb-6 pt-4">
+              <p className="text-sm leading-[1.4]">
+                Permanently delete <span className="font-semibold">{trip.name}</span>? This removes the trip and all of its expenses for everyone in the group. This can't be undone.
+              </p>
+            </div>
+            <div className="flex h-16 border-t border-subtle">
+              <button
+                onClick={() => setDeleteOpen(false)}
+                className="flex-1 border-0 bg-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-gray-80"
+              >
+                Cancel
+              </button>
+              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between">
+                <span>Delete</span>
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                  <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+                  <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+                </svg>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageShell>
   )
 }

@@ -25,6 +25,7 @@ module.exports = {
         success:       '#24a148',
         'success-bg':  '#defbe6',
         danger:        '#da1e28',
+        'danger-bg':   '#fff1f1',
         badge:         '#0043ce',
         'badge-bg':    '#d0e2ff',
       }

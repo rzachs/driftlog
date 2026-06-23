@@ -209,3 +209,37 @@ Then('the trip card shows an {string} badge', async ({ page }, badge) => {
 Then('it shows the total trip count and active count', async ({ page }) => {
   await expect(page.locator('text=/\\d+ trip/')).toBeVisible();
 });
+
+// ── Delete trip ───────────────────────────────────────────────────────────────
+
+When('I click the delete button on a trip row', async ({ page }) => {
+  const row = page.locator('[data-testid="trip-row"]').first();
+  await row.hover();
+  await page.locator('[data-testid="delete-trip-btn"]').first().click();
+});
+
+When('I confirm deletion', async ({ page }) => {
+  await page.locator('[role="dialog"]').getByRole('button', { name: 'Delete' }).click();
+});
+
+When('I cancel deletion', async ({ page }) => {
+  await page.locator('[role="dialog"]').getByRole('button', { name: 'Cancel' }).click();
+});
+
+Then('a delete confirmation dialog appears', async ({ page }) => {
+  await expect(page.locator('[role="dialog"]')).toBeVisible();
+  await expect(page.locator('[role="dialog"]').getByText('Delete trip')).toBeVisible();
+});
+
+Then('the trip is no longer in the list', async ({ page, seededTrip }) => {
+  await expect(page.locator(`a[href="/trips/${seededTrip.id}"]`)).not.toBeVisible();
+});
+
+Then('the trip is still in the list', async ({ page, seededTrip }) => {
+  await expect(page.locator(`a[href="/trips/${seededTrip.id}"]`)).toBeVisible();
+});
+
+Then('I am on the trips list', async ({ page }) => {
+  await page.waitForURL('**/trips');
+  expect(page.url()).toMatch(/\/trips$/);
+});

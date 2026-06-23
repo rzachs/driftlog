@@ -5,7 +5,7 @@ import Avatar from '../components/Avatar'
 import { Button } from '../components/Button'
 import { col, fmtDateRange, fmtBal } from '../utils'
 
-function TripCard({ trip }) {
+function TripCard({ trip, onDelete }) {
   const isActive = trip.start_date && new Date(trip.start_date) <= new Date() &&
     (!trip.end_date || new Date(trip.end_date) >= new Date())
   const bal = trip.myBalance
@@ -17,7 +17,8 @@ function TripCard({ trip }) {
   return (
     <Link
       to={`/trips/${trip.id}`}
-      className="flex items-center gap-6 py-5 px-6 border-b border-row no-underline text-panel transition-colors duration-[70ms] hover:bg-field-hover"
+      data-testid="trip-row"
+      className="group flex items-center gap-6 py-5 px-6 border-b border-row no-underline text-panel transition-colors duration-[70ms] hover:bg-field-hover"
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-[10px] mb-2">
@@ -53,6 +54,19 @@ function TripCard({ trip }) {
         <p className={`m-0 mb-[2px] text-lg font-normal tabular-nums ${balColor}`}>{balStr}</p>
         <p className="m-0 text-xs tracking-[0.32px] text-muted">{balLabel}</p>
       </div>
+      <button
+        type="button"
+        data-testid="delete-trip-btn"
+        onClick={e => { e.preventDefault(); e.stopPropagation(); onDelete(trip) }}
+        aria-label="Delete trip"
+        title="Delete trip"
+        className="flex-none w-10 h-10 -my-2 border-0 bg-transparent cursor-pointer flex items-center justify-center text-muted opacity-0 group-hover:opacity-100 focus:opacity-100 transition-colors duration-[70ms] hover:bg-danger-bg hover:text-danger"
+      >
+        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
+          <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+          <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+        </svg>
+      </button>
       <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" className="opacity-40 flex-none">
         <path d="M22 16L12 26l-1.414-1.414L19.172 16l-8.586-8.586L12 6z"/>
       </svg>
@@ -70,6 +84,7 @@ export default function Trips() {
   const [endDate, setEndDate] = useState('')
   const [participants, setParticipants] = useState(['You', 'Maya', 'Sam'])
   const [newPerson, setNewPerson] = useState('')
+  const [deleteTrip, setDeleteTrip] = useState(null)
 
   useEffect(() => {
     fetch('/api/trips').then(r => r.json()).then(data => { setTrips(data); setLoading(false) })
@@ -107,6 +122,12 @@ export default function Trips() {
     navigate(`/trips/${id}`)
   }
 
+  async function confirmDelete() {
+    await fetch(`/api/trips/${deleteTrip.id}`, { method: 'DELETE' })
+    setTrips(ts => ts.filter(t => t.id !== deleteTrip.id))
+    setDeleteTrip(null)
+  }
+
   return (
     <div className="font-sans bg-field text-panel min-h-screen">
       <Header subtitle="Trips" />
@@ -131,7 +152,7 @@ export default function Trips() {
           ) : trips.length === 0 ? (
             <div className="p-10 text-center text-muted">No trips yet — create your first one.</div>
           ) : (
-            trips.map(trip => <TripCard key={trip.id} trip={trip} />)
+            trips.map(trip => <TripCard key={trip.id} trip={trip} onDelete={setDeleteTrip} />)
           )}
         </div>
       </main>
@@ -214,6 +235,51 @@ export default function Trips() {
               <Button onClick={createTrip} className="flex-1 justify-between">
                 <span>Create trip</span>
                 <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z"/></svg>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteTrip && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6"
+          onClick={e => { if (e.target === e.currentTarget) setDeleteTrip(null) }}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+            <div className="flex items-start justify-between p-5 pb-2">
+              <div>
+                <p className="mb-[2px] text-xs tracking-[0.32px] text-muted">Driftlog</p>
+                <h2 className="text-xl font-normal">Delete trip</h2>
+              </div>
+              <button
+                onClick={() => setDeleteTrip(null)}
+                aria-label="Close"
+                className="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-muted hover:bg-field-hover"
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4l6.6 6.6L8 22.6 9.4 24l6.6-6.6 6.6 6.6 1.4-1.4-6.6-6.6z"/></svg>
+              </button>
+            </div>
+            <div className="px-5 pb-6 pt-4">
+              <p className="text-sm leading-[1.4]">
+                Permanently delete <span className="font-semibold">{deleteTrip.name}</span>? This removes the trip and all of its expenses for everyone in the group. This can't be undone.
+              </p>
+            </div>
+            <div className="flex h-16 border-t border-subtle">
+              <button
+                onClick={() => setDeleteTrip(null)}
+                className="flex-1 border-0 bg-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-gray-80"
+              >
+                Cancel
+              </button>
+              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between">
+                <span>Delete</span>
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                  <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+                  <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+                </svg>
               </Button>
             </div>
           </div>
