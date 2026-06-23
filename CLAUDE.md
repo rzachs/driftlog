@@ -58,8 +58,8 @@ Stop-Process -Name node -Force
 | Path | Purpose |
 |------|---------|
 | `src/pages/` | React page components (one per route) |
-| `src/components/` | Shared React components (Header) |
-| `src/utils.js` | Shared helpers: `fmt`, `col`, `initials`, `fmtDate` |
+| `src/components/` | Shared React components: `Header`, `Avatar`, `Button`/`ButtonLink`, `BackLink`, `PageShell`, `CalloutBanner` |
+| `src/utils.js` | Shared helpers: `fmt`, `col`, `initials`, `fmtDate`, `fmtDateRange`, `fmtBal` |
 | `src/App.jsx` | Route definitions (React Router v6) |
 | `design/` | Claude Design comp files (`.dc.html`) — design reference, not served |
 | `server.js` | Express server; all API routes are defined here |
@@ -142,6 +142,7 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 
 - Vite builds the React SPA to `dist/`; Express serves `dist/` via `express.static`
 - All API routes are prefixed `/api/`
+- Tailwind design tokens use short semantic names — no `driftlog-` prefix. Use `bg-brand`, `text-muted`, `border-subtle`, `bg-field`, `text-success`, `text-danger`, etc. Full token list is in `tailwind.config.js`.
 - SQLite DB file (`driftlog.db`) is gitignored — run `npm start` to auto-create it on first launch
 - E2E tests use a separate `driftlog-test.db` (set via `DB_PATH` env var); seeding is skipped via `SKIP_SEED=true`
 - `bddgen` must run before `playwright test` whenever `.feature` files change — it generates `.features-gen/` (gitignored)

@@ -59,9 +59,14 @@ driftlog/
 ├── src/
 │   ├── main.jsx              # React entry point
 │   ├── App.jsx               # Route definitions
-│   ├── utils.js              # Shared helpers (formatting, colours)
+│   ├── utils.js              # Shared helpers (fmt, col, initials, fmtDate, fmtDateRange, fmtBal)
 │   ├── components/
-│   │   └── Header.jsx
+│   │   ├── Header.jsx
+│   │   ├── Avatar.jsx        # Coloured circle with initials
+│   │   ├── Button.jsx        # Button + ButtonLink (primary / secondary variants)
+│   │   ├── BackLink.jsx      # Back-arrow navigation link
+│   │   ├── PageShell.jsx     # Outer wrapper (Header + main) used by every page
+│   │   └── CalloutBanner.jsx # Left-bordered CTA banner (settle-up prompt)
 │   └── pages/
 │       ├── Login.jsx
 │       ├── Trips.jsx
