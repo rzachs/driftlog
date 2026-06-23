@@ -8,7 +8,7 @@ Example: `/sdlc-fix-bug 1`
 
 ## Steps
 
-1. **Read the issue** using `gh issue view $ARGUMENTS --repo rzachs/driftlog`. Extract: title, body, any comments. If the issue is already labelled `fix-ready` or is closed, stop and tell the user.
+1. **Read the issue** using `gh issue view $ARGUMENTS --repo rzachs/driftlog`. Extract: title, body, any comments. If the issue is already labelled `fix-ready` or is closed, stop and tell the user. Then assign it to the authenticated user: `gh issue edit $ARGUMENTS --repo rzachs/driftlog --add-assignee @me`.
 
 2. **Identify affected files** from the issue body. If the body names specific files and line numbers, start there. Otherwise grep the codebase to locate the relevant code.
 
