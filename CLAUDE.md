@@ -132,6 +132,12 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 
 See `AI_SDLC_PLAN.md` for the full 9-step cycle including the two human checkpoints (Steps 2 and 8).
 
+### Bug fixes
+
+| Command | What it does |
+|---------|-------------|
+| `/sdlc-fix-bug <issue-number>` | Reads a GitHub issue, fixes the bug, runs tests, verifies visually, commits, comments on the issue with root cause + SHA, and labels it `fix-ready` for human validation. Human closes the issue after confirming. |
+
 ### Utilities
 
 | Command | What it does |

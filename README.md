@@ -158,6 +158,12 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 | 4 | `/sdlc-plan <spec-path>` | Reads the approved spec; returns an implementation + test plan citing spec rows; waits for approval |
 | 5–7 | `/sdlc-implement <spec-path>` | Executes the plan: code + unit tests (one per business-rules row) + E2E tests (one per AC item); idempotency check first |
 
+### Bug fixes
+
+| Command | What it does |
+|---------|-------------|
+| `/sdlc-fix-bug <issue-number>` | Reads a GitHub issue, fixes the bug, runs tests, verifies visually, commits, comments with root cause + SHA, labels `fix-ready` — human closes after validating |
+
 ### Utilities
 
 | Command | What it does |

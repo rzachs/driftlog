@@ -232,7 +232,7 @@ export default function Trips() {
               <button onClick={closeModal} className="flex-1 border-0 bg-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-gray-80">
                 Cancel
               </button>
-              <Button onClick={createTrip} className="flex-1 justify-between">
+              <Button onClick={createTrip} className="flex-1 justify-between !h-full">
                 <span>Create trip</span>
                 <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z"/></svg>
               </Button>
@@ -274,7 +274,7 @@ export default function Trips() {
               >
                 Cancel
               </button>
-              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between">
+              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between !h-full">
                 <span>Delete</span>
                 <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
                   <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>

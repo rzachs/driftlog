@@ -269,7 +269,7 @@ export default function TripOverview() {
               >
                 Cancel
               </button>
-              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between">
+              <Button variant="danger" onClick={confirmDelete} className="flex-1 justify-between !h-full">
                 <span>Delete</span>
                 <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
                   <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
