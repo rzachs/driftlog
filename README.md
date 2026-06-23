@@ -149,22 +149,21 @@ driftlog/
 
 Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands.
 
-### Feature development pipeline
+### Per-feature cycle
+
+| Step | Command | What it does |
+|------|---------|-------------|
+| 1 | `/sdlc-feature <description>` | Drafts a combined spec + business rules artifact from plain English; one approval gate; writes only after approval |
+| 3 | `/sdlc-sync-app-design` | Pulls design comps; applies visual changes immediately; stubs behavioral changes pending an approved spec *(UI features only)* |
+| 4 | `/sdlc-plan <spec-path>` | Reads the approved spec; returns an implementation + test plan citing spec rows; waits for approval |
+| 5–7 | `/sdlc-implement <spec-path>` | Executes the plan: code + unit tests (one per business-rules row) + E2E tests (one per AC item); idempotency check first |
+
+### Utilities
 
 | Command | What it does |
 |---------|-------------|
-| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval |
-| `/sdlc-rules <spec-path>` | Proposes business-rules table rows from a feature spec for human review; writes only after approval |
-| `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval |
-| `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify; idempotency check first |
-
-### Other
-
-| Command | What it does |
-|---------|-------------|
-| `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
-| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
-| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a feature spec `.md` — one Scenario per AC item |
+| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from a spec file — one `it()` per business-rules row |
+| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a spec file — one Scenario per AC item |
 
 ## Design sync
 

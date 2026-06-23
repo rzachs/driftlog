@@ -23,13 +23,48 @@ disable-model-invocation: true
 
 3. For each file to sync:
    a. Call `DesignSync.get_file` to fetch the latest version from Claude Design.
-   b. Read the existing local file from `design/` (if it exists).
-   c. Diff the two versions to identify what changed structurally or visually. Summarise the changes in plain language before touching any code.
-   d. Write the updated file to `design/`.
+   b. Read the existing local file from `design/` (if it exists). If identical to remote, skip and say so.
+   c. Diff the two versions and classify every change as either **visual** or **behavioral** (see classification rules below). Summarise what changed before touching any code.
+   d. Write the updated `.dc.html` file to `design/`.
    e. Look up the corresponding JSX file from the mapping above.
-   f. Read the JSX file and apply only the changes identified in step (c). When writing or modifying JSX, always use the shared component library and Tailwind token system described below — never inline what a component already encapsulates.
+   f. Apply **visual changes** to the JSX file immediately — use the shared component library and Tailwind token system below.
+   g. For each **behavioral change**, run the spec-gate check (see below) before writing any JSX logic.
 
-4. After all files are processed, report a summary: which screens were synced, what changed in each, and which JSX files were updated.
+4. After all files are processed, report a summary: which screens were synced, what visual changes were applied, and what behavioral changes were spec-gated or flagged.
+
+## Change classification
+
+When diffing a design file, classify each detected change:
+
+**Visual-only** (safe to apply directly):
+- Layout, spacing, sizing, typography adjustments
+- Colour token changes on existing elements
+- Text content changes
+- Reordering existing elements
+- Adding static/decorative elements (dividers, labels, icons with no action)
+
+**Behavioral** (requires spec-gate before implementation):
+- Any new interactive element: button, link, form input, menu, toggle
+- Any new modal, drawer, or overlay with state
+- Any new navigation flow or route change
+- Changes to what an existing action does
+
+## Spec-gate (for behavioral changes)
+
+For each behavioral change detected:
+
+1. Search `specs/features/` for a spec that covers this interaction. A match means the spec's user story or acceptance criteria explicitly describes this action/flow.
+
+2. **If a spec is found:**
+   - Apply the visual structure to JSX (the element is rendered, styled correctly)
+   - Do NOT wire up API calls, state for the new behavior, or navigation — leave the handler as a no-op stub: `onClick={() => {/* TODO: /sdlc-implement */}}`
+   - Report: "Behavioral change applied as visual stub. Spec found: `<path>`. Run `/sdlc-implement <path>` to wire up the logic."
+
+3. **If no spec is found:**
+   - Apply the visual structure to JSX as a stub (same as above)
+   - Report: "Behavioral change applied as visual stub. No spec found for this interaction. Run `/sdlc-spec '<description>'` to define it, then `/sdlc-rules`, then `/sdlc-implement`."
+
+> **Why stubs, not omissions?** The visual element should appear in the UI so the designer can verify layout and hover states, but the business logic must not exist until the spec is written and reviewed.
 
 ## Shared component library
 
@@ -39,7 +74,7 @@ All shared components live in `src/components/`. Always use these instead of wri
 |---|---|---|
 | `<PageShell maxWidth="...">` | `../components/PageShell` | Outer wrapper (Header + main) on every page |
 | `<Avatar name={} color={} size="sm\|md\|lg">` | `../components/Avatar` | Any coloured circle with initials; use `col(i)` from utils for colour |
-| `<Button variant="primary\|secondary">` | `../components/Button` | Any `<button>` action element |
+| `<Button variant="primary\|secondary\|danger">` | `../components/Button` | Any `<button>` action element |
 | `<ButtonLink to="..." variant="primary\|secondary">` | `../components/Button` | Any `<Link>` that looks like a button |
 | `<BackLink to="...">` | `../components/BackLink` | Back-arrow navigation link |
 | `<CalloutBanner title sub action>` | `../components/CalloutBanner` | Left-blue-bordered info/CTA box |
@@ -57,11 +92,11 @@ Design tokens are defined in `tailwind.config.js`. Always use token names — ne
 | `muted` | Secondary text (`#525252`) |
 | `helper` | Tertiary text (`#6f6f6f`) |
 | `success` / `success-bg` | Green for positive balances / success states |
-| `danger` | Red for negative balances / errors |
+| `danger` / `danger-bg` | Red for negative balances / errors / delete hover background |
 | `badge` / `badge-bg` | Blue badge text / background |
 
 ## Rules
 - If the local `design/` file is identical to the remote, skip it and say so.
 - If no JSX mapping exists for a design file, sync the design file to `design/` and warn that no JSX target is configured.
-- Never overwrite JSX business logic (API calls, state, routing) — only apply structural/style changes from the design diff.
+- **Never implement behavioral logic without a spec** — always stub unspecced behavior.
 - Never use raw hex colour values in JSX — always use a token from the table above.

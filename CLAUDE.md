@@ -14,7 +14,7 @@ Before staging and committing, always check these three files and update them if
 
 | File | Update when... |
 |------|---------------|
-| `AI_SDLC_PLAN.md` | A phase status changes (built ✅ / validated ✅ / partial 🟡) |
+| `AI_SDLC_PLAN.md` | A step's built/validated status changes, or an open decision is resolved |
 | `CLAUDE.md` | Skills are added/renamed, conventions change, or new workflow rules are introduced |
 | `README.md` | Project structure, routes, API endpoints, or slash commands change |
 
@@ -121,22 +121,23 @@ When the user asks to "save the conversation", write a summary to `.claude/conve
 
 All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude Code commands. Skills live in `.claude/skills/<name>/SKILL.md`.
 
-### Feature development pipeline
+### Per-feature cycle
+
+| Step | Command | What it does |
+|------|---------|-------------|
+| 1 | `/sdlc-feature <description>` | Drafts a **combined artifact** — user story + acceptance criteria + business rules table — from plain English. One draft, one approval gate. Writes only after approval. |
+| 3 | `/sdlc-sync-app-design` | Pulls design comps from Claude Design. Visual changes applied immediately; behavioral changes (new buttons, modals, flows) are stubbed pending an approved spec. *(UI-touching features only.)* |
+| 4 | `/sdlc-plan <spec-path>` | Reads the approved spec (+ design diff if applicable); returns an implementation + test plan citing specific spec rows; waits for approval. |
+| 5–7 | `/sdlc-implement <spec-path>` | Executes the approved plan: code changes, unit tests (one per business-rules row), E2E tests (one per AC item). Idempotency check first. |
+
+See `AI_SDLC_PLAN.md` for the full 9-step cycle including the two human checkpoints (Steps 2 and 8).
+
+### Utilities
 
 | Command | What it does |
 |---------|-------------|
-| `/sdlc-spec <description>` | Drafts or updates a feature spec from plain English; detects new vs existing; writes only after approval. Then tells you to run `/sdlc-rules`. |
-| `/sdlc-rules <spec-path>` | Proposes business-rules table rows from a feature spec for human review; writes only after approval. Then tells you to update design comps and run `/sdlc-plan`. |
-| `/sdlc-plan <spec-path>` | Reads an approved spec + existing code; checks what's already implemented; outputs implementation + test plan for approval. Then tells you to run `/sdlc-implement`. |
-| `/sdlc-implement <spec-path>` | Executes an approved plan: code changes + tests + verify. Idempotency check first — will not re-implement what's already done. |
-
-### Other
-
-| Command | What it does |
-|---------|-------------|
-| `/sdlc-sync-app-design` | Pulls updated screens from Claude Design and applies changes to the corresponding `src/pages/*.jsx` files |
-| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
-| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a feature spec `.md` — one Scenario per AC item, `@wip` on spec-gap scenarios |
+| `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from a spec file — one `it()` per business-rules row, skipping known gaps |
+| `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a spec file — one Scenario per AC item, `@wip` on spec-gap scenarios |
 
 ## UI component library
 
@@ -148,7 +149,7 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 |---|---|---|
 | `<PageShell maxWidth="...">` | `maxWidth` (string, default `"768px"`), `subtitle` | Outer wrapper on every page — renders `<Header>` + `<main>` |
 | `<Avatar name color size>` | `name` (string), `color` (hex from `col()`), `size` (`sm`/`md`/`lg`) | Any coloured circle with initials; get `color` from `col(i)` in `utils.js` |
-| `<Button variant?>` | `variant` (`primary` default / `secondary`), standard button props | Any `<button>` action element |
+| `<Button variant?>` | `variant` (`primary` default / `secondary` / `danger`), standard button props | Any `<button>` action element |
 | `<ButtonLink to variant?>` | `to` (route string), same variants as Button | Any React Router `<Link>` that looks like a button |
 | `<BackLink to>` | `to` (route string) | Back-arrow navigation link at the top of inner pages |
 | `<CalloutBanner title sub action>` | `title`, `sub` (strings), `action` (ReactNode) | Left-blue-bordered info/CTA panel |
@@ -166,7 +167,7 @@ Never use raw hex values in JSX. Always use a named token:
 | `muted` | `#525252` | Secondary / helper text |
 | `helper` | `#6f6f6f` | Tertiary text, footnotes |
 | `success` / `success-bg` | `#24a148` / `#defbe6` | Positive balances, settled state |
-| `danger` | `#da1e28` | Negative balances, errors |
+| `danger` / `danger-bg` | `#da1e28` / `#fff1f1` | Negative balances, errors / delete button hover background |
 | `badge` / `badge-bg` | `#0043ce` / `#d0e2ff` | "Active" badge text / background |
 
 ## Key conventions
