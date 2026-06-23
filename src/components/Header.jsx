@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom'
 
 export default function Header({ subtitle = 'Trips' }) {
   return (
-    <header className="h-12 bg-driftlog-panel text-white flex items-center px-4 sticky top-0 z-10">
+    <header className="h-12 bg-panel text-white flex items-center px-4 sticky top-0 z-10">
       <div className="flex items-center gap-[10px]">
-        <div className="w-5 h-5 bg-driftlog-blue-accent flex items-center justify-center">
+        <div className="w-5 h-5 bg-brand-accent flex items-center justify-center">
           <span className="font-semibold text-[0.8125rem] leading-none">$</span>
         </div>
         <Link to="/trips" className="text-sm no-underline text-white">
           <span className="font-semibold">Driftlog</span>{' '}
-          <span className="text-driftlog-gray-40">{subtitle}</span>
+          <span className="text-gray-40">{subtitle}</span>
         </Link>
       </div>
       <div className="ml-auto flex items-center h-full">
@@ -19,7 +19,7 @@ export default function Header({ subtitle = 'Trips' }) {
             <path d="M16 20a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
           </svg>
         </button>
-        <div className="w-8 h-8 rounded-full bg-driftlog-blue text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
+        <div className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
       </div>
     </header>
   )

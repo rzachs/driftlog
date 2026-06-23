@@ -1,47 +1,48 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/Button'
 
 export default function Login() {
   const navigate = useNavigate()
   const [showPw, setShowPw] = useState(false)
 
   return (
-    <div className="min-h-screen flex font-sans bg-white text-[#161616]">
-      <section className="flex-1 min-w-0 bg-driftlog-panel text-white p-16 flex flex-col justify-between">
+    <div className="min-h-screen flex font-sans bg-white text-panel">
+      <section className="flex-1 min-w-0 bg-panel text-white p-16 flex flex-col justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 bg-driftlog-blue-accent flex items-center justify-center">
+          <div className="w-6 h-6 bg-brand-accent flex items-center justify-center">
             <span className="text-white font-semibold text-[0.9375rem] leading-none">$</span>
           </div>
           <span className="text-sm font-semibold tracking-[0.16px]">Driftlog</span>
         </div>
 
         <div className="max-w-[440px]">
-          <p className="mb-4 text-xs tracking-[0.32px] text-driftlog-gray-40 uppercase">Trip expense splitter</p>
+          <p className="mb-4 text-xs tracking-[0.32px] text-gray-40 uppercase">Trip expense splitter</p>
           <h1 className="mb-6 text-[3.375rem] leading-[1.199] font-light">Split the trip, not the friendship.</h1>
-          <p className="text-base leading-[1.5] text-driftlog-gray-30 max-w-[380px]">Log who paid for what as it happens. See live balances. Settle up at the end with the fewest possible payments.</p>
+          <p className="text-base leading-[1.5] text-gray-30 max-w-[380px]">Log who paid for what as it happens. See live balances. Settle up at the end with the fewest possible payments.</p>
         </div>
 
-        <p className="text-xs tracking-[0.32px] text-driftlog-gray-50">© 2026 Driftlog</p>
+        <p className="text-xs tracking-[0.32px] text-gray-50">© 2026 Driftlog</p>
       </section>
 
       <section className="flex-1 min-w-0 flex items-center justify-center p-12">
         <div className="w-full max-w-[384px]">
           <h2 className="mb-2 text-[1.75rem] leading-[1.28572] font-normal">Log in</h2>
-          <p className="mb-10 text-sm leading-[1.42857] text-driftlog-text-2">
+          <p className="mb-10 text-sm leading-[1.42857] text-muted">
             New to Driftlog?{' '}
-            <a href="#" className="text-driftlog-blue no-underline hover:underline hover:text-driftlog-blue-active">Create an account</a>
+            <a href="#" className="text-brand no-underline hover:underline hover:text-brand-active">Create an account</a>
           </p>
 
           <form onSubmit={e => { e.preventDefault(); navigate('/trips') }}>
-            <label className="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Email</label>
+            <label className="block text-xs tracking-[0.32px] text-muted mb-2">Email</label>
             <div className="mb-6">
-              <input className="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm px-4" type="email" placeholder="you@example.com" />
+              <input className="w-full h-12 border-0 border-b border-strong bg-field text-panel text-sm px-4" type="email" placeholder="you@example.com" />
             </div>
 
-            <label className="block text-xs tracking-[0.32px] text-driftlog-text-2 mb-2">Password</label>
+            <label className="block text-xs tracking-[0.32px] text-muted mb-2">Password</label>
             <div className="relative mb-2">
               <input
-                className="w-full h-12 border-0 border-b border-driftlog-border-strong bg-driftlog-field text-[#161616] text-sm pl-4 pr-12"
+                className="w-full h-12 border-0 border-b border-strong bg-field text-panel text-sm pl-4 pr-12"
                 type={showPw ? 'text' : 'password'}
                 placeholder="Enter password"
               />
@@ -49,7 +50,7 @@ export default function Login() {
                 type="button"
                 aria-label="Show password"
                 onClick={() => setShowPw(v => !v)}
-                className="absolute top-0 right-0 w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover"
+                className="absolute top-0 right-0 w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center text-muted hover:bg-field-hover"
               >
                 <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
                   <path d="M30.94 15.66A16.69 16.69 0 0 0 16 5 16.69 16.69 0 0 0 1.06 15.66a1 1 0 0 0 0 .68A16.69 16.69 0 0 0 16 27a16.69 16.69 0 0 0 14.94-10.66 1 1 0 0 0 0-.68zM16 25c-5.37 0-10.26-3.57-12.87-9C5.74 10.57 10.63 7 16 7s10.26 3.57 12.87 9C26.26 21.43 21.37 25 16 25z"/>
@@ -59,24 +60,21 @@ export default function Login() {
             </div>
 
             <div className="mb-10">
-              <a href="#" className="text-xs tracking-[0.32px] text-driftlog-blue no-underline hover:underline hover:text-driftlog-blue-active">Forgot password?</a>
+              <a href="#" className="text-xs tracking-[0.32px] text-brand no-underline hover:underline hover:text-brand-active">Forgot password?</a>
             </div>
 
-            <button
-              type="submit"
-              className="w-full h-12 border-0 bg-driftlog-blue text-white text-sm tracking-[0.16px] cursor-pointer flex items-center justify-between px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover active:bg-driftlog-blue-active"
-            >
+            <Button type="submit" className="w-full">
               <span>Log in</span>
               <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
                 <path d="M18 6l-1.43 1.393L24.15 15H4v2h20.15l-7.58 7.573L18 26l10-10z"/>
               </svg>
-            </button>
+            </Button>
           </form>
 
           <div className="flex items-center gap-4 my-8">
-            <span className="flex-1 h-px bg-driftlog-border-subtle"></span>
-            <span className="text-xs tracking-[0.32px] text-driftlog-text-helper whitespace-nowrap">or continue with</span>
-            <span className="flex-1 h-px bg-driftlog-border-subtle"></span>
+            <span className="flex-1 h-px bg-subtle"></span>
+            <span className="text-xs tracking-[0.32px] text-helper whitespace-nowrap">or continue with</span>
+            <span className="flex-1 h-px bg-subtle"></span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -90,7 +88,7 @@ export default function Login() {
                 key={label}
                 type="button"
                 onClick={() => navigate('/trips')}
-                className="h-12 border border-driftlog-border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-[#161616] text-sm tracking-[0.16px] transition-colors duration-[110ms] hover:bg-driftlog-field-hover hover:border-driftlog-border-strong"
+                className="h-12 border border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-panel text-sm tracking-[0.16px] transition-colors duration-[110ms] hover:bg-field-hover hover:border-strong"
               >
                 {icon}
                 <span>{label}</span>
@@ -98,7 +96,7 @@ export default function Login() {
             ))}
           </div>
 
-          <p className="mt-12 text-xs leading-[1.33333] tracking-[0.32px] text-driftlog-text-helper">By logging in you agree to Driftlog's terms of use and privacy policy.</p>
+          <p className="mt-12 text-xs leading-[1.33333] tracking-[0.32px] text-helper">By logging in you agree to Driftlog's terms of use and privacy policy.</p>
         </div>
       </section>
     </div>
