@@ -138,11 +138,41 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 | `/sdlc-generate-tests <spec-name>` | Generates `tests/<spec-name>.test.js` from `specs/business-rules/<spec-name>.md` — one `it()` per table row, skipping known gaps |
 | `/sdlc-generate-e2e <spec-path>` | Generates `e2e/features/<domain>/<feature>.feature` from a feature spec `.md` — one Scenario per AC item, `@wip` on spec-gap scenarios |
 
+## UI component library
+
+**This is the authoritative reference for all JSX generation.** Any skill or workflow that writes or modifies React pages must follow these rules — never inline what a shared component already encapsulates, and never use raw hex values.
+
+### Shared components (`src/components/`)
+
+| Component | Props | Use for |
+|---|---|---|
+| `<PageShell maxWidth="...">` | `maxWidth` (string, default `"768px"`), `subtitle` | Outer wrapper on every page — renders `<Header>` + `<main>` |
+| `<Avatar name color size>` | `name` (string), `color` (hex from `col()`), `size` (`sm`/`md`/`lg`) | Any coloured circle with initials; get `color` from `col(i)` in `utils.js` |
+| `<Button variant?>` | `variant` (`primary` default / `secondary`), standard button props | Any `<button>` action element |
+| `<ButtonLink to variant?>` | `to` (route string), same variants as Button | Any React Router `<Link>` that looks like a button |
+| `<BackLink to>` | `to` (route string) | Back-arrow navigation link at the top of inner pages |
+| `<CalloutBanner title sub action>` | `title`, `sub` (strings), `action` (ReactNode) | Left-blue-bordered info/CTA panel |
+
+### Tailwind design tokens (`tailwind.config.js`)
+
+Never use raw hex values in JSX. Always use a named token:
+
+| Token | Hex | Use for |
+|---|---|---|
+| `panel` | `#161616` | Primary text colour, dark backgrounds |
+| `brand` / `brand-hover` / `brand-active` | `#0f62fe` / `#0050e6` / `#002d9c` | Buttons, links, focus rings |
+| `field` / `field-hover` | `#f4f4f4` / `#e8e8e8` | Input/form backgrounds, hover states |
+| `subtle` / `strong` / `row` | `#c6c6c6` / `#8d8d8d` / `#e0e0e0` | Border colours — light / medium / row dividers |
+| `muted` | `#525252` | Secondary / helper text |
+| `helper` | `#6f6f6f` | Tertiary text, footnotes |
+| `success` / `success-bg` | `#24a148` / `#defbe6` | Positive balances, settled state |
+| `danger` | `#da1e28` | Negative balances, errors |
+| `badge` / `badge-bg` | `#0043ce` / `#d0e2ff` | "Active" badge text / background |
+
 ## Key conventions
 
 - Vite builds the React SPA to `dist/`; Express serves `dist/` via `express.static`
 - All API routes are prefixed `/api/`
-- Tailwind design tokens use short semantic names — no `driftlog-` prefix. Use `bg-brand`, `text-muted`, `border-subtle`, `bg-field`, `text-success`, `text-danger`, etc. Full token list is in `tailwind.config.js`.
 - SQLite DB file (`driftlog.db`) is gitignored — run `npm start` to auto-create it on first launch
 - E2E tests use a separate `driftlog-test.db` (set via `DB_PATH` env var); seeding is skipped via `SKIP_SEED=true`
 - `bddgen` must run before `playwright test` whenever `.feature` files change — it generates `.features-gen/` (gitignored)

@@ -25,6 +25,7 @@ Example: `/sdlc-implement specs/features/expenses/add-expense-even-split.md`
    - Before writing any logic, cite the exact AC item or business-rules row it satisfies.
    - If a case arises that has no spec AC item or business-rules row, stop and surface the gap. Do not guess or invent behaviour.
    - Follow the existing patterns in each file being edited (naming conventions, style, structure).
+   - **For any JSX changes:** follow the **UI component library** section in `CLAUDE.md` — use shared components (`PageShell`, `Avatar`, `Button`/`ButtonLink`, `BackLink`, `CalloutBanner`) and named Tailwind tokens (`bg-brand`, `text-muted`, etc.). Never write raw hex values or inline class strings that duplicate an existing component.
 
 5. **Create or update tests**:
    - One `it()` per AC item or business-rules row.

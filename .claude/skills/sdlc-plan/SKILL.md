@@ -36,6 +36,7 @@ Example: `/sdlc-plan specs/features/expenses/add-expense-even-split.md`
    - File path
    - What to add or modify (specific: route name, function signature, component behaviour)
    - Which AC item it satisfies
+   - For any `src/pages/*.jsx` changes: name the shared components to use (see **UI component library** in `CLAUDE.md`) — the plan should say "use `<Button>`" not "add a button element"
 
    **Test changes**
    For each test file to create or update, list:
