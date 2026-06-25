@@ -107,6 +107,22 @@ app.get('/auth/google/callback', async (req, res) => {
   }
 });
 
+// Test-only: establishes a session without going through Google OAuth.
+// Gated on SKIP_SEED so this route is never reachable in production.
+if (process.env.SKIP_SEED === 'true') {
+  app.get('/auth/test-login', (req, res) => {
+    const { sub, name, email } = req.query;
+    if (!sub) return res.status(400).json({ error: 'sub required' });
+    const user = upsertUser(sub, email || `${sub}@test.example`, name || sub);
+    req.session.userId = user.id;
+    req.session.user = { displayName: user.display_name, email: user.email };
+    req.session.save(err => {
+      if (err) return res.status(500).json({ error: 'session save failed' });
+      res.redirect('/trips');
+    });
+  });
+}
+
 // ── Trips ─────────────────────────────────────────────────────────────────
 
 // spec rows 11–12: return only the logged-in user's trips; use their display_name for myBalance
