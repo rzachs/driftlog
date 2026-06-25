@@ -157,6 +157,7 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 | 3 | `/sdlc-sync-app-design` | Pulls design comps; applies visual changes immediately; stubs behavioral changes pending an approved spec *(UI features only)* |
 | 4 | `/sdlc-plan <spec-path>` | Reads the approved spec; returns an implementation + test plan citing spec rows; waits for approval |
 | 5–7 | `/sdlc-implement <spec-path>` | Executes the plan: code + unit tests (one per business-rules row) + E2E tests (one per AC item); idempotency check first |
+| 8 | `/sdlc-review <spec-path>` | Runs `/code-review` (high effort) then adds a spec-fidelity pass — every change must trace to a spec row, every spec row must be implemented and tested |
 
 ### Bug fixes
 
