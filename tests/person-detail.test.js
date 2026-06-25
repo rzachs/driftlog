@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const { calculatePersonDetail } = require('../calc.js');
+const { calculatePersonDetail } = require('../server/calc.js');
 
 const ALICE = { id: 'alice', name: 'Alice' };
 const BOB   = { id: 'bob',   name: 'Bob'   };

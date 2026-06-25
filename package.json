@@ -2,10 +2,10 @@
   "name": "driftlog",
   "version": "1.0.0",
   "description": "Trip expense splitter",
-  "main": "server.js",
+  "main": "server/index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "concurrently \"node server.js\" \"vite\"",
+    "start": "node server/index.js",
+    "dev": "concurrently \"node server/index.js\" \"vite\"",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",

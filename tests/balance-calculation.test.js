@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const { calculateBalancesFromData } = require('../calc.js');
+const { calculateBalancesFromData } = require('../server/calc.js');
 
 describe('calculateBalancesFromData', () => {
 

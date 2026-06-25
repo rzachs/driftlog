@@ -92,9 +92,10 @@ driftlog/
 ├── design/                   # Claude Design comp files (.dc.html) — design reference only
 ├── .claude/
 │   └── skills/               # Custom Claude Code skills (slash commands)
-├── server.js                 # Express server + all API routes
-├── db.js                     # SQLite schema, seed data, thin DB wrappers for balances/settlements
-├── calc.js                   # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances, calculatePersonDetail
+├── server/
+│   ├── index.js              # Express server + all API routes
+│   ├── db.js                 # SQLite schema, seed data, thin DB wrappers for balances/settlements
+│   └── calc.js               # Pure business-logic functions (no DB): calculateBalancesFromData, calculateSettlementsFromBalances, calculatePersonDetail
 ├── tests/
 │   ├── balance-calculation.test.js    # One test per spec row in specs/business-rules/balance-calculation.md
 │   ├── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
