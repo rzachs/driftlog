@@ -134,7 +134,7 @@ export default function TripOverview() {
                   >
                     <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
                       <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
-                      <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+                      <path d="M4 6v2h2l2 20h16l2-20h2V6H4zM23.92 26H8.08L6.1 8H25.9zM12 2h8v2h-8z"/>
                     </svg>
                     Delete trip
                   </button>
@@ -273,7 +273,7 @@ export default function TripOverview() {
                 <span>Delete</span>
                 <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
                   <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
-                  <path d="M4 6v2h2l2 20h16l2-20h2V6H4zm6.5 22L8.4 8h15.2l-2.1 20h-7zM12 2h8v2h-8z"/>
+                  <path d="M4 6v2h2l2 20h16l2-20h2V6H4zM23.92 26H8.08L6.1 8H25.9zM12 2h8v2h-8z"/>
                 </svg>
               </Button>
             </div>
