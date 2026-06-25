@@ -142,8 +142,9 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 | 3 | `/sdlc-sync-app-design` | Pulls design comps from Claude Design. Visual changes applied immediately; behavioral changes (new buttons, modals, flows) are stubbed pending an approved spec. *(UI-touching features only.)* |
 | 4 | `/sdlc-plan <spec-path>` | Reads the approved spec (+ design diff if applicable); returns an implementation + test plan citing specific spec rows; waits for approval. |
 | 5–7 | `/sdlc-implement <spec-path>` | Executes the approved plan: code changes, unit tests (one per business-rules row), E2E tests (one per AC item). Idempotency check first. |
+| 8 | `/sdlc-review <spec-path>` | Runs the built-in `/code-review` (high effort) then adds a spec-fidelity pass: every code change must trace to a spec row, every spec row must have an implementation and a test. Untraceable behavior and unimplemented rows are blockers. |
 
-See `AI_SDLC_PLAN.md` for the full 9-step cycle including the two human checkpoints (Steps 2 and 8).
+See `AI_SDLC_PLAN.md` for the full 10-step cycle including the two human checkpoints (Steps 2 and 9).
 
 ### Bug fixes
 

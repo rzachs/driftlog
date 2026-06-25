@@ -29,10 +29,11 @@ Every feature follows these steps in order.
 | 5 | **Implement** | AI | Writes API routes, business logic, and UI wiring exactly as spec'd. Cites spec rows before writing each piece. Stops if a case arises with no spec coverage. |
 | 6 | **Unit tests** | AI | Generates one `it()` per business-rules row in the spec file. Runs them. |
 | 7 | **E2E tests** | AI | Generates one Gherkin scenario per AC item in the spec file. Runs them against the live app in a real browser. |
-| 8 | **Verify** ⚑ | Human | **Load-bearing checkpoint.** Human confirms: (a) all tests pass, and (b) the running app matches what was approved in Step 2. Tests prove code matches itself — only a human can confirm code matches intent. |
-| 9 | **Pipeline / CI** *(future)* | AI blocks, human approves merge | AI blocks merge if any spec row or AC item lacks a matching test. Generates release notes from what changed. |
+| 8 | **Code review** | AI | Runs `/sdlc-review <spec-path>`: invokes the built-in `/code-review` for correctness and quality, then adds a spec-fidelity pass — every code change must trace to a spec row, every spec row must have an implementation and a test. Untraceable behavior and unimplemented rows are blockers. |
+| 9 | **Verify** ⚑ | Human | **Load-bearing checkpoint.** Human confirms: (a) all tests pass, (b) the running app matches what was approved in Step 2, and (c) any code-review blockers from Step 8 are resolved. Tests prove code matches itself — only a human can confirm code matches intent. |
+| 10 | **Pipeline / CI** *(future)* | AI blocks, human approves merge | AI blocks merge if any spec row or AC item lacks a matching test. Generates release notes from what changed. |
 
-> ⚑ = human-owned checkpoint. Steps 2 and 8 cannot be automated — they require judgment that the artifact or behavior matches the *intent*, not just internal consistency.
+> ⚑ = human-owned checkpoint. Steps 2 and 9 cannot be automated — they require judgment that the artifact or behavior matches the *intent*, not just internal consistency.
 
 ---
 
@@ -42,7 +43,7 @@ Every feature follows these steps in order.
 
 **Design-forward case.** When a designer adds something before a spec exists: `/sdlc-sync-app-design` stubs the visual element and reports the gap. The human must then run `/sdlc-feature` before logic can be added. This is the correct behavior — but it means the designer can get ahead of the spec. Whether to enforce spec-first in Claude Design itself (before the designer can add interactivity) is out of scope for this repo.
 
-**Step 8 tooling.** "Verify" is currently a human-only step. A future `/sdlc-verify` skill could automate spec-coverage checking (every AC item and business-rules row has a corresponding test) and surface mismatches between spec language and implementation, reducing the human's verification burden to intent-only judgment.
+**Step 9 tooling.** "Verify" is currently a human-only step. A future `/sdlc-verify` skill could automate spec-coverage checking (every AC item and business-rules row has a corresponding test) and surface mismatches between spec language and implementation, reducing the human's verification burden to intent-only judgment.
 
 ---
 
@@ -58,8 +59,9 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 5 | `/sdlc-implement` | ✅ | 🟡 | Currently runs unit tests (Step 6); E2E generation (Step 7) done separately |
 | 6 | `/sdlc-generate-tests` | ✅ | ✅ | Also called internally by `/sdlc-implement` |
 | 7 | `/sdlc-generate-e2e` | ✅ | ✅ | |
-| 8 | — | ⬜ | ⬜ | Human checkpoint; no automation planned yet |
-| 9 | — | ⬜ | ⬜ | Not started |
+| 8 | `/sdlc-review` | ✅ | ⬜ | Wraps `/code-review` + spec-fidelity pass (traceability, unimplemented rows, uncited tests) |
+| 9 | — | ⬜ | ⬜ | Human checkpoint; no automation planned yet |
+| 10 | — | ⬜ | ⬜ | Not started |
 
 ---
 
@@ -124,7 +126,22 @@ The spec file is the single source of truth for both code and tests. Unit tests 
 
 ---
 
-### Step 9 — Pipeline / CI *(not yet built)*
+### Step 8 — Code review
+
+**Two-layer review** (`/sdlc-review <spec-path>`):
+
+1. **Built-in `/code-review`** (high effort) — correctness bugs, dead code, simplification opportunities, security issues. Output reproduced in the combined report.
+
+2. **Spec-fidelity pass** — the layer general code review cannot do:
+   - *Code → spec:* every changed function, route, and UI element must trace to an AC item or business-rules row. Changes with no spec row are flagged as **invented behavior** and block shipping.
+   - *Spec → code:* every AC item and business-rules row must have a corresponding implementation and a test. Missing rows are flagged as **incomplete implementation** and block shipping.
+   - *Test citations:* unit test `it()` descriptions must include `[row N]`; E2E scenario titles must trace to an AC item. Uncited tests are flagged as weak coverage.
+
+**Blockers vs. findings:** Only untraceable behavior and unimplemented spec rows are blockers. Style findings and simplification suggestions are non-blocking — they are surfaced but do not prevent moving to Step 9.
+
+---
+
+### Step 10 — Pipeline / CI *(not yet built)*
 
 Planned gates:
 - Every business-rules row must have a corresponding unit test.
