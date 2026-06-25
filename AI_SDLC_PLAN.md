@@ -22,7 +22,7 @@ Every feature follows these steps in order.
 
 | Step | Name | Who | What happens |
 |---|---|---|---|
-| 1 | **Feature definition** | AI drafts, human approves | Human describes the feature in plain English. AI drafts a single combined artifact: user story + acceptance criteria + business rules table. Business rules must make *consequences* explicit (what data changes, what fails, what cascades) — not just CRUD-level AC items. |
+| 1 | **Feature definition** | AI drafts, human approves | Human describes the feature in plain English. AI creates a `feat/<slug>` branch, then drafts a single combined artifact: user story + acceptance criteria + business rules table. Business rules must make *consequences* explicit (what data changes, what fails, what cascades) — not just CRUD-level AC items. |
 | 2 | **Approve requirements** ⚑ | Human | **Load-bearing checkpoint.** Human approves or edits the combined draft. Approving means approving the *consequences*, not just the feature's existence. Nothing downstream proceeds without this approval. |
 | 3 | **Design pull** *(UI features only)* | Human authors, AI pulls | Human authors or updates the design in Claude Design. AI fetches the comp, diffs it against current code, applies visual changes immediately. Behavioral changes (new buttons, modals, flows) are stubbed — logic is deferred until Step 5. If design introduces something with no approved spec, AI flags it and stops. |
 | 4 | **Implementation plan** | AI drafts, human approves | AI reads the approved spec and any design diff. Returns a plan citing the specific spec row or AC item each planned change satisfies. Human approves or sends back for revision. |
@@ -94,8 +94,6 @@ The business rules table captures the *consequences* implied by the AC — data 
 
 The spec file is the single source of truth for both code and tests. Unit tests cite rows from the business rules table; E2E tests cite AC items. If a row isn't in the table, it hasn't been decided.
 
-**What was built with the old two-skill approach:** `/sdlc-spec` (user story + AC) and `/sdlc-rules` (business rules table) were separate skills with separate approval gates. This created an unnecessary second gate and allowed the AI to proceed to plan/implement with a spec that had no business rules yet. The combined artifact closes that gap.
-
 ---
 
 ### Step 3 — Design pull
@@ -138,6 +136,8 @@ The spec file is the single source of truth for both code and tests. Unit tests 
    - *Test citations:* unit test `it()` descriptions must include `[row N]`; E2E scenario titles must trace to an AC item. Uncited tests are flagged as weak coverage.
 
 **Blockers vs. findings:** Only untraceable behavior and unimplemented spec rows are blockers. Style findings and simplification suggestions are non-blocking — they are surfaced but do not prevent moving to Step 9.
+
+3. **Automated PR review (GitHub Action)** — `.github/workflows/ai-code-review.yml` runs on every pull request. Diffs the branch against base, sends it to Claude Sonnet 4.6, and posts findings as a PR comment grouped by blocker / warning / suggestion. Complements `/sdlc-review` but does not replace it — the Action has no access to spec files and cannot do the fidelity pass.
 
 ---
 
