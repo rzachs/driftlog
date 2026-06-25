@@ -100,9 +100,22 @@ The `.dc.html` files use the Claude Design runtime (`support.js`, `<x-dc>`, `{{ 
 
 `/specs/features/` and `/specs/business-rules/` are the **single source of truth for all behavioral decisions**.
 
+### Two-tier business rules structure
+
+Business rules live in one of two places depending on whether they are shared:
+
+| Location | When to use |
+|---|---|
+| `specs/business-rules/<domain>.md` | Rules **shared across multiple features** (e.g. `balance-calculation.md` is referenced by view-balances, view-person-detail, record-payment, and undo-payment) |
+| Embedded `## Business rules` table in the feature file | Rules **unique to one feature** that no other feature will ever reference (e.g. OAuth flow rules in `login-with-google.md`) |
+
+A feature file may use both: reference an external file for shared rules AND embed a table for its own unique rules.
+
 ### Before implementing any logic or generating any tests
 
-1. Read the relevant `/specs/business-rules/` file(s)
+1. Read the feature spec file. Check its `## Business rules` section for:
+   - Any **embedded table** — this is authoritative for rules unique to that feature
+   - Any **references to `specs/business-rules/*.md`** — read each referenced file in full
 2. Identify the exact row(s) that cover the case being implemented
 3. Cite those rows explicitly before writing any code
 4. If no spec row covers the case → **stop and surface the gap to the human** — do not guess or infer

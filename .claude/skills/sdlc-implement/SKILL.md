@@ -14,7 +14,9 @@ Example: `/sdlc-implement specs/features/expenses/add-expense-even-split.md`
    - `server.js`, `db.js`, `calc.js`, `src/App.jsx`
    - Relevant `src/pages/*.jsx` files (infer from the spec's user story)
    - Relevant `tests/*.test.js` files
-   - Referenced `specs/business-rules/*.md` files
+   - Business rules — check BOTH locations:
+     - **Embedded in the feature file** (`## Business rules` section with an inline table) — use these directly
+     - **Referenced external files** (any `specs/business-rules/*.md` paths listed in the feature file) — read each one in full
 
 3. **Idempotency check**: Before changing anything, assess whether this feature is already implemented:
    - For each AC item in the spec, check whether the corresponding code and test already exist.

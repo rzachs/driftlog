@@ -18,17 +18,21 @@ Example: `/sdlc-feature delete a trip`
 
    **Acceptance criteria** — Given/When/Then bullets covering: the happy path, the cancel/undo path, and any error state the user sees. One bullet per distinct outcome.
 
-   **Business rules** — a decision table (`| Scenario | Input | Expected output |`) covering every *consequence* implied by the AC. This is not a restatement of AC items — it is the precise list of decisions a programmer needs to implement correctly:
-   - What data is created, modified, or deleted?
-   - What validation rules apply and what errors are returned?
-   - What cascade effects occur (e.g. deleting a parent record)?
-   - What navigation or state change follows?
-   - What error is returned for invalid or not-found inputs?
-   Mark any row where the correct behavior is genuinely unclear with `[?]` — these are known gaps.
+   **Business rules** — decide which form to use before drafting:
+
+   - **Shared rules (reference form):** If the rules this feature depends on are already defined in `specs/business-rules/` AND those rules apply to other features too, reference the external file and cite the specific rows. Example: `specs/business-rules/balance-calculation.md` — rows 3, 7, 10. Do not embed a duplicate table.
+   - **Feature-unique rules (embedded form):** If the rules are specific to this feature and no other feature will share them, embed a decision table directly in the feature file (`| Scenario | Input | Expected output |`). This table covers every *consequence* implied by the AC:
+     - What data is created, modified, or deleted?
+     - What validation rules apply and what errors are returned?
+     - What cascade effects occur (e.g. deleting a parent record)?
+     - What navigation or state change follows?
+     - What error is returned for invalid or not-found inputs?
+   - Mark any row where the correct behavior is genuinely unclear with `[?]` — these are known gaps.
+   - A feature may use **both forms** if some rules are shared and others are unique.
 
    **Out of scope** — explicit list of related cases that are NOT in this feature.
 
-   > The business rules table is the load-bearing part of this artifact. AC items describe the user experience; business rules describe the system behavior. Approving this file means approving the consequences, not just the existence of a button. Make those consequences explicit.
+   > The business rules section is the load-bearing part of this artifact. AC items describe the user experience; business rules describe the system behavior. Approving this file means approving the consequences, not just the existence of a button. Make those consequences explicit.
 
 4. Present the full draft to the user. Say: "Here is the combined spec + business rules for **[feature name]**. The business rules table is the critical part — review it carefully before approving, as it defines what the system will actually do. Reply **yes** to write the file, or tell me what to change."
 
