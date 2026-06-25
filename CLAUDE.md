@@ -138,7 +138,7 @@ All custom skills are prefixed `sdlc-` to avoid collisions with built-in Claude 
 
 | Step | Command | What it does |
 |------|---------|-------------|
-| 1 | `/sdlc-feature <description>` | Drafts a **combined artifact** — user story + acceptance criteria + business rules table — from plain English. One draft, one approval gate. Writes only after approval. |
+| 1 | `/sdlc-feature <description>` | Creates a `feat/<slug>` branch, then drafts a **combined artifact** — user story + acceptance criteria + business rules table — from plain English. One draft, one approval gate. Writes only after approval. |
 | 3 | `/sdlc-sync-app-design` | Pulls design comps from Claude Design. Visual changes applied immediately; behavioral changes (new buttons, modals, flows) are stubbed pending an approved spec. *(UI-touching features only.)* |
 | 4 | `/sdlc-plan <spec-path>` | Reads the approved spec (+ design diff if applicable); returns an implementation + test plan citing specific spec rows; waits for approval. |
 | 5–7 | `/sdlc-implement <spec-path>` | Executes the approved plan: code changes, unit tests (one per business-rules row), E2E tests (one per AC item). Idempotency check first. |

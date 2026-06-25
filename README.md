@@ -154,7 +154,7 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 
 | Step | Command | What it does |
 |------|---------|-------------|
-| 1 | `/sdlc-feature <description>` | Drafts a combined spec + business rules artifact from plain English; one approval gate; writes only after approval |
+| 1 | `/sdlc-feature <description>` | Creates a `feat/<slug>` branch, then drafts a combined spec + business rules artifact from plain English; one approval gate; writes only after approval |
 | 3 | `/sdlc-sync-app-design` | Pulls design comps; applies visual changes immediately; stubs behavioral changes pending an approved spec *(UI features only)* |
 | 4 | `/sdlc-plan <spec-path>` | Reads the approved spec; returns an implementation + test plan citing spec rows; waits for approval |
 | 5–7 | `/sdlc-implement <spec-path>` | Executes the plan: code + unit tests (one per business-rules row) + E2E tests (one per AC item); idempotency check first |
