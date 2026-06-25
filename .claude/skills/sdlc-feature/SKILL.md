@@ -8,11 +8,15 @@ Example: `/sdlc-feature delete a trip`
 
 ## Steps
 
-1. Read all existing spec files under `specs/features/` recursively. Build a list of what's already there (path + user story line).
+1. **Create a feature branch.** Check the current branch with `git branch --show-current`.
+   - If already on a branch other than `master` / `main`, stay on it and note this to the user.
+   - If on `master` / `main`, derive a branch name from the description: `feat/<kebab-case-slug>` (e.g. `feat/delete-trip`). Run `git checkout -b <branch-name>` and tell the user which branch was created.
 
-2. **New vs existing check:** Compare the description to existing files. If a match is found, show the user the path and user story, and ask: "Is this an update to this existing spec, or a new feature?" Wait for the answer. If no match, proceed as new.
+2. Read all existing spec files under `specs/features/` recursively. Build a list of what's already there (path + user story line).
 
-3. **Draft the combined artifact.** For a new feature, determine the correct epic folder (`trips/`, `expenses/`, `balances/`, `settle-up/` — or a new folder if none fits) and a kebab-case filename. Then draft a single file containing all four sections:
+3. **New vs existing check:** Compare the description to existing files. If a match is found, show the user the path and user story, and ask: "Is this an update to this existing spec, or a new feature?" Wait for the answer. If no match, proceed as new.
+
+4. **Draft the combined artifact.** For a new feature, determine the correct epic folder (`trips/`, `expenses/`, `balances/`, `settle-up/` — or a new folder if none fits) and a kebab-case filename. Then draft a single file containing all four sections:
 
    **User story** — one sentence: "As a [role], I want [capability], so that [outcome]."
 
@@ -34,11 +38,11 @@ Example: `/sdlc-feature delete a trip`
 
    > The business rules section is the load-bearing part of this artifact. AC items describe the user experience; business rules describe the system behavior. Approving this file means approving the consequences, not just the existence of a button. Make those consequences explicit.
 
-4. Present the full draft to the user. Say: "Here is the combined spec + business rules for **[feature name]**. The business rules table is the critical part — review it carefully before approving, as it defines what the system will actually do. Reply **yes** to write the file, or tell me what to change."
+5. Present the full draft to the user. Say: "Here is the combined spec + business rules for **[feature name]**. The business rules table is the critical part — review it carefully before approving, as it defines what the system will actually do. Reply **yes** to write the file, or tell me what to change."
 
-5. **Only after explicit approval:** Write the file to `specs/features/<epic>/<filename>.md`.
+6. **Only after explicit approval:** Write the file to `specs/features/<epic>/<filename>.md`.
 
-6. Tell the user: "File written at `specs/features/<epic>/<filename>.md`. Next steps:
+7. Tell the user: "File written at `specs/features/<epic>/<filename>.md`. Next steps:
    - If this feature touches the UI: author or update the design in Claude Design, then run `/sdlc-sync-app-design`.
    - Run `/sdlc-plan specs/features/<epic>/<filename>.md` when ready to plan implementation."
 
