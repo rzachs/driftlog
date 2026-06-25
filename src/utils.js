@@ -7,4 +7,9 @@ export const fmtDateRange = (s, e) => {
   return s && e ? fmtDate(s) + ' – ' + fmtDate(e) : fmtDate(s || e)
 }
 export const fmtBal = n => (n >= 0 ? '+' : '−') + fmt(n)
-export const initials = name => name.slice(0, 2).toUpperCase()
+export const initials = name => {
+  const parts = name.trim().split(/\s+/)
+  return parts.length >= 2
+    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+    : name.slice(0, 2).toUpperCase()
+}
