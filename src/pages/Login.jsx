@@ -1,10 +1,24 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button } from '../components/Button'
+
+// spec row 9: error messages per error code
+const ERROR_MESSAGES = {
+  csrf:         'Login failed — please try again',
+  oauth_failed: 'Google sign-in was cancelled or failed',
+  server_error: 'Something went wrong — please try again',
+}
 
 export default function Login() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [showPw, setShowPw] = useState(false)
+  const error = searchParams.get('error')
+
+  // spec AC: already logged in → redirect to /trips
+  useEffect(() => {
+    fetch('/api/me').then(r => { if (r.ok) navigate('/trips', { replace: true }) })
+  }, [navigate])
 
   return (
     <div className="min-h-screen flex font-sans bg-white text-panel">
@@ -28,6 +42,14 @@ export default function Login() {
       <section className="flex-1 min-w-0 flex items-center justify-center p-12">
         <div className="w-full max-w-[384px]">
           <h2 className="mb-2 text-[1.75rem] leading-[1.28572] font-normal">Log in</h2>
+
+          {/* spec row 9: inline error message */}
+          {error && ERROR_MESSAGES[error] && (
+            <div className="mb-6 px-4 py-3 bg-danger-bg text-danger text-sm">
+              {ERROR_MESSAGES[error]}
+            </div>
+          )}
+
           <p className="mb-10 text-sm leading-[1.42857] text-muted">
             New to Driftlog?{' '}
             <a href="#" className="text-brand no-underline hover:underline hover:text-brand-active">Create an account</a>
@@ -78,8 +100,16 @@ export default function Login() {
           </div>
 
           <div className="grid grid-cols-2 gap-2">
+            {/* spec AC: Google button initiates real OAuth */}
+            <button
+              type="button"
+              onClick={() => { window.location.href = '/auth/google' }}
+              className="h-12 border border-subtle bg-white cursor-pointer flex items-center justify-center gap-2 text-panel text-sm tracking-[0.16px] transition-colors duration-[110ms] hover:bg-field-hover hover:border-strong"
+            >
+              <GoogleIcon />
+              <span>Google</span>
+            </button>
             {[
-              { label: 'Google', icon: <GoogleIcon /> },
               { label: 'Microsoft', icon: <MicrosoftIcon /> },
               { label: 'Apple', icon: <AppleIcon /> },
               { label: 'Facebook', icon: <FacebookIcon /> },

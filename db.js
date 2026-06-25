@@ -9,6 +9,14 @@ db.exec('PRAGMA foreign_keys = ON');
 
 function init() {
   db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id           TEXT PRIMARY KEY,
+      google_id    TEXT UNIQUE NOT NULL,
+      email        TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      created_at   TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS trips (
       id         TEXT PRIMARY KEY,
       name       TEXT NOT NULL,
@@ -50,15 +58,26 @@ function init() {
     );
   `);
 
+  // spec row 11: add created_by column to trips (migration — idempotent)
+  const tripsColumns = db.prepare('PRAGMA table_info(trips)').all();
+  if (!tripsColumns.some(c => c.name === 'created_by')) {
+    db.exec('ALTER TABLE trips ADD COLUMN created_by TEXT REFERENCES users(id)');
+  }
+
   const { c } = db.prepare('SELECT COUNT(*) AS c FROM trips').get();
   if (c === 0 && !process.env.SKIP_SEED) seed();
 }
 
 function seed() {
+  const seedUserId = uuidv4();
+  db.prepare('INSERT INTO users (id, google_id, email, display_name) VALUES (?,?,?,?)').run(
+    seedUserId, 'seed-user', 'seed@driftlog.dev', 'You'
+  );
+
   const tripId = uuidv4();
-  db.prepare('INSERT INTO trips VALUES (?,?,?,?,?)').run(
+  db.prepare('INSERT INTO trips VALUES (?,?,?,?,?,?)').run(
     tripId, 'Lisbon long weekend', '2026-06-12', '2026-06-15',
-    new Date('2026-06-10').toISOString()
+    new Date('2026-06-10').toISOString(), seedUserId
   );
 
   const names = ['You', 'Maya', 'Sam', 'Theo'];
@@ -70,9 +89,9 @@ function seed() {
 
   // Also seed a second (past) trip so the list screen has variety
   const trip2Id = uuidv4();
-  db.prepare('INSERT INTO trips VALUES (?,?,?,?,?)').run(
+  db.prepare('INSERT INTO trips VALUES (?,?,?,?,?,?)').run(
     trip2Id, 'NYE in Edinburgh', '2025-12-30', '2026-01-02',
-    new Date('2025-12-28').toISOString()
+    new Date('2025-12-28').toISOString(), seedUserId
   );
   const eNames = ['You', 'Maya', 'Sam', 'Lena', 'Rob', 'Kai'];
   eNames.forEach(name => {
@@ -121,4 +140,15 @@ function calculateSettlements(tripId) {
   return calculateSettlementsFromBalances(calculateBalances(tripId));
 }
 
-module.exports = { db, init, calculateBalances, calculateSettlements };
+// spec rows 4–5: insert on first login, update profile on subsequent logins
+function upsertUser(googleId, email, displayName) {
+  db.prepare(
+    'INSERT OR IGNORE INTO users (id, google_id, email, display_name) VALUES (?,?,?,?)'
+  ).run(uuidv4(), googleId, email, displayName);
+  db.prepare(
+    'UPDATE users SET email = ?, display_name = ? WHERE google_id = ?'
+  ).run(email, displayName, googleId);
+  return db.prepare('SELECT * FROM users WHERE google_id = ?').get(googleId);
+}
+
+module.exports = { db, init, calculateBalances, calculateSettlements, upsertUser };
