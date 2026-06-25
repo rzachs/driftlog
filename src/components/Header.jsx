@@ -1,6 +1,10 @@
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { UserContext } from '../App'
+import Avatar from './Avatar'
 
 export default function Header({ subtitle = 'Trips' }) {
+  const user = useContext(UserContext)
   return (
     <header className="h-12 bg-panel text-white flex items-center px-4 sticky top-0 z-10">
       <div className="flex items-center gap-[10px]">
@@ -19,7 +23,7 @@ export default function Header({ subtitle = 'Trips' }) {
             <path d="M16 20a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
           </svg>
         </button>
-        <div className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
+        {user && <Avatar name={user.displayName} color="#0f62fe" size="sm" />}
       </div>
     </header>
   )
