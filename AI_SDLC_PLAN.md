@@ -148,3 +148,26 @@ Planned gates:
 - Every AC item must have a corresponding E2E scenario.
 - Any spec row lacking a test blocks merge.
 - Release notes are generated from spec file diffs between tags: which rows changed → what user-visible behavior changed.
+
+---
+
+## Maintenance track — Bug fixes
+
+Bug fixes bypass the feature cycle. No spec, no design pull, no implementation plan — the issue is the source of truth.
+
+| Step | Who | What happens |
+|---|---|---|
+| **1. File issue** | Human | GitHub issue describes the bug: steps to reproduce, expected vs. actual behavior. |
+| **2. Fix** | AI | `/sdlc-fix-bug <issue-number>` creates a `fix/<issue-number>-<slug>` branch, reads the issue, locates the root cause, applies the fix, runs tests, verifies visually, commits, and opens a PR linked to the issue. Posts a comment on the issue with root cause + PR link. Labels the issue `fix-ready`. |
+| **3. AI review** | AI (automated) | GitHub Action runs on the PR — diffs the fix, posts findings grouped by blocker / warning / suggestion. |
+| **4. Validate** ⚑ | Human | Reviews the PR and the AI review comment. Merges if satisfied. Closing the PR auto-closes the linked issue. |
+
+> ⚑ = human-owned checkpoint. AI labels `fix-ready` and opens the PR; only the human merges.
+
+**Scope constraint:** If fixing the bug requires a behavioral change not currently in any spec (i.e. the bug is actually a missing or wrong spec row), `/sdlc-fix-bug` stops and surfaces the gap. The human must decide whether to update the spec first and run the feature cycle, or treat it as an emergency fix with a spec update to follow.
+
+### Tool inventory
+
+| Skill | Built | Validated | Notes |
+|---|---|---|---|
+| `/sdlc-fix-bug` | 🟡 | 🟡 | Needs update: add branch creation and PR opening; currently commits directly to current branch |
