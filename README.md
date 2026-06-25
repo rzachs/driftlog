@@ -164,7 +164,7 @@ Custom Claude Code skills live in `.claude/skills/`. All are prefixed `sdlc-` to
 
 | Command | What it does |
 |---------|-------------|
-| `/sdlc-fix-bug <issue-number>` | Reads a GitHub issue, fixes the bug, runs tests, verifies visually, commits, comments with root cause + SHA, labels `fix-ready` — human closes after validating |
+| `/sdlc-fix-bug <issue-number>` | Creates a `fix/<issue-number>-<slug>` branch, fixes the bug, runs tests, verifies visually, commits, opens a PR linked to the issue, comments with root cause + PR link, labels `fix-ready` — human merges PR to auto-close |
 
 ### Utilities
 
