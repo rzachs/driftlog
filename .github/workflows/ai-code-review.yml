@@ -45,14 +45,14 @@ jobs:
           jq -n \
             --rawfile diff /tmp/pr_diff.txt \
             '{
-              model: "claude-opus-4-8",
+              model: "claude-sonnet-4-6",
               max_tokens: 2048,
               messages: [{
                 role: "user",
                 content: ("Review this pull request diff for correctness bugs, security vulnerabilities, and code quality issues. Cite file names and approximate line numbers. Format as markdown, grouped by severity (blocker / warning / suggestion). If nothing is worth flagging, say so in one sentence.\n\n```diff\n" + $diff + "\n```")
               }]
             }' \
-          | curl -sf https://api.anthropic.com/v1/messages \
+          | curl -s https://api.anthropic.com/v1/messages \
               -H "x-api-key: $ANTHROPIC_API_KEY" \
               -H "anthropic-version: 2023-06-01" \
               -H "content-type: application/json" \
