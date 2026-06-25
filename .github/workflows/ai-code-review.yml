@@ -8,6 +8,10 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   ai-code-review:
     runs-on: ubuntu-latest
@@ -31,6 +35,8 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
+          set -euo pipefail
+
           if [ ! -s /tmp/pr_diff.txt ]; then
             echo "No code changes to review." > /tmp/review.md
             exit 0
@@ -52,6 +58,10 @@ jobs:
               -H "content-type: application/json" \
               -d @- \
           | jq -r '.content[0].text' > /tmp/review.md
+
+          if [ ! -s /tmp/review.md ] || [ "$(cat /tmp/review.md)" = "null" ]; then
+            echo "Review generation failed — check the Actions log for details." > /tmp/review.md
+          fi
 
       - name: Post comment
         env:
