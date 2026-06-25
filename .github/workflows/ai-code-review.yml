@@ -1,0 +1,78 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ai-code-review:
+    runs-on: ubuntu-latest
+    # Forks cannot access repo secrets — skip them
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate diff
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff origin/${{ github.base_ref }}...HEAD \
+            -- . ':(exclude)package-lock.json' ':(exclude)*.lock' ':(exclude)dist/' \
+            | head -c 50000 > /tmp/pr_diff.txt
+          echo "Diff size: $(wc -c < /tmp/pr_diff.txt) bytes"
+
+      - name: Review with Claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ ! -s /tmp/pr_diff.txt ]; then
+            echo "No code changes to review." > /tmp/review.md
+            exit 0
+          fi
+
+          jq -n \
+            --rawfile diff /tmp/pr_diff.txt \
+            '{
+              model: "claude-sonnet-4-6",
+              max_tokens: 2048,
+              messages: [{
+                role: "user",
+                content: ("Review this pull request diff for correctness bugs, security vulnerabilities, and code quality issues. Cite file names and approximate line numbers. Format as markdown, grouped by severity (blocker / warning / suggestion). If nothing is worth flagging, say so in one sentence.\n\n```diff\n" + $diff + "\n```")
+              }]
+            }' \
+          | curl -s https://api.anthropic.com/v1/messages \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "anthropic-version: 2023-06-01" \
+              -H "content-type: application/json" \
+              -d @- \
+          | jq -r '.content[0].text' > /tmp/review.md
+
+          if [ ! -s /tmp/review.md ] || [ "$(cat /tmp/review.md)" = "null" ]; then
+            echo "Review generation failed — check the Actions log for details." > /tmp/review.md
+          fi
+
+      - name: Post comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "## AI Code Review"
+            echo ""
+            cat /tmp/review.md
+            echo ""
+            echo "---"
+            echo "*Reviewed by Claude · [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+          } > /tmp/comment.md
+          gh pr comment ${{ github.event.pull_request.number }} --body-file /tmp/comment.md
