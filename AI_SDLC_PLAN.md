@@ -31,7 +31,9 @@ Every feature follows these steps in order.
 | 7 | **E2E tests** | AI | Generates one Gherkin scenario per AC item in the spec file. Runs them against the live app in a real browser. |
 | 8 | **Code review** | AI | Runs `/sdlc-review <spec-path>`: invokes the built-in `/code-review` for correctness and quality, then adds a spec-fidelity pass — every code change must trace to a spec row, every spec row must have an implementation and a test. Untraceable behavior and unimplemented rows are blockers. |
 | 9 | **Verify** ⚑ | Human | **Load-bearing checkpoint.** Human confirms: (a) all tests pass, (b) the running app matches what was approved in Step 2, and (c) any code-review blockers from Step 8 are resolved. Tests prove code matches itself — only a human can confirm code matches intent. |
-| 10 | **Pipeline / CI** *(future)* | AI blocks, human approves merge | AI blocks merge if any spec row or AC item lacks a matching test. Generates release notes from what changed. |
+| 10a | **CI test gate** | AI (automated) | GitHub Action runs `npm test` + `npx playwright test` on every PR. Merge is blocked if any test fails. |
+| 10b | **Spec-coverage enforcement** | AI (automated) | Script parses spec files, counts business-rules rows and AC items, compares against `[row N]` citations in unit tests and scenario titles in `.feature` files. Merge is blocked if any row or AC item has no corresponding test. |
+| 10c | **Release notes** | AI (automated) | Action triggered on tag push diffs spec files between the previous and current tag, maps changed/added/removed rows to user-visible behavior, and writes a structured changelog (GitHub Release body and/or `CHANGELOG.md`). |
 
 > ⚑ = human-owned checkpoint. Steps 2 and 9 cannot be automated — they require judgment that the artifact or behavior matches the *intent*, not just internal consistency.
 
@@ -61,7 +63,9 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 7 | `/sdlc-generate-e2e` | ✅ | ✅ | |
 | 8 | `/sdlc-review` | ✅ | ✅ | Wraps `/code-review` + spec-fidelity pass; GitHub Action also runs Claude review on every PR |
 | 9 | — | ✅ | ✅ | Human checkpoint; no automation planned yet |
-| 10 | — | ⬜ | ⬜ | Not started |
+| 10a | — | ⬜ | ⬜ | Not started |
+| 10b | — | ⬜ | ⬜ | Not started |
+| 10c | — | ⬜ | ⬜ | Not started |
 
 ---
 
@@ -143,11 +147,17 @@ The spec file is the single source of truth for both code and tests. Unit tests 
 
 ### Step 10 — Pipeline / CI *(not yet built)*
 
-Planned gates:
-- Every business-rules row must have a corresponding unit test.
-- Every AC item must have a corresponding E2E scenario.
-- Any spec row lacking a test blocks merge.
-- Release notes are generated from spec file diffs between tags: which rows changed → what user-visible behavior changed.
+#### 10a — CI test gate
+
+GitHub Action runs `npm test` (unit) and `npx playwright test` (E2E) on every PR. Merge is blocked if any test fails. This is the missing link that makes Steps 6–7 actually enforce anything — currently tests are run locally and manually.
+
+#### 10b — Spec-coverage enforcement
+
+A script (run as a CI step or standalone Action) parses spec files, counts business-rules rows and AC items, then compares them against `[row N]` citations in unit test `it()` descriptions and scenario titles in `.feature` files. Merge is blocked if any row or AC item has no corresponding test. This makes the spec-fidelity check that `/sdlc-review` currently does manually into a hard, automated gate.
+
+#### 10c — Release notes
+
+A skill or Action triggered on tag push diffs spec files between the previous and current tag. Changed, added, and removed rows are mapped to user-visible behavior and written as a structured changelog — GitHub Release body, `CHANGELOG.md` entry, or both.
 
 ---
 
