@@ -150,7 +150,7 @@ See `AI_SDLC_PLAN.md` for the full 10-step cycle including the two human checkpo
 
 | Command | What it does |
 |---------|-------------|
-| `/sdlc-fix-bug <issue-number>` | Reads a GitHub issue, fixes the bug, runs tests, verifies visually, commits, comments on the issue with root cause + SHA, and labels it `fix-ready` for human validation. Human closes the issue after confirming. |
+| `/sdlc-fix-bug <issue-number>` | Creates a `fix/<issue-number>-<slug>` branch, fixes the bug, runs tests, verifies visually, commits, opens a PR linked to the issue, comments with root cause + PR link, and labels it `fix-ready`. Human merges the PR to auto-close the issue. |
 
 ### Utilities
 

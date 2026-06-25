@@ -170,4 +170,4 @@ Bug fixes bypass the feature cycle. No spec, no design pull, no implementation p
 
 | Skill | Built | Validated | Notes |
 |---|---|---|---|
-| `/sdlc-fix-bug` | 🟡 | 🟡 | Needs update: add branch creation and PR opening; currently commits directly to current branch |
+| `/sdlc-fix-bug` | ✅ | 🟡 | Creates `fix/<issue-number>-<slug>` branch, fixes, commits, opens PR linked to issue; human merges to auto-close |
