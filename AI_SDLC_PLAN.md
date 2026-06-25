@@ -53,14 +53,14 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 
 | Step | Skill | Built | Validated | Notes |
 |---|---|---|---|---|
-| 1 | `/sdlc-feature` | ✅ | 🟡 | Merged replacement for the old `/sdlc-spec` + `/sdlc-rules` pair |
+| 1 | `/sdlc-feature` | ✅ | ✅ | Merged replacement for the old `/sdlc-spec` + `/sdlc-rules` pair; now creates feature branch at start |
 | 3 | `/sdlc-sync-app-design` | ✅ | ✅ | Spec-gate added: behavioral changes are stubbed pending spec approval |
-| 4 | `/sdlc-plan` | ✅ | 🟡 | |
-| 5 | `/sdlc-implement` | ✅ | 🟡 | Currently runs unit tests (Step 6); E2E generation (Step 7) done separately |
+| 4 | `/sdlc-plan` | ✅ | ✅ | |
+| 5 | `/sdlc-implement` | ✅ | ✅ | Currently runs unit tests (Step 6); E2E generation (Step 7) done separately |
 | 6 | `/sdlc-generate-tests` | ✅ | ✅ | Also called internally by `/sdlc-implement` |
 | 7 | `/sdlc-generate-e2e` | ✅ | ✅ | |
-| 8 | `/sdlc-review` | ✅ | ⬜ | Wraps `/code-review` + spec-fidelity pass (traceability, unimplemented rows, uncited tests) |
-| 9 | — | ⬜ | ⬜ | Human checkpoint; no automation planned yet |
+| 8 | `/sdlc-review` | ✅ | ✅ | Wraps `/code-review` + spec-fidelity pass; GitHub Action also runs Claude review on every PR |
+| 9 | — | ⬜ | ✅ | Human checkpoint; no automation planned yet |
 | 10 | — | ⬜ | ⬜ | Not started |
 
 ---
