@@ -60,7 +60,7 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 6 | `/sdlc-generate-tests` | ✅ | ✅ | Also called internally by `/sdlc-implement` |
 | 7 | `/sdlc-generate-e2e` | ✅ | ✅ | |
 | 8 | `/sdlc-review` | ✅ | ✅ | Wraps `/code-review` + spec-fidelity pass; GitHub Action also runs Claude review on every PR |
-| 9 | — | ⬜ | ✅ | Human checkpoint; no automation planned yet |
+| 9 | — | ✅ | ✅ | Human checkpoint; no automation planned yet |
 | 10 | — | ⬜ | ⬜ | Not started |
 
 ---
@@ -170,4 +170,4 @@ Bug fixes bypass the feature cycle. No spec, no design pull, no implementation p
 
 | Skill | Built | Validated | Notes |
 |---|---|---|---|
-| `/sdlc-fix-bug` | ✅ | 🟡 | Creates `fix/<issue-number>-<slug>` branch, fixes, commits, opens PR linked to issue; human merges to auto-close |
+| `/sdlc-fix-bug` | ✅ | ✅ | Creates `fix/<issue-number>-<slug>` branch, fixes, commits, opens PR linked to issue; human merges to auto-close |
