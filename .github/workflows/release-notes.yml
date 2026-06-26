@@ -120,16 +120,48 @@ jobs:
       - name: Update CHANGELOG.md
         if: github.event_name == 'push' && steps.spec_diff.outputs.has_changes == 'true'
         run: |
-          if [ -f CHANGELOG.md ]; then
-            { cat /tmp/release_notes.md; echo ""; cat CHANGELOG.md; } > /tmp/new_changelog.md
-          else
-            cat /tmp/release_notes.md > /tmp/new_changelog.md
-          fi
-          cp /tmp/new_changelog.md CHANGELOG.md
+          DATE=$(date +%Y-%m-%d)
+          export DATE
+
+          python3 - <<'PYEOF'
+import os, re
+
+date = os.environ['DATE']
+with open('/tmp/claude_notes.md') as f:
+    new_content = f.read().strip()
+
+changelog_path = 'CHANGELOG.md'
+existing = open(changelog_path).read() if os.path.exists(changelog_path) else ''
+
+header = f'## {date}'
+lines = existing.split('\n')
+
+try:
+    idx = lines.index(header)
+except ValueError:
+    idx = None
+
+if idx is not None:
+    # Find end of today's section (next date header or EOF)
+    end_idx = len(lines)
+    for i in range(idx + 1, len(lines)):
+        if re.match(r'^## \d{4}-\d{2}-\d{2}$', lines[i]):
+            end_idx = i
+            break
+    # Append new content at the end of today's section
+    insert = [''] + new_content.split('\n') + ['']
+    lines = lines[:end_idx] + insert + lines[end_idx:]
+else:
+    # No section for today yet — prepend one
+    lines = [header, ''] + new_content.split('\n') + [''] + lines
+
+with open(changelog_path, 'w') as f:
+    f.write('\n'.join(lines))
+PYEOF
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           git diff --staged --quiet && echo "No changes to commit." && exit 0
-          git commit -m "docs(changelog): $(date +%Y-%m-%d) spec changes [skip ci]"
+          git commit -m "docs(changelog): ${DATE} spec changes [skip ci]"
           git push origin master
