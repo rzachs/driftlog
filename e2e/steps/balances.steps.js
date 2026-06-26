@@ -1,8 +1,8 @@
 const { Given, When, Then, expect } = require('../fixtures');
 
-Given('a member has a positive balance', async ({ page, request, seededTrip }) => {
+Given('a member has a positive balance', async ({ page, seededTrip }) => {
   // Maya paid for everyone → Maya has positive balance
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Maya paid',
       amount: 90,
@@ -30,8 +30,8 @@ Given('a member has exactly zero balance', async ({ page }) => {
 // ── Person detail ─────────────────────────────────────────────────────────────
 
 Given('I am on a person detail page for a member in a trip with expenses',
-  async ({ page, request, seededTrip }) => {
-    await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  async ({ page, seededTrip }) => {
+    await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
       data: {
         description: 'Dinner',
         amount: 90,
@@ -65,7 +65,7 @@ Given('the member paid and was split into the expense', async ({ page }) => {
   // Already on You's page — You paid $90 and also has a $30 share
 });
 
-Given('the member has a negative net balance', async ({ page, request, seededTrip }) => {
+Given('the member has a negative net balance', async ({ page, seededTrip }) => {
   // Navigate to Maya's detail page — Maya owes money
   const maya = seededTrip.members.find(m => m.name === 'Maya');
   await page.goto(`/trips/${seededTrip.id}/members/${maya.id}`);

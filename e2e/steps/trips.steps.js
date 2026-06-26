@@ -123,19 +123,19 @@ Given('trips exist', async ({ page, seededTrip }) => {
   await page.waitForLoadState('networkidle');
 });
 
-Given('no trips exist', async ({ page, request }) => {
+Given('no trips exist', async ({ page }) => {
   // Delete all existing trips so the page renders the empty state
-  const trips = await (await request.get('/api/trips')).json();
+  const trips = await (await page.request.get('/api/trips')).json();
   for (const trip of trips) {
-    await request.delete(`/api/trips/${trip.id}`);
+    await page.request.delete(`/api/trips/${trip.id}`);
   }
   await page.goto('/trips');
   await page.waitForLoadState('networkidle');
 });
 
-Given('I have a trip where my balance is positive', async ({ page, request, seededTrip }) => {
+Given('I have a trip where my balance is positive', async ({ page, seededTrip }) => {
   // You paid for everyone → positive balance
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'You paid',
       amount: 90,
@@ -148,9 +148,9 @@ Given('I have a trip where my balance is positive', async ({ page, request, seed
   await page.waitForLoadState('networkidle');
 });
 
-Given('I have a trip where my balance is negative', async ({ page, request, seededTrip }) => {
+Given('I have a trip where my balance is negative', async ({ page, seededTrip }) => {
   // Someone else paid for everyone → You has negative balance
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Maya paid',
       amount: 90,
