@@ -6,6 +6,9 @@ so that my identity is established without creating a separate password.
 
 ## Acceptance criteria
 
+- Given I am on the Login page and not logged in, when I view the page,
+  then I see only a 'Sign in with Google' button — no email/password form,
+  no other social auth buttons, no 'Create an account' link.
 - Given I am on the Login page and not logged in, when I click the Google
   button, then I am redirected to Google's OAuth consent screen.
 - Given I have granted consent, when Google redirects me back to Driftlog,
@@ -25,6 +28,7 @@ so that my identity is established without creating a separate password.
 
 | Scenario | Input | Expected output |
 |---|---|---|
+| Login page composition | GET /login (rendered) | Renders: 'Log in' heading, subtitle 'Sign in with your Google account to start splitting trips.', single full-width 'Sign in with Google' button, disclaimer 'By continuing you agree to Driftlog's terms of use and privacy policy.'. Does NOT render: email/password form, show/hide password toggle, 'Forgot password?' link, 'Create an account' link, 'or continue with' divider, Microsoft/Apple/Facebook buttons. |
 | Initiate OAuth | User clicks Google button | Server generates a random state token (CSRF), stores it in the session, redirects to Google with: client_id, redirect_uri, scope=`email profile`, response_type=code, state |
 | State mismatch on callback | callback `state` ≠ session state | Redirect to `/login?error=csrf`. No user record created or modified. |
 | Google returns error on callback | callback has `error` param | Redirect to `/login?error=oauth_failed`. No user record created or modified. |
@@ -39,8 +43,8 @@ so that my identity is established without creating a separate password.
 | "You" identity in balances | Viewing balances for a trip | The logged-in user's `display_name` is matched against `trip_members.name` to identify which member is "You" in balance calculations. The caller's identity shifts from a hardcoded string to `session.user.display_name`. |
 
 ## Out of scope
-- Email/password login (separate feature)
-- Microsoft, Apple, Facebook login (separate features)
+- Email/password login — not displayed on the login page; separate feature if ever added
+- Microsoft, Apple, Facebook login — not displayed on the login page; separate features if ever added
 - Logout / session invalidation (separate feature)
 - Account linking (Google account ↔ existing email/password account)
 - Changing display name after sign-up

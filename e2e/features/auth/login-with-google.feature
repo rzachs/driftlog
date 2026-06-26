@@ -1,6 +1,10 @@
 @auth
 Feature: Login with Google
 
+  Scenario: Login page shows only the Google sign-in button
+    Given I am on the login page and not logged in
+    Then I see only the Google sign-in button with no other auth options
+
   Scenario: Google button redirects to consent screen
     Given I am on the login page and not logged in
     When I click the Google sign-in button
