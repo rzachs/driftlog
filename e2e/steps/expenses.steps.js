@@ -157,6 +157,37 @@ Then('the expense is not submitted', async ({ page }) => {
   await expect(page).toHaveURL(/\/add-expense$/);
 });
 
+// Delete expense
+
+When('I click the expense actions menu on the first expense', async ({ page }) => {
+  await page.locator('[aria-label="Expense actions"]').first().click();
+});
+
+When('I confirm the expense deletion', async ({ page }) => {
+  await page.getByRole('button', { name: 'Delete' }).last().click();
+  await page.waitForLoadState('networkidle');
+});
+
+When('I cancel the expense deletion', async ({ page }) => {
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+Then('a delete expense confirmation dialog appears', async ({ page }) => {
+  await expect(page.getByRole('heading', { name: 'Delete expense' })).toBeVisible();
+});
+
+Then('{string} no longer appears in the expense list', async ({ page }, desc) => {
+  await expect(page.getByText(desc)).not.toBeVisible();
+});
+
+Then('the expense summary shows {int} expense', async ({ page }, count) => {
+  await expect(page.locator(`text=${count} expense`)).toBeVisible();
+});
+
+Then('the balance cards show updated amounts', async ({ page }) => {
+  await expect(page.locator('text=/€/').first()).toBeVisible();
+});
+
 // Expense history
 
 When('I view the expense list section', async ({ page }) => {

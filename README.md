@@ -149,6 +149,7 @@ driftlog/
 | PATCH | `/api/trips/:id` | Rename a trip |
 | DELETE | `/api/trips/:id` | Delete a trip |
 | POST | `/api/trips/:id/expenses` | Add an expense |
+| DELETE | `/api/trips/:tripId/expenses/:expenseId` | Delete an expense |
 | GET | `/api/trips/:tripId/members/:memberId/detail` | Per-person breakdown |
 | GET | `/api/trips/:id/settle` | Suggested settlement payments |
 | POST | `/api/trips/:id/settle` | Record a payment |

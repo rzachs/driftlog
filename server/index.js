@@ -258,6 +258,16 @@ app.post('/api/trips/:id/expenses', requireAuth, (req, res) => {
   res.status(201).json({ id: expId });
 });
 
+// BR: Expense and splits are deleted (splits cascade via FK ON DELETE CASCADE)
+// BR: Expense not found → 404
+app.delete('/api/trips/:tripId/expenses/:expenseId', requireAuth, (req, res) => {
+  const result = db.prepare(
+    'DELETE FROM expenses WHERE id = ? AND trip_id = ?'
+  ).run(req.params.expenseId, req.params.tripId);
+  if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
+  res.json({ ok: true });
+});
+
 // ── Person detail ─────────────────────────────────────────────────────────
 
 app.get('/api/trips/:tripId/members/:memberId/detail', requireAuth, (req, res) => {
