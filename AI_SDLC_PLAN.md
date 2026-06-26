@@ -64,7 +64,7 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 8 | `/sdlc-review` | ✅ | ✅ | Wraps `/code-review` + spec-fidelity pass; GitHub Action also runs Claude review on every PR |
 | 9 | — | ✅ | ✅ | Human checkpoint; no automation planned yet |
 | 10a | — | ✅ | ✅ | GitHub Action on every PR: runs unit tests (Vitest) and E2E tests (Playwright BDD) as separate jobs; merge is blocked if either fails; test report uploaded as artifact |
-| 10b | — | ⬜ | ⬜ | Not started |
+| 10b | — | ✅ | ⬜ | `scripts/check-spec-coverage.js` runs as a third CI job on every PR; checks `[row N]` citations in unit tests and `[AC: ...]`-annotated scenario counts vs spec rows/AC items |
 | 10c | — | ✅ | ✅ | GitHub Action on PR + push to master: diffs spec files, calls Claude to generate user-facing notes; posts changelog preview as PR comment (upserts on re-push), prepends dated entry to CHANGELOG.md on merge |
 
 ---

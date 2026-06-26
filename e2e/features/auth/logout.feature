@@ -13,7 +13,7 @@ Feature: Logout
     Then the dropdown closes
     And I am still logged in
 
-  Scenario: Clicking Log out destroys session and redirects to login
+  Scenario: Clicking Log out destroys session and redirects to login [AC: redirect + best-effort redirect]
     Given I am logged in
     When I open the account menu
     And I click Log out
