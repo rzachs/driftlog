@@ -124,7 +124,7 @@ The spec file is the single source of truth for both code and tests. Unit tests 
 
 **E2E tests** (`/sdlc-generate-e2e`): One Gherkin scenario per AC item. Scenarios are tagged by domain (`@trips`, `@expenses`, etc.) and run against the full stack: browser → API → SQLite. Each scenario name references the AC item.
 
-**Current test count:** 22 unit tests, 78 E2E scenarios (75 passing, 3 `@wip` for declared spec gaps).
+**Current test count:** 22 unit tests, 79 E2E scenarios (76 passing, 3 `@wip` for declared spec gaps).
 
 ---
 

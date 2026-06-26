@@ -87,6 +87,16 @@ When('Driftlog processes the callback', async ({ page }) => {
 
 // ── Thens ─────────────────────────────────────────────────────────────────────
 
+// [row 1: Login page composition]
+Then('I see only the Google sign-in button with no other auth options', async ({ page }) => {
+  await expect(page.getByRole('button', { name: 'Sign in with Google' })).toBeVisible();
+  await expect(page.locator('input[type="email"]')).not.toBeVisible();
+  await expect(page.locator('input[type="password"]')).not.toBeVisible();
+  await expect(page.getByRole('button', { name: /Microsoft|Apple|Facebook/i })).not.toBeVisible();
+  await expect(page.getByText('Create an account')).not.toBeVisible();
+  await expect(page.getByText('or continue with')).not.toBeVisible();
+});
+
 Then("I am redirected to Google's OAuth consent screen", async ({ page }) => {
   expect(page.url()).toMatch(/accounts\.google\.com/);
 });
