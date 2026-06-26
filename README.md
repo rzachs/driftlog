@@ -135,6 +135,8 @@ driftlog/
 
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/api/me` | Current session user |
+| POST | `/api/auth/logout` | Destroy session and log out |
 | GET | `/api/trips` | List all trips |
 | POST | `/api/trips` | Create a trip |
 | GET | `/api/trips/:id` | Trip detail (members, balances, expenses) |

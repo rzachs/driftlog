@@ -1,10 +1,18 @@
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { UserContext } from '../App'
 import Avatar from './Avatar'
 
 export default function Header({ subtitle = 'Trips' }) {
   const user = useContext(UserContext)
+  const navigate = useNavigate()
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+
+  async function handleLogout() {
+    setUserMenuOpen(false)
+    await fetch('/api/auth/logout', { method: 'POST' })
+    navigate('/')
+  }
   return (
     <header className="h-12 bg-panel text-white flex items-center px-4 sticky top-0 z-10">
       <div className="flex items-center gap-[10px]">
@@ -23,8 +31,40 @@ export default function Header({ subtitle = 'Trips' }) {
             <path d="M16 20a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"/>
           </svg>
         </button>
-        {user && <Avatar name={user.displayName} color="#0f62fe" size="sm" />}
+        {user && (
+          <div className="relative ml-2">
+            <button
+              onClick={(e) => { e.stopPropagation(); setUserMenuOpen(o => !o) }}
+              aria-label="Account menu"
+              aria-haspopup="true"
+              aria-expanded={userMenuOpen}
+              className="p-0 border-2 border-transparent rounded-full bg-transparent cursor-pointer hover:border-brand-accent"
+            >
+              <Avatar name={user.displayName} color="#0f62fe" size="sm" />
+            </button>
+            {userMenuOpen && (
+              <div className="absolute right-0 top-[calc(100%+4px)] w-60 bg-panel text-white shadow-[0_2px_12px_rgba(0,0,0,0.4)] z-20">
+                <div className="px-4 py-3 border-b border-gray-80">
+                  <p className="text-sm font-semibold leading-tight">{user.displayName}</p>
+                  <p className="text-xs text-gray-40 mt-[2px]">{user.email}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full h-12 px-4 border-0 bg-transparent text-white text-sm text-left tracking-[0.16px] cursor-pointer flex items-center gap-3 hover:bg-gray-80"
+                >
+                  <svg width="18" height="18" viewBox="0 0 32 32" fill="currentColor">
+                    <path d="M6 30h12v-2H8V4h10V2H6zm20.83-14.83L24 12.34l-1.41 1.42 2.56 2.56H14v2h11.15l-2.56 2.56L24 22.3l2.83-2.83 1.41-1.41-1.41-1.42z"/>
+                  </svg>
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+      {userMenuOpen && (
+        <div onClick={() => setUserMenuOpen(false)} className="fixed inset-0 z-[15]" />
+      )}
     </header>
   )
 }

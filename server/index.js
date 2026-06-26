@@ -117,6 +117,15 @@ app.get('/auth/google/callback', async (req, res) => {
   }
 });
 
+// logout spec rows "Server destroys session" + "Server error on destroy"
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error('Session destroy error:', err);
+    res.clearCookie('connect.sid');
+    res.json({ ok: true });
+  });
+});
+
 // Test-only: establishes a session without going through Google OAuth.
 // Gated on SKIP_SEED so this route is never reachable in production.
 if (process.env.SKIP_SEED === 'true') {
