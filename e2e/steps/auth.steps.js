@@ -101,9 +101,9 @@ Then('a Driftlog account is created from my Google profile', async ({ page }) =>
   expect(me.displayName).toBe(_name);
 });
 
-Then('I am signed in to my existing account with profile synced', async ({ page, request }) => {
+Then('I am signed in to my existing account with profile synced', async ({ page }) => {
   expect(page.url()).toMatch(/\/trips$/);
-  const me = await (await request.get('/api/me')).json();
+  const me = await (await page.request.get('/api/me')).json();
   expect(me.displayName).toBe(_name);
 });
 
@@ -140,7 +140,7 @@ When('I open the account menu', async ({ page }) => {
 
 // [AC: Close menu on click-away] — row "Close menu on click-away"
 When('I click outside the menu', async ({ page }) => {
-  await page.locator('header').locator('div.fixed').click();
+  await page.locator('div.fixed.inset-0').click();
 });
 
 // [AC: Click Log out] — row "Logout request"

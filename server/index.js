@@ -118,11 +118,14 @@ app.get('/auth/google/callback', async (req, res) => {
 });
 
 // logout spec rows "Server destroys session" + "Server error on destroy"
+// No requireAuth — logout must work even if the session is corrupted (requireAuth
+// hits the DB and would 401 before we can clean up). SameSite=lax on the cookie
+// mitigates cross-origin form-POST CSRF.
 app.post('/api/auth/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) console.error('Session destroy error:', err);
     res.clearCookie('connect.sid');
-    res.json({ ok: true });
+    res.json({ ok: !err });
   });
 });
 
