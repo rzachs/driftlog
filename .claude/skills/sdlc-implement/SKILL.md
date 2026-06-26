@@ -42,27 +42,33 @@ Example: `/sdlc-implement specs/features/expenses/add-expense-even-split.md`
    - `CLAUDE.md` — if new shared components, conventions, or skills were introduced
    - `AI_SDLC_PLAN.md` — if a step's built/validated status changed
 
-8. **Commit, push, and open a PR**:
+8. **Commit and push**:
    - Stage all changed files (be explicit — do not use `git add -A`)
    - Commit with message format: `feat(<scope>): <short description>` and a body summarising what was implemented and which spec it satisfies
    - Push the branch to origin
-   - Open a PR with `gh pr create`. PR body must include:
+   - Print a **test plan checklist** — a bulleted list of what the user should manually verify in the running app (golden path + key edge cases from the AC items)
+   - Then say: "Branch pushed. **Test the app using the checklist above**, then reply **'done'** (or **'create PR'**) when ready and I'll open the pull request."
+   - **Wait for the user's confirmation before running `gh pr create`.**
+
+9. **Open the PR** (only after user confirms testing is done):
+   - Run `gh pr create`. PR body must include:
      - **Summary** — bullet list of what was built
      - **Spec** — path to the spec file
      - **Tests** — list of new/updated test files and what they cover
      - **Test plan** — manual checklist of what a reviewer should verify
      - `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
 
-9. **After the human merges the PR**: when the user asks to merge or confirms it is merged:
+10. **After the human merges the PR**: when the user asks to merge or confirms it is merged:
    - Run `git checkout master && git pull` to bring master up to date
    - Delete the local branch: `git branch -d <branch-name>`
    - Delete the remote branch: `git push origin --delete <branch-name>`
 
-10. Report a summary: list each AC item, whether it was already implemented or newly added, which test covers it, and the PR URL.
+11. Report a summary: list each AC item, whether it was already implemented or newly added, which test covers it, and the PR URL.
 
 ## Rules
 - Spec-gated: cite the spec row before writing any logic. No invented behaviour.
 - Never re-implement what already works — only add what is missing (enforced by step 3).
 - If a business-rules gap is encountered mid-implementation, stop that piece and flag it to the user. Do not skip silently.
 - Always run `npm test` at the end — do not report done without a passing test run.
-- Always open a PR at the end — do not report done without a PR URL.
+- Always push the branch and print the test checklist before stopping — never skip straight to PR creation.
+- Never open a PR without explicit user confirmation that they have tested the change.
