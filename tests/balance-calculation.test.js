@@ -37,7 +37,7 @@ describe('calculateBalancesFromData', () => {
     expect(result.find(b => b.id === 'carol').balance).toBe(-40);
   });
 
-  it('payer who is also a participant nets out [row 3]', () => {
+  it('payer who is also a participant nets out', () => {
     // spec row 3: "Alice pays $120, split 3 ways $40 each → Alice net: +$80"
     const members  = [
       { id: 'alice', name: 'Alice' },
