@@ -53,7 +53,12 @@ Example: `/sdlc-implement specs/features/expenses/add-expense-even-split.md`
      - **Test plan** — manual checklist of what a reviewer should verify
      - `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
 
-9. Report a summary: list each AC item, whether it was already implemented or newly added, which test covers it, and the PR URL.
+9. **After the human merges the PR**: when the user asks to merge or confirms it is merged:
+   - Run `git checkout master && git pull` to bring master up to date
+   - Delete the local branch: `git branch -d <branch-name>`
+   - Delete the remote branch: `git push origin --delete <branch-name>`
+
+10. Report a summary: list each AC item, whether it was already implemented or newly added, which test covers it, and the PR URL.
 
 ## Rules
 - Spec-gated: cite the spec row before writing any logic. No invented behaviour.
