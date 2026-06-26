@@ -244,8 +244,8 @@ export default function TripOverview() {
                     onClick={e => { e.stopPropagation(); setOpenExpenseMenu(o => o === exp.id ? null : exp.id) }}
                     className="w-8 h-8 border-0 bg-transparent text-panel cursor-pointer flex items-center justify-center transition-colors duration-[70ms] hover:bg-subtle"
                   >
-                    <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
-                      <circle cx="16" cy="8" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="16" cy="24" r="2"/>
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                      <circle cx="16" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><circle cx="16" cy="24" r="3"/>
                     </svg>
                   </button>
                   {openExpenseMenu === exp.id && (
