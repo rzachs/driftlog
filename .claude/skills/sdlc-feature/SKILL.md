@@ -43,7 +43,7 @@ Example: `/sdlc-feature delete a trip`
 6. **Only after explicit approval:** Write the file to `specs/features/<epic>/<filename>.md`.
 
 7. Tell the user: "File written at `specs/features/<epic>/<filename>.md`. Next steps:
-   - If this feature touches the UI: author or update the design in Claude Design, then run `/sdlc-sync-app-design`.
+   - If this feature touches the UI: run `/sdlc-sync-app-design` to pull the latest design comp for this feature's screen. (If the design hasn't been updated in Claude Design yet, do that first, then sync.)
    - Run `/sdlc-plan specs/features/<epic>/<filename>.md` when ready to plan implementation."
 
 ## For updates to existing specs

@@ -18,8 +18,8 @@ disable-model-invocation: true
 ## Steps
 
 1. **Branch check.** Run `git branch --show-current`.
-   - If already on a branch other than `master` / `main`, stay on it and note this to the user.
-   - If on `master` / `main`, ask the user: "Which screen(s) are you syncing?" — use the answer to derive a branch name `feat/sync-<kebab-screen-name>` (e.g. `feat/sync-trip-overview`). Run `git checkout -b <branch-name>` and tell the user which branch was created. If syncing **all** screens, use `feat/sync-design-all`.
+   - If on a `feat/*` branch: stay on it, note the branch name, and proceed.
+   - If on `master` / `main`: **stop.** Tell the user: "Design sync must run inside a feature branch. Run `/sdlc-feature <description>` first to create the branch and write the spec, then run `/sdlc-sync-app-design` here."
 
 2. Call `DesignSync.list_files` on the project to get the current list of `.dc.html` files.
 
