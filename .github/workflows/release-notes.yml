@@ -124,71 +124,67 @@ jobs:
           export DATE
 
           python3 - <<'PYEOF'
-import os, re
+          import os, re
 
-date = os.environ['DATE']
-with open('/tmp/claude_notes.md') as f:
-    new_content = f.read().strip()
+          date = os.environ['DATE']
+          with open('/tmp/claude_notes.md') as f:
+              new_content = f.read().strip()
 
-changelog_path = 'CHANGELOG.md'
-existing = open(changelog_path).read() if os.path.exists(changelog_path) else ''
+          changelog_path = 'CHANGELOG.md'
+          existing = open(changelog_path).read() if os.path.exists(changelog_path) else ''
 
-SECTION_ORDER = ['New features', 'Changes', 'Removed']
+          SECTION_ORDER = ['New features', 'Changes', 'Removed']
 
-def parse_sections(text):
-    """Return (dict of section_name -> [bullet lines], insertion-order list of names)."""
-    sections, order, current = {}, [], None
-    for line in text.split('\n'):
-        if line.startswith('## '):
-            current = line[3:].strip()
-            if current not in sections:
-                sections[current] = []
-                order.append(current)
-        elif current is not None and line.strip():
-            sections[current].append(line)
-    return sections, order
+          def parse_sections(text):
+              sections, order, current = {}, [], None
+              for line in text.split('\n'):
+                  if line.startswith('## '):
+                      current = line[3:].strip()
+                      if current not in sections:
+                          sections[current] = []
+                          order.append(current)
+                  elif current is not None and line.strip():
+                      sections[current].append(line)
+              return sections, order
 
-def render_sections(sections, order):
-    out, seen = [], set()
-    for name in SECTION_ORDER + [n for n in order if n not in SECTION_ORDER]:
-        if name in sections and name not in seen and sections[name]:
-            seen.add(name)
-            out += [f'## {name}'] + sections[name] + ['']
-    return out
+          def render_sections(sections, order):
+              out, seen = [], set()
+              for name in SECTION_ORDER + [n for n in order if n not in SECTION_ORDER]:
+                  if name in sections and name not in seen and sections[name]:
+                      seen.add(name)
+                      out += [f'## {name}'] + sections[name] + ['']
+              return out
 
-lines = existing.split('\n')
-header = f'## {date}'
+          lines = existing.split('\n')
+          header = f'## {date}'
 
-try:
-    idx = lines.index(header)
-except ValueError:
-    idx = None
+          try:
+              idx = lines.index(header)
+          except ValueError:
+              idx = None
 
-if idx is not None:
-    # Find end of today's section (next date header or EOF)
-    end_idx = len(lines)
-    for i in range(idx + 1, len(lines)):
-        if re.match(r'^## \d{4}-\d{2}-\d{2}$', lines[i]):
-            end_idx = i
-            break
-    # Merge new bullets into existing subsections
-    ex_secs, ex_order = parse_sections('\n'.join(lines[idx + 1:end_idx]))
-    new_secs, new_order = parse_sections(new_content)
-    for name, bullets in new_secs.items():
-        if name in ex_secs:
-            ex_secs[name].extend(bullets)
-        else:
-            ex_secs[name] = bullets
-            ex_order.append(name)
-    merged = [header, ''] + render_sections(ex_secs, ex_order)
-    lines = lines[:idx] + merged + lines[end_idx:]
-else:
-    # No section for today yet — prepend one
-    lines = [header, ''] + new_content.split('\n') + [''] + lines
+          if idx is not None:
+              end_idx = len(lines)
+              for i in range(idx + 1, len(lines)):
+                  if re.match(r'^## \d{4}-\d{2}-\d{2}$', lines[i]):
+                      end_idx = i
+                      break
+              ex_secs, ex_order = parse_sections('\n'.join(lines[idx + 1:end_idx]))
+              new_secs, new_order = parse_sections(new_content)
+              for name, bullets in new_secs.items():
+                  if name in ex_secs:
+                      ex_secs[name].extend(bullets)
+                  else:
+                      ex_secs[name] = bullets
+                      ex_order.append(name)
+              merged = [header, ''] + render_sections(ex_secs, ex_order)
+              lines = lines[:idx] + merged + lines[end_idx:]
+          else:
+              lines = [header, ''] + new_content.split('\n') + [''] + lines
 
-with open(changelog_path, 'w') as f:
-    f.write('\n'.join(lines))
-PYEOF
+          with open(changelog_path, 'w') as f:
+              f.write('\n'.join(lines))
+          PYEOF
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

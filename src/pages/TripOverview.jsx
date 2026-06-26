@@ -12,8 +12,11 @@ export default function TripOverview() {
   const [trip, setTrip] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [openExpenseMenu, setOpenExpenseMenu] = useState(null)
+  const [expenseToDelete, setExpenseToDelete] = useState(null)
   const titleRef = useRef(null)
   const menuRef = useRef(null)
+  const expenseMenuRef = useRef(null)
 
   useEffect(() => {
     if (!id) { navigate('/trips'); return }
@@ -41,9 +44,28 @@ export default function TripOverview() {
     return () => document.removeEventListener('mousedown', handler)
   }, [menuOpen])
 
+  useEffect(() => {
+    if (!openExpenseMenu) return
+    function handler(e) {
+      if (expenseMenuRef.current && !expenseMenuRef.current.contains(e.target)) {
+        setOpenExpenseMenu(null)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [openExpenseMenu])
+
   async function confirmDelete() {
     await fetch(`/api/trips/${id}`, { method: 'DELETE' })
     navigate('/trips')
+  }
+
+  // AC: Confirming deletion removes expense; balances recalculate via re-fetch
+  async function confirmDeleteExpense() {
+    await fetch(`/api/trips/${id}/expenses/${expenseToDelete.id}`, { method: 'DELETE' })
+    setExpenseToDelete(null)
+    const data = await fetch(`/api/trips/${id}`).then(r => r.json())
+    if (!data.error) setTrip(data)
   }
 
   if (!trip) return (
@@ -211,11 +233,37 @@ export default function TripOverview() {
                 <span className="text-sm text-muted">{exp.date}</span>
                 <span className="text-sm text-muted">Split {waysCount} ways</span>
                 <span className="text-sm text-right tabular-nums">{fmt(exp.amount)}</span>
-                <span className="flex justify-end">
-                  <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" className="opacity-50">
-                    <path d="M22 16L12 26l-1.414-1.414L19.172 16l-8.586-8.586L12 6z"/>
-                  </svg>
-                </span>
+                {/* AC: clicking delete control → confirmation prompt; BR: Confirmation required */}
+                <div
+                  className="relative flex justify-end"
+                  ref={openExpenseMenu === exp.id ? expenseMenuRef : null}
+                >
+                  <button
+                    type="button"
+                    aria-label="Expense actions"
+                    onClick={e => { e.stopPropagation(); setOpenExpenseMenu(o => o === exp.id ? null : exp.id) }}
+                    className="w-8 h-8 border-0 bg-transparent text-panel cursor-pointer flex items-center justify-center transition-colors duration-[70ms] hover:bg-subtle"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                      <circle cx="16" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><circle cx="16" cy="24" r="3"/>
+                    </svg>
+                  </button>
+                  {openExpenseMenu === exp.id && (
+                    <div className="absolute right-0 top-full mt-px w-[180px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.3)] z-30">
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); setExpenseToDelete(exp); setOpenExpenseMenu(null) }}
+                        className="w-full h-10 border-0 bg-white text-danger text-sm text-left px-4 cursor-pointer flex items-center gap-3 transition-colors duration-[70ms] hover:bg-field-hover"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor">
+                          <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+                          <path d="M4 6v2h2l2 20h16l2-20h2V6H4zM23.92 26H8.08L6.1 8H25.9zM12 2h8v2h-8z"/>
+                        </svg>
+                        Delete expense
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )
           })}
@@ -235,6 +283,52 @@ export default function TripOverview() {
           }
         />
       </div>
+
+      {/* AC: cancel has no effect; AC: confirming removes expense + recalculates balances */}
+      {expenseToDelete && (
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6"
+          onClick={e => { if (e.target === e.currentTarget) setExpenseToDelete(null) }}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+            <div className="flex items-start justify-between p-5 pb-2">
+              <div>
+                <p className="mb-[2px] text-xs tracking-[0.32px] text-muted">Driftlog</p>
+                <h2 className="text-xl font-normal">Delete expense</h2>
+              </div>
+              <button
+                onClick={() => setExpenseToDelete(null)}
+                aria-label="Close"
+                className="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-muted hover:bg-field-hover"
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4l6.6 6.6L8 22.6 9.4 24l6.6-6.6 6.6 6.6 1.4-1.4-6.6-6.6z"/></svg>
+              </button>
+            </div>
+            <div className="px-5 pb-6 pt-4">
+              <p className="text-sm leading-[1.4]">
+                Delete <span className="font-semibold">{expenseToDelete.description}</span> ({fmt(expenseToDelete.amount)})? This removes it from the trip and recalculates everyone's balances. This can't be undone.
+              </p>
+            </div>
+            <div className="flex h-16 border-t border-subtle">
+              <button
+                onClick={() => setExpenseToDelete(null)}
+                className="flex-1 border-0 bg-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-gray-80"
+              >
+                Cancel
+              </button>
+              <Button variant="danger" onClick={confirmDeleteExpense} className="flex-1 justify-between !h-full">
+                <span>Delete</span>
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor">
+                  <path d="M12 12h2v12h-2zm6 0h2v12h-2z"/>
+                  <path d="M4 6v2h2l2 20h16l2-20h2V6H4zM23.92 26H8.08L6.1 8H25.9zM12 2h8v2h-8z"/>
+                </svg>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {deleteOpen && (
         <div

@@ -90,7 +90,7 @@
         </div>
       </div>
       <div class="ml-auto flex-none flex items-stretch gap-px">
-        <a href="03 Add Expense.dc.html" class="h-12 bg-driftlog-blue text-white text-sm tracking-[0.16px] no-underline inline-flex items-center gap-12 px-4 transition-colors duration-[110ms] hover:bg-driftlog-blue-hover">
+        <a href="03 Add Expense.dc.html" class="h-12 bg-driftlog-blue text-white text-sm tracking-[0.16px] no-underline inline-flex items-center gap-12 px-4 transition-colors duration-[110ms) hover:bg-driftlog-blue-hover">
           <span>Add expense</span>
           <img src="carbon/icons/add.svg" width="20" height="20" alt="" class="invert" />
         </a>
@@ -128,7 +128,7 @@
     <!-- Recent expenses -->
     <div class="flex items-baseline justify-between mb-4">
       <h2 class="text-sm font-semibold tracking-[0.16px]">Recent expenses</h2>
-      <span class="text-xs tracking-[0.32px] text-driftlog-text-2">7 expenses · €1,272.00 total</span>
+      <span class="text-xs tracking-[0.32px] text-driftlog-text-2">{{ expenseSummary }}</span>
     </div>
 
     <div class="border border-driftlog-border-subtle">
@@ -151,9 +151,19 @@
           <span class="text-sm text-driftlog-text-2">{{ e.dateStr }}</span>
           <span class="text-sm text-driftlog-text-2">{{ e.splitStr }}</span>
           <span class="text-sm text-right tabular-nums">{{ e.amountStr }}</span>
-          <span class="flex justify-end">
-            <img src="carbon/icons/chevron-right.svg" width="16" height="16" alt="" class="opacity-50" />
-          </span>
+          <div class="relative flex justify-end">
+            <button onclick="{{ e.toggleMenu }}" aria-label="Expense actions" class="w-8 h-8 border-0 bg-transparent text-[#161616] cursor-pointer flex items-center justify-center transition-colors duration-[70ms] hover:bg-driftlog-border-subtle">
+              <img src="carbon/icons/overflow-menu-vertical.svg" width="16" height="16" alt="" />
+            </button>
+            <sc-if value="{{ e.menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div class="absolute right-0 top-full mt-px w-[180px] bg-white shadow-[0_2px_6px_rgba(0,0,0,0.3)] z-30">
+                <button onclick="{{ e.requestDelete }}" class="w-full h-10 border-0 bg-white text-[#da1e28] text-sm text-left px-4 cursor-pointer flex items-center gap-3 transition-colors duration-[70ms] hover:bg-driftlog-field-hover">
+                  <img src="carbon/icons/trash-can.svg" width="16" height="16" alt="" />
+                  Delete expense
+                </button>
+              </div>
+            </sc-if>
+          </div>
         </div>
       </sc-for>
     </div>
@@ -204,12 +214,54 @@
   </div>
 </sc-if>
 
+<!-- Delete expense confirmation -->
+<sc-if value="{{ expenseDeleteOpen }}" hint-placeholder-val="{{ false }}">
+  <div onclick="{{ cancelDeleteExpense }}" class="fixed inset-0 bg-[rgba(0,0,0,0.6)] z-50 flex items-center justify-center p-6">
+    <div onclick="{{ stop }}" class="w-full max-w-[440px] bg-white shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+
+      <div class="flex items-start justify-between p-5 pb-2">
+        <div>
+          <p class="mb-[2px] text-xs tracking-[0.32px] text-driftlog-text-2">Driftlog</p>
+          <h2 class="text-xl font-normal">Delete expense</h2>
+        </div>
+        <button onclick="{{ cancelDeleteExpense }}" aria-label="Close" class="w-10 h-10 border-0 bg-transparent cursor-pointer flex items-center justify-center text-driftlog-text-2 hover:bg-driftlog-field-hover">
+          <img src="carbon/icons/close.svg" width="20" height="20" alt="" />
+        </button>
+      </div>
+
+      <div class="px-5 pb-6 pt-4">
+        <p class="text-sm leading-[1.4] text-[#161616]">Delete <span class="font-semibold">{{ expenseDeleteDesc }}</span> (<span class="tabular-nums">{{ expenseDeleteAmount }}</span>)? This removes it from the trip and recalculates everyone's balances. This can't be undone.</p>
+      </div>
+
+      <div class="flex h-16 border-t border-driftlog-border-subtle">
+        <button onclick="{{ cancelDeleteExpense }}" class="flex-1 border-0 bg-driftlog-panel text-white flex items-center px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-[#393939]">Cancel</button>
+        <button onclick="{{ confirmDeleteExpense }}" class="flex-1 border-0 bg-[#da1e28] text-white flex items-center justify-between px-4 text-sm tracking-[0.16px] cursor-pointer transition-colors duration-[110ms] hover:bg-[#ba1b23]">
+          <span class="whitespace-nowrap">Delete</span>
+          <img src="carbon/icons/trash-can.svg" width="20" height="20" alt="" class="invert" />
+        </button>
+      </div>
+
+    </div>
+  </div>
+</sc-if>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1056,&quot;height&quot;:900}}">
 class Component extends DCLogic {
   state = {
     menuOpen: false,
     deleteOpen: false,
+    openRowMenu: null,
+    deleteExpenseId: null,
+    expenses: [
+      { id: 1, desc: "Tarts & coffee",            payer: "Sam",  date: "Jun 14", amount:  24, ways: 4 },
+      { id: 2, desc: "Surf lessons",              payer: "Theo", date: "Jun 14", amount: 120, ways: 3 },
+      { id: 3, desc: "Train to Sintra",           payer: "Maya", date: "Jun 13", amount:  36, ways: 4 },
+      { id: 4, desc: "Dinner at Time Out Market", payer: "You",  date: "Jun 13", amount: 164, ways: 4 },
+      { id: 5, desc: "Groceries",                 payer: "Sam",  date: "Jun 13", amount:  88, ways: 4 },
+      { id: 6, desc: "Rental car",                payer: "Maya", date: "Jun 12", amount: 240, ways: 4 },
+      { id: 7, desc: "Airbnb (3 nights)",         payer: "You",  date: "Jun 12", amount: 600, ways: 4 },
+    ],
     tripName: (() => {
     try { return localStorage.getItem("driftlog.tripName") || "Lisbon long weekend"; }
     catch (e) { return "Lisbon long weekend"; }
@@ -253,15 +305,7 @@ class Component extends DCLogic {
       };
     });
 
-    const rawExpenses = [
-      { desc: "Tarts & coffee",            payer: "Sam",  date: "Jun 14", amount:  24, ways: 4 },
-      { desc: "Surf lessons",              payer: "Theo", date: "Jun 14", amount: 120, ways: 3 },
-      { desc: "Train to Sintra",           payer: "Maya", date: "Jun 13", amount:  36, ways: 4 },
-      { desc: "Dinner at Time Out Market", payer: "You",  date: "Jun 13", amount: 164, ways: 4 },
-      { desc: "Groceries",                 payer: "Sam",  date: "Jun 13", amount:  88, ways: 4 },
-      { desc: "Rental car",                payer: "Maya", date: "Jun 12", amount: 240, ways: 4 },
-      { desc: "Airbnb (3 nights)",         payer: "You",  date: "Jun 12", amount: 600, ways: 4 },
-    ];
+    const rawExpenses = this.state.expenses;
     const initialsOf = { You: "YO", Maya: "MA", Sam: "SA", Theo: "TH" };
     const expenses = rawExpenses.map((e) => ({
       desc:         e.desc,
@@ -271,9 +315,16 @@ class Component extends DCLogic {
       dateStr:      e.date,
       splitStr:     "Split " + e.ways + " ways",
       amountStr:    fmt(e.amount),
+      menuOpen:     this.state.openRowMenu === e.id,
+      toggleMenu:   (ev) => { ev.stopPropagation(); this.setState((s) => ({ openRowMenu: s.openRowMenu === e.id ? null : e.id })); },
+      requestDelete: (ev) => { ev.stopPropagation(); this.setState({ openRowMenu: null, deleteExpenseId: e.id }); },
     }));
 
-    return { people, expenses, tripName: this.state.tripName, titleRef, onTitleBlur, onTitleKeyDown,
+    const totalAmount = rawExpenses.reduce((a, e) => a + e.amount, 0);
+    const expenseSummary = rawExpenses.length + " expense" + (rawExpenses.length === 1 ? "" : "s") + " · " + fmt(totalAmount) + " total";
+    const pendingExpense = rawExpenses.find((e) => e.id === this.state.deleteExpenseId) || null;
+
+    return { people, expenses, expenseSummary, tripName: this.state.tripName, titleRef, onTitleBlur, onTitleKeyDown,
       menuOpen: this.state.menuOpen,
       deleteOpen: this.state.deleteOpen,
       stop: (e) => e.stopPropagation(),
@@ -281,6 +332,14 @@ class Component extends DCLogic {
       requestDelete: () => this.setState({ menuOpen: false, deleteOpen: true }),
       cancelDelete: () => this.setState({ deleteOpen: false }),
       confirmDelete: () => { window.location.href = "01b My Trips.dc.html"; },
+      expenseDeleteOpen:   !!pendingExpense,
+      expenseDeleteDesc:   pendingExpense ? pendingExpense.desc : "",
+      expenseDeleteAmount: pendingExpense ? fmt(pendingExpense.amount) : "",
+      cancelDeleteExpense: () => this.setState({ deleteExpenseId: null }),
+      confirmDeleteExpense: () => this.setState((s) => ({
+        expenses: s.expenses.filter((e) => e.id !== s.deleteExpenseId),
+        deleteExpenseId: null,
+      })),
     };
   }
 }
