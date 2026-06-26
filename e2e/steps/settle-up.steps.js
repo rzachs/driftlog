@@ -53,6 +53,8 @@ Given('all payments were recorded', async ({ page, seededTrip }) => {
   });
   await page.goto(`/trips/${seededTrip.id}/settle`);
   await page.waitForLoadState('networkidle');
+  // Wait for the page to render payment rows before counting
+  await page.waitForSelector('button:text("Record payment"), text=All balances', { timeout: 8000 }).catch(() => {});
   // Re-query after each click to avoid stale references
   while (await page.getByRole('button', { name: 'Record payment' }).count() > 0) {
     await page.getByRole('button', { name: 'Record payment' }).first().click();
