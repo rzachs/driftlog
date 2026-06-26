@@ -83,10 +83,11 @@ When('I click {string} on a recorded payment', async ({ page }, label) => {
 });
 
 When('I record all suggested payments', async ({ page }) => {
-  // Re-query after each click to avoid stale references
+  await page.waitForSelector('button:text("Record payment"), text=All balances', { timeout: 8000 }).catch(() => {});
   while (await page.getByRole('button', { name: 'Record payment' }).count() > 0) {
     await page.getByRole('button', { name: 'Record payment' }).first().click();
     await page.waitForResponse(r => r.url().includes('/settle') && r.request().method() === 'POST');
+    await page.waitForLoadState('networkidle').catch(() => {});
   }
 });
 
