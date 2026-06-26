@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Trip expense splitter",
   "main": "server/index.js",
+  "engines": { "node": ">=22" },
   "scripts": {
     "start": "node server/index.js",
     "dev": "concurrently \"node server/index.js\" \"vite\"",

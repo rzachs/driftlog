@@ -1,5 +1,7 @@
 # Driftlog
 
+[![CI](https://github.com/rzachs/driftlog/actions/workflows/ci.yml/badge.svg)](https://github.com/rzachs/driftlog/actions/workflows/ci.yml)
+
 Trip expense splitter. Log who paid for what, see live balances, and settle up with the fewest possible payments.
 
 ---

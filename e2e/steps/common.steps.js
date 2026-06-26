@@ -15,9 +15,9 @@ Given('I am on the add expense form for a trip', async ({ page, seededTrip }) =>
   await page.waitForLoadState('networkidle');
 });
 
-Given('I am on a trip overview with members and expenses', async ({ page, request, seededTrip }) => {
+Given('I am on a trip overview with members and expenses', async ({ page, seededTrip }) => {
   // Add an expense so balances are non-zero
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Setup expense',
       amount: 90,
@@ -30,8 +30,8 @@ Given('I am on a trip overview with members and expenses', async ({ page, reques
   await page.waitForLoadState('networkidle');
 });
 
-Given('I am on a trip overview with unbalanced expenses', async ({ page, request, seededTrip }) => {
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+Given('I am on a trip overview with unbalanced expenses', async ({ page, seededTrip }) => {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Setup expense',
       amount: 90,

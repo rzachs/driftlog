@@ -10,8 +10,8 @@ Given('no expenses exist on the trip', async ({ page, seededTrip }) => {
   await page.waitForLoadState('networkidle');
 });
 
-Given('expenses exist on the trip', async ({ page, request, seededTrip }) => {
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+Given('expenses exist on the trip', async ({ page, seededTrip }) => {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'First expense',
       amount: 60,
@@ -20,7 +20,7 @@ Given('expenses exist on the trip', async ({ page, request, seededTrip }) => {
       splits: seededTrip.members.map(m => ({ personId: m.id, amount: 20 })),
     },
   });
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Second expense',
       amount: 30,

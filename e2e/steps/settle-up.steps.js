@@ -1,8 +1,8 @@
 const { Given, When, Then, expect } = require('../fixtures');
 
 Given('I am on the settle up page with at least one suggested payment',
-  async ({ page, request, seededTrip }) => {
-    await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  async ({ page, seededTrip }) => {
+    await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
       data: {
         description: 'Setup expense',
         amount: 90,
@@ -18,8 +18,8 @@ Given('I am on the settle up page with at least one suggested payment',
 );
 
 Given('I am on the settle up page with at least one recorded payment',
-  async ({ page, request, seededTrip }) => {
-    await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+  async ({ page, seededTrip }) => {
+    await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
       data: {
         description: 'Setup expense',
         amount: 90,
@@ -41,8 +41,8 @@ Given('all balances are already at or within 0.005 of zero', async ({ page, seed
   await page.waitForLoadState('networkidle');
 });
 
-Given('all payments were recorded', async ({ page, request, seededTrip }) => {
-  await request.post(`/api/trips/${seededTrip.id}/expenses`, {
+Given('all payments were recorded', async ({ page, seededTrip }) => {
+  await page.request.post(`/api/trips/${seededTrip.id}/expenses`, {
     data: {
       description: 'Setup expense',
       amount: 90,
@@ -53,6 +53,8 @@ Given('all payments were recorded', async ({ page, request, seededTrip }) => {
   });
   await page.goto(`/trips/${seededTrip.id}/settle`);
   await page.waitForLoadState('networkidle');
+  // Wait for the page to render payment rows before counting
+  await page.waitForSelector('button:text("Record payment"), text=All balances', { timeout: 8000 }).catch(() => {});
   // Re-query after each click to avoid stale references
   while (await page.getByRole('button', { name: 'Record payment' }).count() > 0) {
     await page.getByRole('button', { name: 'Record payment' }).first().click();
@@ -88,7 +90,7 @@ When('I record all suggested payments', async ({ page }) => {
   }
 });
 
-When('I record one of multiple payments', async ({ page, request, seededTrip }) => {
+When('I record one of multiple payments', async ({ page }) => {
   // Ensure there are multiple payments first (need 3 members with varying balances)
   await page.getByRole('button', { name: 'Record payment' }).first().click();
   await page.waitForResponse(r => r.url().includes('/settle') && r.request().method() === 'POST');
