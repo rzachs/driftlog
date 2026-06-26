@@ -78,7 +78,8 @@ driftlog/
 │       └── SettleUp.jsx
 ├── specs/
 │   ├── features/             # Human-authored user stories + acceptance criteria
-│   │   ├── trips/            # Create trip, view trips, rename trip
+│   │   ├── auth/             # Login with Google, logout
+│   │   ├── trips/            # Create trip, view trips, rename trip, delete trip
 │   │   ├── expenses/         # Add expense (even split, custom split)
 │   │   ├── balances/         # View trip balances, expense history, person breakdown
 │   │   └── settle-up/        # View suggested payments, record payment, undo payment
@@ -102,8 +103,11 @@ driftlog/
 │   ├── balance-calculation.test.js    # One test per spec row in specs/business-rules/balance-calculation.md
 │   ├── settlement-calculation.test.js # One test per spec row in specs/business-rules/settlement-calculation.md
 │   └── person-detail.test.js          # One test per spec row in specs/business-rules/person-detail.md
+├── scripts/
+│   └── check-spec-coverage.js  # CI spec-coverage check (step 10b) — run locally with node scripts/check-spec-coverage.js
 ├── e2e/
 │   ├── features/             # Gherkin .feature files (one per feature spec, domain-tagged)
+│   │   ├── auth/
 │   │   ├── trips/
 │   │   ├── expenses/
 │   │   ├── balances/

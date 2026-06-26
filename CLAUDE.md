@@ -41,8 +41,11 @@ npm start
 # Unit tests (Vitest — no browser, no server)
 npm test
 
+# Spec-coverage check (no browser, no server)
+node scripts/check-spec-coverage.js
+
 # E2E tests (Playwright — builds app, starts server, runs browser)
-npx bddgen && npx playwright test                        # all features
+npx bddgen && npx playwright test --grep-invert "@wip"   # all features (skip known spec gaps)
 npx bddgen && npx playwright test --grep @trips          # one domain
 npx bddgen && npx playwright test --grep "Create a trip" # one feature
 npx bddgen && npx playwright test --headed               # watch the browser
@@ -66,7 +69,8 @@ Stop-Process -Name node -Force
 | `server/db.js` | SQLite setup, schema init, thin wrappers `calculateBalances()`, `calculateSettlements()` |
 | `server/calc.js` | Pure business-logic functions: `calculateBalancesFromData()`, `calculateSettlementsFromBalances()`, `calculatePersonDetail()` — no DB I/O, tested directly |
 | `tests/` | Vitest unit tests — one file per business-rules spec, one `it()` per table row |
-| `e2e/features/` | Gherkin `.feature` files — one per feature spec, domain-tagged (`@trips`, `@expenses`, `@balances`, `@settle-up`) |
+| `scripts/` | Dev/CI utilities — `check-spec-coverage.js` (step 10b); run locally with `node scripts/check-spec-coverage.js` |
+| `e2e/features/` | Gherkin `.feature` files — one per feature spec, domain-tagged (`@auth`, `@trips`, `@expenses`, `@balances`, `@settle-up`) |
 | `e2e/steps/` | Playwright step definitions — one file per domain, all import from `e2e/fixtures.js` |
 | `e2e/fixtures.js` | `createBdd(test)` + `seededTrip` fixture shared by all step files |
 | `e2e/global-setup.js` | Deletes `driftlog-test.db` before each E2E run |

@@ -45,7 +45,7 @@ Every feature follows these steps in order.
 
 **Design-forward case.** When a designer adds something before a spec exists: `/sdlc-sync-app-design` stubs the visual element and reports the gap. The human must then run `/sdlc-feature` before logic can be added. This is the correct behavior — but it means the designer can get ahead of the spec. Whether to enforce spec-first in Claude Design itself (before the designer can add interactivity) is out of scope for this repo.
 
-**Step 9 tooling.** "Verify" is currently a human-only step. A future `/sdlc-verify` skill could automate spec-coverage checking (every AC item and business-rules row has a corresponding test) and surface mismatches between spec language and implementation, reducing the human's verification burden to intent-only judgment.
+**Step 9 tooling.** ~~Resolved as 10b.~~ Spec-coverage checking is now automated via `scripts/check-spec-coverage.js` (CI job) — every AC item and business-rules row is verified to have a corresponding test on every PR. The human's Step 9 burden is reduced to intent-only judgment: confirming the running app matches what was approved, not counting tests.
 
 ---
 
@@ -124,7 +124,7 @@ The spec file is the single source of truth for both code and tests. Unit tests 
 
 **E2E tests** (`/sdlc-generate-e2e`): One Gherkin scenario per AC item. Scenarios are tagged by domain (`@trips`, `@expenses`, etc.) and run against the full stack: browser → API → SQLite. Each scenario name references the AC item.
 
-**Current test count:** 22 unit tests, 66 E2E tests (65 passing, 1 `@wip` for a declared spec gap).
+**Current test count:** 22 unit tests, 78 E2E scenarios (75 passing, 3 `@wip` for declared spec gaps).
 
 ---
 
@@ -145,19 +145,19 @@ The spec file is the single source of truth for both code and tests. Unit tests 
 
 ---
 
-### Step 10 — Pipeline / CI *(not yet built)*
+### Step 10 — Pipeline / CI
 
 #### 10a — CI test gate
 
-GitHub Action runs `npm test` (unit) and `npx playwright test` (E2E) on every PR. Merge is blocked if any test fails. This is the missing link that makes Steps 6–7 actually enforce anything — currently tests are run locally and manually.
+GitHub Action (`.github/workflows/ci.yml`) runs `npm test` (unit) and `npx bddgen && npx playwright test --grep-invert "@wip"` (E2E) on every PR as separate jobs. Merge is blocked if any test fails. Test report uploaded as artifact on each run.
 
 #### 10b — Spec-coverage enforcement
 
-A script (run as a CI step or standalone Action) parses spec files, counts business-rules rows and AC items, then compares them against `[row N]` citations in unit test `it()` descriptions and scenario titles in `.feature` files. Merge is blocked if any row or AC item has no corresponding test. This makes the spec-fidelity check that `/sdlc-review` currently does manually into a hard, automated gate.
+`scripts/check-spec-coverage.js` runs as a third CI job on every PR. Parses business-rules spec files and feature specs, then verifies: (1) every table row has a `[row N]` citation in the matching unit test — rows acknowledged with `// Rows N … — not covered here` are skipped; (2) every AC item has at least one non-`@wip` scenario in the matching `.feature` file — scenarios annotated `[AC: X + Y]` count as two ACs. Merge is blocked if any gap is found. Run locally with `node scripts/check-spec-coverage.js`.
 
 #### 10c — Release notes
 
-A skill or Action triggered on tag push diffs spec files between the previous and current tag. Changed, added, and removed rows are mapped to user-visible behavior and written as a structured changelog — GitHub Release body, `CHANGELOG.md` entry, or both.
+GitHub Action (`.github/workflows/release-notes.yml`) triggers on every PR and on push to master. On a PR it diffs spec files against master, calls Claude to generate user-facing notes, and upserts a changelog preview comment. On merge to master it prepends a dated entry to `CHANGELOG.md`.
 
 ---
 
