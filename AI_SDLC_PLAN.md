@@ -63,7 +63,7 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 7 | `/sdlc-generate-e2e` | ✅ | ✅ | |
 | 8 | `/sdlc-review` | ✅ | ✅ | Wraps `/code-review` + spec-fidelity pass; GitHub Action also runs Claude review on every PR |
 | 9 | — | ✅ | ✅ | Human checkpoint; no automation planned yet |
-| 10a | — | ⬜ | ⬜ | Not started |
+| 10a | — | ✅ | ⬜ | GitHub Action on every PR: runs unit tests (Vitest) and E2E tests (Playwright BDD) as separate jobs; merge is blocked if either fails; test report uploaded as artifact |
 | 10b | — | ⬜ | ⬜ | Not started |
 | 10c | — | ✅ | ✅ | GitHub Action on PR + push to master: diffs spec files, calls Claude to generate user-facing notes; posts changelog preview as PR comment (upserts on re-push), prepends dated entry to CHANGELOG.md on merge |
 
