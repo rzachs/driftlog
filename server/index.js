@@ -11,8 +11,11 @@ const { calculatePersonDetail } = require('./calc');
 const app = express();
 app.use(express.json());
 
+const SESSION_COOKIE_NAME = 'driftlog.sid';
+
 // spec row 6: session middleware — 7-day expiry, httpOnly, sameSite=lax
 app.use(session({
+  name: SESSION_COOKIE_NAME,
   store: new FileStore({ path: './sessions', ttl: 7 * 24 * 60 * 60, reapInterval: 3600 }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
   resave: false,
@@ -118,13 +121,17 @@ app.get('/auth/google/callback', async (req, res) => {
 });
 
 // logout spec rows "Server destroys session" + "Server error on destroy"
-// No requireAuth — logout must work even if the session is corrupted (requireAuth
-// hits the DB and would 401 before we can clean up). SameSite=lax on the cookie
-// mitigates cross-origin form-POST CSRF.
+// Light auth check: if no session exists, clear the cookie and return — avoids
+// running destroy() for anonymous requests while still allowing logout when the
+// DB record is missing (which would cause requireAuth to 401).
 app.post('/api/auth/logout', (req, res) => {
+  if (!req.session.userId) {
+    res.clearCookie(SESSION_COOKIE_NAME);
+    return res.json({ ok: true });
+  }
   req.session.destroy(err => {
     if (err) console.error('Session destroy error:', err);
-    res.clearCookie('connect.sid');
+    res.clearCookie(SESSION_COOKIE_NAME);
     res.json({ ok: !err });
   });
 });
