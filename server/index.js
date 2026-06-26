@@ -11,8 +11,16 @@ const { calculatePersonDetail } = require('./calc');
 const app = express();
 app.use(express.json());
 
+const SESSION_COOKIE_NAME = 'driftlog.sid';
+
+if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: SESSION_SECRET must be set in production');
+  process.exit(1);
+}
+
 // spec row 6: session middleware — 7-day expiry, httpOnly, sameSite=lax
 app.use(session({
+  name: SESSION_COOKIE_NAME,
   store: new FileStore({ path: './sessions', ttl: 7 * 24 * 60 * 60, reapInterval: 3600 }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
   resave: false,
@@ -115,6 +123,27 @@ app.get('/auth/google/callback', async (req, res) => {
     console.error('OAuth callback error:', e);
     res.redirect('/login?error=server_error');
   }
+});
+
+// logout spec rows "Server destroys session" + "Server error on destroy"
+// Light auth check: if no session exists, clear the cookie and return — avoids
+// running destroy() for anonymous requests while still allowing logout when the
+// DB record is missing (which would cause requireAuth to 401).
+app.post('/api/auth/logout', (req, res) => {
+  if (!req.session.userId) {
+    res.clearCookie(SESSION_COOKIE_NAME);
+    return res.json({ ok: true });
+  }
+  req.session.destroy(err => {
+    // Clear the cookie regardless — best-effort per spec; even if the server-side
+    // session record lingers, the client credential is gone and will expire at TTL.
+    res.clearCookie(SESSION_COOKIE_NAME);
+    if (err) {
+      console.error('Session destroy error:', err);
+      return res.status(500).json({ ok: false });
+    }
+    res.json({ ok: true });
+  });
 });
 
 // Test-only: establishes a session without going through Google OAuth.

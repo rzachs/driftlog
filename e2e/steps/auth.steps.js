@@ -68,7 +68,7 @@ When('I complete login', async ({ page }) => {
   await page.waitForURL('**/trips');
 });
 
-When('I navigate to /login', async ({ page }) => {
+When(/^I navigate to \/login$/, async ({ page }) => {
   await page.goto('/login');
   await page.waitForLoadState('networkidle');
 });
@@ -91,23 +91,23 @@ Then("I am redirected to Google's OAuth consent screen", async ({ page }) => {
   expect(page.url()).toMatch(/accounts\.google\.com/);
 });
 
-Then('I am logged in and taken to /trips', async ({ page }) => {
+Then(/^I am logged in and taken to \/trips$/, async ({ page }) => {
   expect(page.url()).toMatch(/\/trips$/);
 });
 
-Then('a Driftlog account is created from my Google profile', async ({ page, request }) => {
+Then('a Driftlog account is created from my Google profile', async ({ page }) => {
   expect(page.url()).toMatch(/\/trips$/);
-  const me = await (await request.get('/api/me')).json();
+  const me = await (await page.request.get('/api/me')).json();
   expect(me.displayName).toBe(_name);
 });
 
-Then('I am signed in to my existing account with profile synced', async ({ page, request }) => {
+Then('I am signed in to my existing account with profile synced', async ({ page }) => {
   expect(page.url()).toMatch(/\/trips$/);
-  const me = await (await request.get('/api/me')).json();
+  const me = await (await page.request.get('/api/me')).json();
   expect(me.displayName).toBe(_name);
 });
 
-Then('I am redirected to /trips without OAuth', async ({ page }) => {
+Then(/^I am redirected to \/trips without OAuth$/, async ({ page }) => {
   await page.waitForURL('**/trips');
   expect(page.url()).toMatch(/\/trips$/);
 });
@@ -122,4 +122,64 @@ Then('I see an error message on the login page', async ({ page }) => {
 Then('I remain logged out', async ({ request }) => {
   const res = await request.get('/api/me');
   expect(res.status()).toBe(401);
+});
+
+// ── Logout steps ──────────────────────────────────────────────────────────────
+
+// [AC: I am logged in] — shared Given for logout scenarios
+Given('I am logged in', async ({ page }) => {
+  await page.goto('/auth/test-login?sub=logout-e2e&name=Logout%20User&email=logout%40example.com');
+  await page.waitForURL('**/trips');
+});
+
+// [AC: Open account menu] — row "Toggle account menu"
+When('I open the account menu', async ({ page }) => {
+  await page.getByRole('button', { name: 'Account menu' }).click();
+  await page.waitForSelector('[aria-label="Account menu"] ~ div, [aria-label="Account menu"] + div', { state: 'attached' });
+});
+
+// [AC: Close menu on click-away] — row "Close menu on click-away"
+When('I click outside the menu', async ({ page }) => {
+  await page.locator('div.fixed.inset-0').click();
+});
+
+// [AC: Click Log out] — row "Logout request"
+When('I click Log out', async ({ page }) => {
+  await page.getByRole('button', { name: 'Log out' }).click();
+  await page.waitForLoadState('networkidle');
+});
+
+// [AC: Navigate to /trips after logout] — row "Protected route after logout"
+When(/^I navigate to \/trips$/, async ({ page }) => {
+  await page.goto('/trips');
+  await page.waitForLoadState('networkidle');
+});
+
+// [AC: dropdown shows name and email] — rows "Toggle account menu", "User info in menu"
+Then('I see the account dropdown with my name and email', async ({ page }) => {
+  await expect(page.getByText('Logout User')).toBeVisible();
+  await expect(page.getByText('logout@example.com')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
+});
+
+// [AC: dropdown closes] — row "Close menu on click-away"
+Then('the dropdown closes', async ({ page }) => {
+  await expect(page.getByRole('button', { name: 'Log out' })).not.toBeVisible();
+});
+
+// [AC: redirected to login] — row "Client redirect"
+Then('I am on the login page', async ({ page }) => {
+  expect(page.url()).toMatch(/\/(login)?$/);
+});
+
+// [AC: session is gone] — row "Server destroys session"
+Then('my session is gone', async ({ page }) => {
+  const res = await page.request.get('/api/me');
+  expect(res.status()).toBe(401);
+});
+
+// [AC: still logged in after click-away] — row "Close menu on click-away"
+Then('I am still logged in', async ({ page }) => {
+  const res = await page.request.get('/api/me');
+  expect(res.status()).toBe(200);
 });

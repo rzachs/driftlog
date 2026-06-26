@@ -59,9 +59,27 @@
       <button aria-label="Settings" class="w-12 h-12 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-driftlog-field-hover">
         <img src="carbon/icons/settings.svg" width="20" height="20" alt="" class="invert" />
       </button>
-      <div class="w-8 h-8 rounded-full bg-driftlog-blue text-white flex items-center justify-center text-xs font-semibold ml-2">YO</div>
+      <div class="relative ml-2">
+        <button onclick="{{ toggleUserMenu }}" aria-label="Account menu" aria-haspopup="true" class="w-8 h-8 rounded-full bg-driftlog-blue text-white flex items-center justify-center text-xs font-semibold cursor-pointer border-2 border-transparent hover:border-driftlog-blue-accent">YO</button>
+        <sc-if value="{{ userMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <div class="absolute right-0 top-[calc(100%+4px)] w-60 bg-driftlog-panel text-white shadow-[0_2px_12px_rgba(0,0,0,0.4)] z-20">
+            <div class="px-4 py-3 border-b border-driftlog-gray-80">
+              <p class="text-sm font-semibold leading-tight">You</p>
+              <p class="text-xs text-driftlog-gray-40 mt-[2px]">you@driftlog.app</p>
+            </div>
+            <button onclick="{{ logout }}" class="w-full h-12 px-4 border-0 bg-transparent text-white text-sm text-left tracking-[0.16px] cursor-pointer flex items-center gap-3 hover:bg-driftlog-gray-80">
+              <img src="carbon/icons/logout.svg" width="18" height="18" alt="" class="invert" />
+              Log out
+            </button>
+          </div>
+        </sc-if>
+      </div>
     </div>
   </header>
+
+  <sc-if value="{{ userMenuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onclick="{{ closeUserMenu }}" class="fixed inset-0 z-[15]"></div>
+  </sc-if>
 
   <main class="max-w-[880px] mx-auto px-4 pt-12 pb-20">
 
@@ -221,6 +239,7 @@ class Component extends DCLogic {
     participants: ["You", "Maya", "Sam"],
     newPerson: "",
     deleteIndex: null,
+    userMenuOpen: false,
     tripsData: (() => {
       const C = { blue: "#0f62fe", teal: "#007d79", purple: "#8a3ffc", magenta: "#d02670", cyan: "#0072c3", gray: "#6f6f6f" };
       const av = (initials, bg) => ({ initials, bg });
@@ -310,6 +329,10 @@ class Component extends DCLogic {
       onNewPerson: (e) => this.setState({ newPerson: e.target.value }),
       onAddKey:    (e) => { if (e.key === "Enter") { e.preventDefault(); addPerson(); } },
       createTrip:  () => { window.location.href = "02 Trip Overview.dc.html"; },
+      userMenuOpen: this.state.userMenuOpen,
+      toggleUserMenu: (e) => { e.stopPropagation(); this.setState((s) => ({ userMenuOpen: !s.userMenuOpen })); },
+      closeUserMenu: () => this.setState({ userMenuOpen: false }),
+      logout: () => { window.location.href = "01 Login.dc.html"; },
     };
   }
 }
