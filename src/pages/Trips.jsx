@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { UserContext } from '../App'
 import Header from '../components/Header'
 import Avatar from '../components/Avatar'
 import { Button } from '../components/Button'
@@ -76,18 +77,23 @@ function TripCard({ trip, onDelete }) {
 
 export default function Trips() {
   const navigate = useNavigate()
+  const user = useContext(UserContext)
+  const myName = user?.displayName || 'You'
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [tripName, setTripName] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [participants, setParticipants] = useState(['You', 'Maya', 'Sam'])
+  const [participants, setParticipants] = useState(() => [myName, 'Maya', 'Sam'])
   const [newPerson, setNewPerson] = useState('')
   const [deleteTrip, setDeleteTrip] = useState(null)
 
   useEffect(() => {
-    fetch('/api/trips').then(r => r.json()).then(data => { setTrips(data); setLoading(false) })
+    fetch('/api/trips')
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => { setTrips(data); setLoading(false) })
+      .catch(() => navigate('/'))
   }, [])
 
   const active = trips.filter(t =>
@@ -108,7 +114,7 @@ export default function Trips() {
     setTripName('')
     setStartDate('')
     setEndDate('')
-    setParticipants(['You', 'Maya', 'Sam'])
+    setParticipants([myName, 'Maya', 'Sam'])
   }
 
   async function createTrip() {
@@ -206,7 +212,7 @@ export default function Trips() {
                 {participants.map((name, i) => (
                   <span key={i} className="inline-flex items-center gap-[6px] h-8 pl-3 pr-1 bg-gray-80 text-white text-[0.8125rem] rounded-full">
                     {name}
-                    {name !== 'You' && (
+                    {i !== 0 && (
                       <button
                         type="button"
                         onClick={() => setParticipants(p => p.filter((_, j) => j !== i))}

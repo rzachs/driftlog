@@ -20,7 +20,7 @@ app.use(session({
   cookie: { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 },
 }));
 
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 init();
 
@@ -28,6 +28,11 @@ const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/a
 
 function requireAuth(req, res, next) {
   if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+  const user = db.prepare('SELECT id FROM users WHERE id = ?').get(req.session.userId);
+  if (!user) {
+    req.session.destroy(() => {});
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   next();
 }
 
@@ -36,6 +41,11 @@ function requireAuth(req, res, next) {
 // spec row 7: return current user for frontend auth checks
 app.get('/api/me', (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+  const user = db.prepare('SELECT id FROM users WHERE id = ?').get(req.session.userId);
+  if (!user) {
+    req.session.destroy(() => {});
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   res.json(req.session.user);
 });
 
@@ -286,7 +296,7 @@ app.delete('/api/trips/:tripId/settle/:recordId', requireAuth, (req, res) => {
 // ── SPA fallback ──────────────────────────────────────────────────────────
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────
