@@ -65,7 +65,7 @@ Skills live in `.claude/skills/<name>/SKILL.md`. Built = tooling exists. Validat
 | 9 | — | ✅ | ✅ | Human checkpoint; no automation planned yet |
 | 10a | — | ⬜ | ⬜ | Not started |
 | 10b | — | ⬜ | ⬜ | Not started |
-| 10c | — | ✅ | ⬜ | GitHub Action on PR + push to master: diffs spec files, calls Claude to generate user-facing notes; posts changelog preview as PR comment, prepends dated entry to CHANGELOG.md on merge |
+| 10c | — | ✅ | ✅ | GitHub Action on PR + push to master: diffs spec files, calls Claude to generate user-facing notes; posts changelog preview as PR comment (upserts on re-push), prepends dated entry to CHANGELOG.md on merge |
 
 ---
 
