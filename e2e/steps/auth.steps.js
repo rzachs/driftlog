@@ -135,12 +135,12 @@ Given('I am logged in', async ({ page }) => {
 // [AC: Open account menu] — row "Toggle account menu"
 When('I open the account menu', async ({ page }) => {
   await page.getByRole('button', { name: 'Account menu' }).click();
-  await page.waitForSelector('[aria-label="Account menu"] ~ div, [aria-label="Account menu"] + div', { state: 'attached' }).catch(() => {});
+  await page.waitForSelector('[aria-label="Account menu"] ~ div, [aria-label="Account menu"] + div', { state: 'attached' });
 });
 
 // [AC: Close menu on click-away] — row "Close menu on click-away"
 When('I click outside the menu', async ({ page }) => {
-  await page.mouse.click(10, 10);
+  await page.locator('header').locator('div.fixed').click();
 });
 
 // [AC: Click Log out] — row "Logout request"
@@ -173,8 +173,8 @@ Then('I am on the login page', async ({ page }) => {
 });
 
 // [AC: session is gone] — row "Server destroys session"
-Then('my session is gone', async ({ request }) => {
-  const res = await request.get('/api/me');
+Then('my session is gone', async ({ page }) => {
+  const res = await page.request.get('/api/me');
   expect(res.status()).toBe(401);
 });
 
