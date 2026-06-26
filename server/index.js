@@ -13,6 +13,11 @@ app.use(express.json());
 
 const SESSION_COOKIE_NAME = 'driftlog.sid';
 
+if (!process.env.SESSION_SECRET && process.env.NODE_ENV === 'production') {
+  console.error('FATAL: SESSION_SECRET must be set in production');
+  process.exit(1);
+}
+
 // spec row 6: session middleware — 7-day expiry, httpOnly, sameSite=lax
 app.use(session({
   name: SESSION_COOKIE_NAME,
@@ -130,9 +135,14 @@ app.post('/api/auth/logout', (req, res) => {
     return res.json({ ok: true });
   }
   req.session.destroy(err => {
-    if (err) console.error('Session destroy error:', err);
+    // Clear the cookie regardless — best-effort per spec; even if the server-side
+    // session record lingers, the client credential is gone and will expire at TTL.
     res.clearCookie(SESSION_COOKIE_NAME);
-    res.json({ ok: !err });
+    if (err) {
+      console.error('Session destroy error:', err);
+      return res.status(500).json({ ok: false });
+    }
+    res.json({ ok: true });
   });
 });
 
